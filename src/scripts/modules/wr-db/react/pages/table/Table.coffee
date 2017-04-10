@@ -134,14 +134,6 @@ templateFn = (componentId) ->
           @_renderIncremetnalSetup()
         if isRenderIncremental
           @_renderTableFiltersRow()
-        if componentId == 'keboola.wr-db-mssql-v2'
-          @_renderBCPToggle()
-        # div className: 'col-sm-offset-7 col-sm-3',
-        #   if !!@state.editingColumns
-        #     @_renderSetColumnsType()
-        #   else
-        #     ' '
-        # div className: 'col-sm-2 kbc-buttons', ''
 
       ColumnsEditor
         onToggleHideIgnored: (e) =>
@@ -364,24 +356,6 @@ templateFn = (componentId) ->
       isSaving: @state.v2State.get('saving')
       saveStyle: 'success'
       setLabel: 'Save'
-
-  _renderBCPToggle: ->
-    exportInfo = @state.v2ConfigTable
-    isBCP = exportInfo.get('bcp')
-
-    span null,
-      p null,
-        strong className: 'col-sm-3',
-          'Import using BCP (Beta)'
-        React.createElement ActivateDeactivateButton,
-          isActive: isBCP
-          activateTooltip: 'Activate BCP import'
-          deactivateTooltip: 'Deactivate BCP import'
-          isPending: @state.v2State.get('saving')
-          buttonStyle: {'paddingTop': '0', 'paddingBottom': '0'}
-          buttonDisabled: !!@state.editingColumns
-          onChange: =>
-            @setV2TableInfo(exportInfo.set('bcp', !isBCP))
 
   _renderEditButtons: ->
     isValid = @state.columnsValidation?.reduce((memo, value) ->
