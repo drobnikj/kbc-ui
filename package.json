@@ -81,6 +81,7 @@
     "webpack-dev-server": "^1.14.1"
   },
   "scripts": {
+    "start-https": "webpack-dev-server --config webpack/dev-server.config.js --hot --progress --colors --host 0.0.0.0 --port 3000 --inline --https",
     "start": "webpack-dev-server --config webpack/dev-server.config.js --hot --progress --colors --host 0.0.0.0 --port 3000 --inline",
     "start-projects-list": "webpack-dev-server --config webpack/dev-server-projects-list.config.js --hot --progress --colors --host 0.0.0.0 --port 3000 --inline",
     "build": "webpack --config webpack/production.config.js --profile --colors --bail && node webpack/generate-manifest.js",

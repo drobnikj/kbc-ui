@@ -51,7 +51,9 @@ module.exports = function (options) {
             './node_modules/intl/Intl.js',
             './node_modules/intl/locale-data/jsonp/en.js',
             options.entry
-          ]};
+          ],
+          parts: ['./src/scripts/parts']
+        };
     } else {
         entry = {
           bundle: [

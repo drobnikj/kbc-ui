@@ -11,3 +11,4 @@ global.kbcApp =
     CurrentUser: require('./react/layout/CurrentUser').default
     ProjectsList: require './react/layout/project-select/List'
     NewProjectModal: require './react/layout/NewProjectModal'
+    SystemJobsToggle: require('./modules/settings/SystemJobsToggle').default
