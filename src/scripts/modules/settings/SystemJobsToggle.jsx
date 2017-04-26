@@ -7,7 +7,6 @@ import InstalledComponentsActionCreators from '../components/InstalledComponents
 import OrchestrationsActionCreator from '../orchestrations/ActionCreators';
 import OrchestrationsStore from '../orchestrations/stores/OrchestrationsStore';
 import createStoreMixin from '../../react/mixins/createStoreMixin';
-
 import SystemJobsModal from './SystemJobsModal';
 
 const systemJobsOrchestrationName = 'KBC System Tasks';
