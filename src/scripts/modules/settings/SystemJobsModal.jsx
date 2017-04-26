@@ -28,9 +28,9 @@ const systemJobsErrorNotification = {
 export default React.createClass({
   propTypes: {
     systemJobsEnabled: PropTypes.bool.isRequired,
-    systemJobsOrchestrationId: PropTypes.string,
     isOpen: PropTypes.bool.isRequired,
-    onHide: PropTypes.func.isRequired
+    onHide: PropTypes.func.isRequired,
+    systemJobsOrchestrationId: PropTypes.string
   },
 
   getInitialState() {
@@ -41,7 +41,7 @@ export default React.createClass({
   },
 
   render() {
-    const {systemJobs, isOpen, onHide} = this.props;
+    const {systemJobsEnabled, isOpen, onHide} = this.props;
     let modalText = 'Please note that this will result in the removal of some features,' +
                     ' please see the help documentation for further info.';
     let submitButtonText = 'Disable';
@@ -86,14 +86,14 @@ export default React.createClass({
   },
 
   disableSystemJobs() {
-    OrchestrationsApi.deleteOrchestration(this.props.systemJobsOrchestrationId)
+    OrchestrationsApi.deleteOrchestration(this.props.systemJobsOrchestrationId);
   },
 
   enableSystemJobs() {
-    curDate = new Date();
+    let curDate = new Date();
     OrchestrationsApi.createOrchestration({
       name: systemJobsOrchestrationName,
-      crontabRecord: curDate.getMinutes() + " " + curDate.getHours() + " * * *",
+      crontabRecord: curDate.getMinutes() + ' ' + curDate.getHours() + ' * * *',
       tasks: [
         systemMetadataGathererTask
       ],

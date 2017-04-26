@@ -21,6 +21,7 @@ export default React.createClass({
   },
 
   getInitialState() {
+    // getStateFromStores
     ApplicationActionCreators.receiveApplicationData({
       sapiToken: this.props.sapiToken
     });
