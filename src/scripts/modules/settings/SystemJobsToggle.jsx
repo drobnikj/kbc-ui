@@ -1,56 +1,78 @@
 import React, {PropTypes} from 'react';
-import Immutable from 'immutable';
+import {Map} from 'immutable';
 import {Button} from 'react-bootstrap';
 import ApplicationActionCreators from '../../actions/ApplicationActionCreators';
 import ComponentsActionCreators from '../components/ComponentsActionCreators';
-import OrchestrationsApi from '../orchestrations/OrchestrationsApi';
-
-/*
+import InstalledComponentsActionCreators from '../components/InstalledComponentsActionCreators';
+import OrchestrationsActionCreator from '../orchestrations/ActionCreators';
 import OrchestrationsStore from '../orchestrations/stores/OrchestrationsStore';
-*/
+import createStoreMixin from '../../react/mixins/createStoreMixin';
 
 import SystemJobsModal from './SystemJobsModal';
 
 const systemJobsOrchestrationName = 'KBC System Tasks';
 
 export default React.createClass({
+
+  mixins: [createStoreMixin(OrchestrationsStore)],
+
   displayName: 'System Jobs Toggle',
 
   propTypes: {
-    sapiToken: PropTypes.string.isRequired
+    sapiToken: PropTypes.string.isRequired,
+    sapiUrl: PropTypes.string.isRequireds,
+    components: PropTypes.array.isRequired,
+    installedComponents: PropTypes.array.isRequired
+  },
+
+  getStateFromStores() {
+    const orchestrations = OrchestrationsStore.getFiltered() || Map();
+    let sysjobsEnabled = true;
+    let sysjobsOrchestrationId = null;
+    let buttonLabel = 'Disable';
+    if (!orchestrations) {
+      buttonLabel = 'Enable';
+      sysjobsEnabled = false;
+    } else {
+      sysjobsOrchestrationId = orchestrations.keySeq().first();
+    }
+    return {
+      sysjobsEnabled: sysjobsEnabled,
+      sysjobsOrchestrationId: sysjobsOrchestrationId,
+      buttonLabel: buttonLabel
+    };
+  },
+
+  componentWillMount() {
+    ApplicationActionCreators.receiveApplicationData({
+      sapiToken: {'token': this.props.sapiToken},
+      sapiUrl: this.props.sapiUrl
+    });
+    ComponentsActionCreators.receiveAllComponents(this.props.components);
+    InstalledComponentsActionCreators.receiveAllComponents(this.props.installedComponents);
+    OrchestrationsActionCreator.loadOrchestrationsForce();
+    OrchestrationsActionCreator.setOrchestrationsFilter(systemJobsOrchestrationName);
   },
 
   getInitialState() {
-    // getStateFromStores
-    ApplicationActionCreators.receiveApplicationData({
-      sapiToken: this.props.sapiToken
-    });
-    ComponentsActionCreators.receiveAllComponents(
-      [{ id: 'orchestrator', url: 'https://syrup.keboola.com/orchestrator'}]
-    );
-    if (this.projectHasSystemOrchestration()) {
-      return {
-        isOpen: false,
-        buttonLabel: 'Disable'
-      };
-    } else {
-      return {
-        isOpen: false,
-        buttonLabel: 'Enable'
-      };
-    }
+    return {
+      isOpen: false
+    };
   },
 
   render() {
     return (
-      <Button bsStyle="success" onClick={this.openModal}>
-        <span className="kbc-icon-pencil"/> {this.state.buttonLabel}
-        <SystemJobsModal
-          systemJobsEnabled={!this.projectHasSystemOrchestration()}
-          onHide={this.closeModal}
-          isOpen={this.state.isOpen}
-        />
-      </Button>
+      <div>
+        <Button bsStyle="success" onClick={this.openModal}>
+          {this.state.buttonLabel}
+          <SystemJobsModal
+            systemJobsEnabled={this.state.sysjobsEnabled}
+            systemJobsOrchestrationId={this.state.sysjobsOrchestrationId}
+            onHide={this.closeModal}
+            isOpen={this.state.isOpen}
+          />
+        </Button>
+      </div>
     );
   },
 
@@ -68,14 +90,5 @@ export default React.createClass({
     this.setState({
       isOpen: false
     });
-  },
-
-  projectHasSystemOrchestration() {
-    let orchestrations = new Immutable.List(OrchestrationsApi.getOrchestrations());
-    if (orchestrations.hasIn('name', systemJobsOrchestrationName)) {
-      return true;
-    } else {
-      return false;
-    }
   }
 });

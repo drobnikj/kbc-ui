@@ -1,7 +1,6 @@
 import React, {PropTypes} from 'react';
 import {Modal, ButtonToolbar, Button} from 'react-bootstrap';
-import ApplicationStore from '../../stores/ApplicationStore';
-import OrchestrationsApi from '../orchestrations/OrchestrationsApi';
+import OrchestrationsActionCreator from '../orchestrations/ActionCreators';
 
 const systemJobsOrchestrationName = 'KBC System Tasks';
 
@@ -24,30 +23,20 @@ const systemJobsErrorNotification = {
   'parameters': {}
 };
 
-
 export default React.createClass({
   propTypes: {
-    systemJobsEnabled: PropTypes.bool.isRequired,
+    sysjobsEnabled: PropTypes.bool.isRequired,
     isOpen: PropTypes.bool.isRequired,
     onHide: PropTypes.func.isRequired,
-    systemJobsOrchestrationId: PropTypes.string
-  },
-
-  getInitialState() {
-    return {
-      isSaving: false,
-      xsrf: ApplicationStore.getXsrfToken()
-    };
+    sysjobsOrchestrationId: PropTypes.string
   },
 
   render() {
-    const {systemJobsEnabled, isOpen, onHide} = this.props;
-    let modalText = 'Please note that this will result in the removal of some features,' +
-                    ' please see the help documentation for further info.';
+    const {sysjobsEnabled, isOpen, onHide} = this.props;
+    let modalText = 'Please note that this will result in the removal of some features.';
     let submitButtonText = 'Disable';
-    if (systemJobsEnabled) {
-      modalText = 'Enabling system jobs will give you access to some advanced features,' +
-                  ' please see the help documentation for further info.';
+    if (sysjobsEnabled) {
+      modalText = 'Enabling system jobs will give you access to some advanced features.';
       submitButtonText = 'Enable';
     }
     return (
@@ -65,7 +54,7 @@ export default React.createClass({
             <Button onClick={onHide} bsStyle="link">
               Cancel
             </Button>
-            <Button bsStyle="primary" onClick={this.handleSave} disabled={this.state.isSaving}>
+            <Button bsStyle="primary" onClick={this.handleSave}>
               {submitButtonText}
             </Button>
           </ButtonToolbar>
@@ -75,23 +64,21 @@ export default React.createClass({
   },
 
   handleSave() {
-    if (this.props.systemJobsEnabled) {
+    if (this.props.sysjobsEnabled) {
       this.disableSystemJobs();
     } else {
       this.enableSystemJobs();
     }
-    this.setState({
-      isSaving: true
-    });
+    this.props.onHide();
   },
 
   disableSystemJobs() {
-    OrchestrationsApi.deleteOrchestration(this.props.systemJobsOrchestrationId);
+    OrchestrationsActionCreator.deleteOrchestration(this.props.sysjobsOrchestrationId);
   },
 
   enableSystemJobs() {
     let curDate = new Date();
-    OrchestrationsApi.createOrchestration({
+    OrchestrationsActionCreator.createOrchestration({
       name: systemJobsOrchestrationName,
       crontabRecord: curDate.getMinutes() + ' ' + curDate.getHours() + ' * * *',
       tasks: [
