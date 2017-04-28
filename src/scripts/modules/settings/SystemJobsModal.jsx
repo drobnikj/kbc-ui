@@ -1,5 +1,6 @@
 import React, {PropTypes} from 'react';
 import {Modal, ButtonToolbar, Button} from 'react-bootstrap';
+import ApplicationActionCreators from '../../actions/ApplicationActionCreators';
 import OrchestrationsActionCreator from '../orchestrations/ActionCreators';
 
 const systemJobsOrchestrationName = 'KBC System Tasks';
@@ -66,8 +67,14 @@ export default React.createClass({
   handleSave() {
     if (this.props.sysjobsEnabled) {
       this.disableSystemJobs();
+      ApplicationActionCreators.sendNotification({
+        message: 'Removed KBC System Tasks Orchestration'
+      });
     } else {
       this.enableSystemJobs();
+      ApplicationActionCreators.sendNotification({
+        message: 'Created KBC System Tasks Orchestration'
+      });
     }
     this.props.onHide();
   },
