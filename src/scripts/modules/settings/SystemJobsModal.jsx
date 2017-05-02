@@ -12,8 +12,16 @@ const systemMetadataGathererTask = {
   'actionParameters': {
     'configData': {
       'parameters': {
-        'writers': '*',
-        'transformation': '*'
+        'writers': [
+          {
+            'componentId': '*'
+          }
+        ],
+        'transformations': [
+          {
+            'configurationId': '*'
+          }
+        ]
       }
     }
   }
