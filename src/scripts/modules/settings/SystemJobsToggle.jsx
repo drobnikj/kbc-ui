@@ -30,7 +30,7 @@ export default React.createClass({
     let sysjobsEnabled = true;
     let sysjobsOrchestrationId = null;
     let buttonLabel = 'Disable';
-    if (!orchestrations) {
+    if (orchestrations.length === 0) {
       buttonLabel = 'Enable';
       sysjobsEnabled = false;
     } else {
@@ -50,6 +50,9 @@ export default React.createClass({
     });
     ComponentsActionCreators.receiveAllComponents(this.props.components);
     InstalledComponentsActionCreators.receiveAllComponents(this.props.installedComponents);
+  },
+
+  componentDidMount() {
     OrchestrationsActionCreator.loadOrchestrationsForce();
     OrchestrationsActionCreator.setOrchestrationsFilter(systemJobsOrchestrationName);
   },

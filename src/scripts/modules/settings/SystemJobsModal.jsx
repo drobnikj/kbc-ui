@@ -44,7 +44,7 @@ export default React.createClass({
     const {sysjobsEnabled, isOpen, onHide} = this.props;
     let modalText = 'Please note that this will result in the removal of some features.';
     let submitButtonText = 'Disable';
-    if (sysjobsEnabled) {
+    if (!sysjobsEnabled) {
       modalText = 'Enabling system jobs will give you access to some advanced features.';
       submitButtonText = 'Enable';
     }
