@@ -170,6 +170,7 @@ module.exports = React.createClass
                   name: 'primaryKey'
                   value: @props.value.get('primaryKey')
                   multi: true
+                  trimMultiCreatedValues: true
                   disabled: @props.disabled
                   allowCreate: (@_getColumns().size == 0)
                   delimiter: ','
