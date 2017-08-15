@@ -201,7 +201,10 @@ export function createStore(componentId, configId) {
 
     getQueryName(qid) {
       return this.getConfigQuery(qid).get('name');
-    }
+    },
 
+    getSourceTables() {
+      return data.localState.get('sourceTables');
+    }
   };
 }

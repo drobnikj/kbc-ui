@@ -14,7 +14,7 @@ ComponentsActionCreators = require './ComponentsActionCreators'
 
 exApifyRoutes = require('../apify/routes').default
 exDbRoutes = require '../ex-db/exDbRoutes'
-exDbGenericRoutes = require '../ex-db-generic/routes'
+exDbGenericRoutes = require('../ex-db-generic/routes').default
 exMongoDbRoutes = require '../ex-mongodb/routes'
 exGoogleBigqueryRoutes = require('../ex-google-bigquery/routes').default
 exGdriveGoogleRoutes = require '../ex-google-drive-old/exGdriveRoutes'

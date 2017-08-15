@@ -184,6 +184,15 @@ export function createActions(componentId) {
       return callDockerAction(componentId, 'testConnection', params);
     },
 
+    getTables(configId) {
+      const store = getStore(configId);
+      let runData = store.configData.setIn(['parameters', 'tables'], List());
+      const params = {
+        configData: runData.toJS()
+      };
+      return callDockerAction(componentId, 'getTables', params);
+    },
+
     prepareSingleQueryRunData(configId, query) {
       const store = getStore(configId);
       const runData = store.configData.setIn(['parameters', 'tables'], List().push(query));
