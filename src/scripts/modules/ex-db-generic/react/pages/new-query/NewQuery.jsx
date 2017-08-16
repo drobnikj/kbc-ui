@@ -4,8 +4,8 @@ import React from 'react';
 import createStoreMixin from '../../../../../react/mixins/createStoreMixin';
 import StorageTablesStore from '../../../../components/stores/StorageTablesStore';
 import RoutesStore from '../../../../../stores/RoutesStore';
-import actionsProvisioning from '../../../actionsProvisioning';
-import storeProvisioning from '../../../storeProvisioning';
+import * as actionsProvisioning from '../../../actionsProvisioning';
+import * as storeProvisioning from '../../../storeProvisioning';
 import QueryEditor from '../../components/QueryEditor';
 
 export default function(componentId) {
@@ -34,7 +34,7 @@ export default function(componentId) {
 
     render() {
       return (
-        <div> AWGRIAERWNGIANGIANR IWN IANGRI AJRGIJ EARIG
+        <div>
           <div className="container-fluid kbc-main-content">
             <QueryEditor
               query = {this.state.newQuery}
