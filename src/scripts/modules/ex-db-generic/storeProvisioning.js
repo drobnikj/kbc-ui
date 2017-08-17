@@ -9,6 +9,8 @@ import getDefaultPort from './templates/defaultPorts';
 
 const defaultSshPort = 22;
 
+export const sourceTablesPath = 'sourceTables';
+
 function fetch(componentId, configId) {
   const config = store.getConfigData(componentId, configId) || Map();
   return {
@@ -40,8 +42,6 @@ export function getLocalState(componentId, configId) {
 export const componentsStore = store;
 export function createStore(componentId, configId) {
   const data = fetch(componentId, configId);
-
-
   return {
     hasValidCredentials(credentials) {
       const configCredentials = this.getCredentials();
@@ -144,6 +144,8 @@ export function createStore(componentId, configId) {
         enabled: true,
         incremental: false,
         outputTable: '',
+        table: '',
+        columns: [],
         primaryKey: [],
         query: '',
         id: generateId(ids)
@@ -204,7 +206,7 @@ export function createStore(componentId, configId) {
     },
 
     getSourceTables() {
-      return data.localState.get('sourceTables');
+      return data.localState.get(sourceTablesPath);
     }
   };
 }

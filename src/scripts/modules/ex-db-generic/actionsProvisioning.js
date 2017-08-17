@@ -1,5 +1,5 @@
 import * as storeProvisioning from './storeProvisioning';
-import {Map, List} from 'immutable';
+import {Map, List, fromJS} from 'immutable';
 import componentsActions from '../components/InstalledComponentsActionCreators';
 import callDockerAction from '../components/DockerActionsApi';
 
@@ -8,7 +8,13 @@ import {getProtectedProperties} from './templates/credentials';
 
 
 export function loadConfiguration(componentId, configId) {
-  return componentsActions.loadComponentConfigData(componentId, configId);
+  return componentsActions.loadComponentConfigData(componentId, configId).then(function() {
+    loadSourceTables(componentId, configId);
+  });
+}
+
+export function loadSourceTables(componentId, config) {
+  return createActions(componentId).getSourceTables(config);
 }
 
 export function createActions(componentId) {
@@ -184,19 +190,25 @@ export function createActions(componentId) {
       return callDockerAction(componentId, 'testConnection', params);
     },
 
-    getTables(configId) {
-      const store = getStore(configId);
-      let runData = store.configData.setIn(['parameters', 'tables'], List());
-      const params = {
-        configData: runData.toJS()
-      };
-      return callDockerAction(componentId, 'getTables', params);
-    },
-
     prepareSingleQueryRunData(configId, query) {
       const store = getStore(configId);
       const runData = store.configData.setIn(['parameters', 'tables'], List().push(query));
       return runData;
+    },
+
+    getSourceTables(configId) {
+      const store = storeProvisioning.createStore(componentId, configId);
+      const credentials = store.getCredentials();
+      if (credentials) {
+        let runData = store.configData.setIn(['parameters', 'tables'], List());
+        runData = store.configData.setIn(['parameters', 'db'], store.getCredentials());
+        const params = {
+          configData: runData.toJS()
+        };
+        return callDockerAction(componentId, 'getTables', params).then( (data) =>
+          updateLocalState(configId, storeProvisioning.sourceTablesPath, fromJS(data.tables))
+        );
+      }
     }
   };
 }

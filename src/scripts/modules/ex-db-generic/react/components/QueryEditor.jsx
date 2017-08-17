@@ -1,5 +1,7 @@
 
 import React from 'react';
+import Immutable from 'immutable';
+import _ from 'underscore';
 import {CodeEditor} from '../../../../react/common/common';
 import Select from '../../../../react/common/Select';
 
@@ -11,15 +13,21 @@ export default React.createClass({
   propTypes: {
     query: React.PropTypes.object.isRequired,
     tables: React.PropTypes.object.isRequired,
+    sourceTables: React.PropTypes.object,
     onChange: React.PropTypes.func.isRequired,
     showOutputTable: React.PropTypes.bool,
     configId: React.PropTypes.string.isRequired,
     defaultOutputTable: React.PropTypes.string.isRequired,
-    componentId: React.PropTypes.string.isRequired
+    componentId: React.PropTypes.string.isRequired,
+    simpleDisabled: React.PropTypes.bool.isRequired
   },
 
   handleOutputTableChange(newValue) {
     return this.props.onChange(this.props.query.set('outputTable', newValue));
+  },
+
+  handleSourceTableChange(newValue) {
+    return this.props.onChange(this.props.query.set('table', newValue));
   },
 
   handlePrimaryKeyChange(newValue) {
@@ -42,6 +50,43 @@ export default React.createClass({
     return 'default: ' + this.props.defaultOutputTable;
   },
 
+  sourceTableSelectOptions() {
+    return this.props.sourceTables.map(function(table) {
+      return table.get('name');
+    }).sortBy(function(val) {
+      return val;
+    });
+  },
+
+  tableSelectOptions() {
+    return this.props.tables.map(function(table) {
+      return table.get('id');
+    }).sortBy(function(val) {
+      return val;
+    });
+  },
+
+  getColumnsOptions() {
+    var columns = [];
+    if (this.props.query.get('table')) {
+      var matchedTable = this.props.sourceTables.find((table) =>
+        table.get('name') === this.props.query.get('table')
+      );
+      if (!matchedTable) {
+        return [];
+      }
+      columns = matchedTable.get('columns', Immutable.List()).toJS();
+    } else {
+      return [];
+    }
+    return _.map(columns, function(column) {
+      return {
+        label: column,
+        value: column
+      };
+    });
+  },
+
   renderQueryHelpBlock() {
     if (this.props.componentId === 'keboola.ex-db-oracle') {
       return (
@@ -52,6 +97,10 @@ export default React.createClass({
         </div>
       );
     }
+  },
+
+  handleChangeColumns() {
+
   },
 
   render() {
@@ -75,13 +124,35 @@ export default React.createClass({
             <label className="col-md-2 control-label">Output Table</label>
             <div className="col-md-10">
               <AutoSuggestWrapper
-                suggestions={this._tableSelectOptions()}
+                suggestions={this.tableSelectOptions()}
                 placeholder={this.tableNamePlaceholder()}
                 value={this.props.query.get('outputTable')}
                 onChange={this.handleOutputTableChange}/>
+              <div className="help-block">
+                if empty then default will be used
+              </div>
             </div>
-            <div className="help-block">
-              if empty then default will be used
+          </div>
+          <div className="form-group">
+            <label className="col-md-2 control-label">Source Table</label>
+            <div className="col-md-4">
+              <AutoSuggestWrapper
+                suggestions={this.sourceTableSelectOptions()}
+                placeholder="Select Source Table"
+                value={this.props.query.get('table')}
+                onChange={this.handleSourceTableChange}/>
+            </div>
+            <label className="col-md-2 control-label">Columns</label>
+            <div className="col-md-4">
+              <Select
+                multi={true}
+                name="columns"
+                value={this.props.query.get('columns', Immutable.List()).toJS()}
+                disabled={this.props.simpleDisabled || !this.props.query.get('table')}
+                placeholder="All columns will be imported"
+                onChange={this.handleChangeColumns}
+                options={this.getColumnsOptions()}
+              />
             </div>
           </div>
           <div className="form-group">
