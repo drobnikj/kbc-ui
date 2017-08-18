@@ -139,28 +139,6 @@ export default React.createClass({
             </div>
           </div>
           <div className="form-group">
-            <label className="col-md-2 control-label">Source Table</label>
-            <div className="col-md-4">
-              <AutoSuggestWrapper
-                suggestions={this.sourceTableSelectOptions()}
-                placeholder="Select Source Table"
-                value={this.props.query.get('table')}
-                onChange={this.handleSourceTableChange}/>
-            </div>
-            <label className="col-md-2 control-label">Columns</label>
-            <div className="col-md-4">
-              <Select
-                multi={true}
-                name="columns"
-                value={this.props.query.get('columns', Immutable.List()).toJS()}
-                disabled={this.props.simpleDisabled || !this.props.query.get('table')}
-                placeholder="All columns will be imported"
-                onChange={this.handleChangeColumns}
-                options={this.getColumnsOptions()}
-              />
-            </div>
-          </div>
-          <div className="form-group">
             <label className="col-md-2 control-label">Primary Key</label>
             <div className="col-md-6">
               <Select
@@ -183,6 +161,30 @@ export default React.createClass({
                   onChange={this.handleIncrementalChange}/>
                 Incremental
               </label>
+            </div>
+          </div>
+          <div className="form-group">
+            <label className="col-md-2 control-label">Source Table</label>
+            <div className="col-md-4">
+              <AutoSuggestWrapper
+                suggestions={this.sourceTableSelectOptions()}
+                placeholder="Select Source Table"
+                value={this.props.query.get('table')}
+                onChange={this.handleSourceTableChange}/>
+            </div>
+          </div>
+          <div className="form-group">
+            <label className="col-md-2 control-label">Columns</label>
+            <div className="col-md-4">
+              <Select
+                multi={true}
+                name="columns"
+                value={this.props.query.get('columns', Immutable.List()).toJS()}
+                disabled={this.props.simpleDisabled || !this.props.query.get('table')}
+                placeholder="All columns will be imported"
+                onChange={this.handleChangeColumns}
+                options={this.getColumnsOptions()}
+              />
             </div>
           </div>
           <div className="form-group">
