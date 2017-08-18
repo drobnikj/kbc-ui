@@ -27,7 +27,12 @@ export default React.createClass({
   },
 
   handleSourceTableChange(newValue) {
-    return this.props.onChange(this.props.query.set('table', newValue));
+    const query = this.props.query.withMutations(function(valmap) {
+      var mapping = valmap.set('table', newValue);
+      mapping = mapping.set('columns', Immutable.List());
+      return mapping;
+    });
+    return this.props.onChange(query);
   },
 
   handlePrimaryKeyChange(newValue) {
@@ -81,8 +86,8 @@ export default React.createClass({
     }
     return _.map(columns, function(column) {
       return {
-        label: column,
-        value: column
+        label: column.name,
+        value: column.name
       };
     });
   },
@@ -99,8 +104,8 @@ export default React.createClass({
     }
   },
 
-  handleChangeColumns() {
-
+  handleChangeColumns(newValue) {
+    return this.props.onChange(this.props.query.set('columns', newValue));
   },
 
   render() {
