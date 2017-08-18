@@ -26,15 +26,6 @@ export default React.createClass({
     return this.props.onChange(this.props.query.set('outputTable', newValue));
   },
 
-  handleSourceTableChange(newValue) {
-    const query = this.props.query.withMutations(function(valmap) {
-      var mapping = valmap.set('table', newValue);
-      mapping = mapping.set('columns', Immutable.List());
-      return mapping;
-    });
-    return this.props.onChange(query);
-  },
-
   handlePrimaryKeyChange(newValue) {
     return this.props.onChange(this.props.query.set('primaryKey', newValue));
   },
@@ -58,8 +49,6 @@ export default React.createClass({
   sourceTableSelectOptions() {
     return this.props.sourceTables.map(function(table) {
       return table.get('name');
-    }).sortBy(function(val) {
-      return val;
     });
   },
 
@@ -69,6 +58,21 @@ export default React.createClass({
     }).sortBy(function(val) {
       return val;
     });
+  },
+
+  handleSourceTableChange(newValue) {
+    const query = this.props.query.withMutations(function(valmap) {
+      var mapping = valmap.set('table', newValue);
+      mapping = mapping.set('columns', Immutable.List());
+      if (newValue === '') {
+        mapping = mapping.set('query', '');
+      } else {
+        mapping = mapping.set('query', 'SELECT * FROM ' + newValue);
+      }
+
+      return mapping;
+    });
+    return this.props.onChange(query);
   },
 
   getColumnsOptions() {
@@ -84,12 +88,22 @@ export default React.createClass({
     } else {
       return [];
     }
+
     return _.map(columns, function(column) {
       return {
         label: column.name,
         value: column.name
       };
     });
+  },
+
+  handleChangeColumns(newValue) {
+    const query = this.props.query.withMutations(function(valmap) {
+      var mapping = valmap.set('columns', newValue);
+      mapping = mapping.set('query', 'SELECT ' + newValue.join(', ') + ' FROM ' + valmap.get('table'));
+      return mapping;
+    });
+    return this.props.onChange(query);
   },
 
   renderQueryHelpBlock() {
@@ -102,10 +116,6 @@ export default React.createClass({
         </div>
       );
     }
-  },
-
-  handleChangeColumns(newValue) {
-    return this.props.onChange(this.props.query.set('columns', newValue));
   },
 
   render() {
