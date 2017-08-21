@@ -15,11 +15,12 @@ export default React.createClass({
     tables: React.PropTypes.object.isRequired,
     sourceTables: React.PropTypes.object,
     onChange: React.PropTypes.func.isRequired,
-    showOutputTable: React.PropTypes.bool,
+    showSimple: React.PropTypes.bool,
     configId: React.PropTypes.string.isRequired,
     defaultOutputTable: React.PropTypes.string.isRequired,
     componentId: React.PropTypes.string.isRequired,
-    simpleDisabled: React.PropTypes.bool.isRequired
+    localState: React.PropTypes.object.isRequired,
+    updateLocalState: React.PropTypes.func.isRequired
   },
 
   handleOutputTableChange(newValue) {
@@ -47,9 +48,15 @@ export default React.createClass({
   },
 
   sourceTableSelectOptions() {
-    return this.props.sourceTables.map(function(table) {
-      return table.get('name');
-    });
+    if (this.props.sourceTables) {
+      this.props.simpleDisabled = false;
+      return this.props.sourceTables.map(function(table) {
+        return table.get('name');
+      });
+    } else {
+      this.props.simpleDisabled = true;
+      return {};
+    }
   },
 
   tableSelectOptions() {
@@ -69,7 +76,6 @@ export default React.createClass({
       } else {
         mapping = mapping.set('query', 'SELECT * FROM ' + newValue);
       }
-
       return mapping;
     });
     return this.props.onChange(query);
@@ -180,6 +186,7 @@ export default React.createClass({
                 suggestions={this.sourceTableSelectOptions()}
                 placeholder="Select Source Table"
                 value={this.props.query.get('table')}
+                disabled={this.props.simpleDisabled}
                 onChange={this.handleSourceTableChange}/>
             </div>
           </div>
@@ -216,5 +223,13 @@ export default React.createClass({
         </div>
       </div>
     );
+  },
+
+  localState(path, defaultVal) {
+    return this.props.localState.getIn(path, defaultVal);
+  },
+
+  updateLocalState(path, newValue) {
+    return this.props.updateLocalState([].concat(path), newValue);
   }
 });

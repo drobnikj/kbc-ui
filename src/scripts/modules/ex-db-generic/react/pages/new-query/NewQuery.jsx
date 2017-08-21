@@ -24,7 +24,8 @@ export default function(componentId) {
         newQuery: newQuery,
         tables: StorageTablesStore.getAll(),
         sourceTables: ExDbStore.getSourceTables(),
-        defaultOutputTable: ExDbStore.getDefaultOutputTableId(newQuery)
+        defaultOutputTable: ExDbStore.getDefaultOutputTableId(newQuery),
+        localState: ExDbStore.getLocalState()
       };
     },
 
