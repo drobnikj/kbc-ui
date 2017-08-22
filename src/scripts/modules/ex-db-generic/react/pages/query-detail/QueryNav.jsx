@@ -26,13 +26,14 @@ export default React.createClass({
 
   rows() {
     if (this.props.queries.count()) {
-      return this.props.queries.map((query) => {
-        return React.createElement(NavRow, {
-          query: query,
-          configurationId: this.props.configurationId,
-          componentId: this.props.componentId
-        });
-      });
+      return this.props.queries.map(function(query) {
+        return (
+          <NavRow
+            query={query}
+            configurationId={this.props.configurationId}
+            componentId={this.props.componentId}/>
+        );
+      }, this).toArray();
     } else {
       return (
         <div className="list-group-item">
