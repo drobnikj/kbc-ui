@@ -47,14 +47,20 @@ export default React.createClass({
     return 'default: ' + this.props.defaultOutputTable;
   },
 
+  isSimpleDisabled() {
+    if (this.props.sourceTables.count() > 0) {
+      return false;
+    } else {
+      return true;
+    }
+  },
+
   sourceTableSelectOptions() {
-    if (this.props.sourceTables) {
-      this.props.simpleDisabled = false;
+    if (this.props.sourceTables.count() > 0) {
       return this.props.sourceTables.map(function(table) {
         return table.get('name');
       });
     } else {
-      this.props.simpleDisabled = true;
       return {};
     }
   },
@@ -112,16 +118,12 @@ export default React.createClass({
     return this.props.onChange(query);
   },
 
-  renderQueryHelpBlock() {
-    if (this.props.componentId === 'keboola.ex-db-oracle') {
-      return (
-        <div className="col-md-12">
-          <div className="help-block">
-            Please do not put semicolons at the end of the query.
-          </div>
-        </div>
-      );
-    }
+  localState(path, defaultVal) {
+    return this.props.localState.getIn(path, defaultVal);
+  },
+
+  updateLocalState(path, newValue) {
+    return this.props.updateLocalState(this.props.configId, [].concat(path), newValue);
   },
 
   render() {
@@ -179,31 +181,8 @@ export default React.createClass({
               </label>
             </div>
           </div>
-          <div className="form-group">
-            <label className="col-md-2 control-label">Source Table</label>
-            <div className="col-md-4">
-              <AutoSuggestWrapper
-                suggestions={this.sourceTableSelectOptions()}
-                placeholder="Select Source Table"
-                value={this.props.query.get('table')}
-                disabled={this.props.simpleDisabled}
-                onChange={this.handleSourceTableChange}/>
-            </div>
-          </div>
-          <div className="form-group">
-            <label className="col-md-2 control-label">Columns</label>
-            <div className="col-md-4">
-              <Select
-                multi={true}
-                name="columns"
-                value={this.props.query.get('columns', Immutable.List()).toJS()}
-                disabled={this.props.simpleDisabled || !this.props.query.get('table')}
-                placeholder="All columns will be imported"
-                onChange={this.handleChangeColumns}
-                options={this.getColumnsOptions()}
-              />
-            </div>
-          </div>
+          {this.renderSimpleTable()}
+          {this.renderSimpleColumns()}
           <div className="form-group">
             <label className="col-md-12 control-label">SQL Query</label>
             {this.renderQueryHelpBlock()}
@@ -225,11 +204,53 @@ export default React.createClass({
     );
   },
 
-  localState(path, defaultVal) {
-    return this.props.localState.getIn(path, defaultVal);
+  renderSimpleTable() {
+    if (this.props.showSimple) {
+      return (
+        <div className="form-group">
+          <label className="col-md-2 control-label">Source Table</label>
+          <div className="col-md-4">
+            <AutoSuggestWrapper
+              suggestions={this.sourceTableSelectOptions()}
+              placeholder="Select Source Table"
+              value={this.props.query.get('table')}
+              disabled={this.isSimpleDisabled()}
+              onChange={this.handleSourceTableChange}/>
+          </div>
+        </div>
+      );
+    }
   },
 
-  updateLocalState(path, newValue) {
-    return this.props.updateLocalState([].concat(path), newValue);
+  renderSimpleColumns() {
+    if (this.props.showSimple) {
+      return (
+        <div className="form-group">
+          <label className="col-md-2 control-label">Columns</label>
+          <div className="col-md-4">
+            <Select
+              multi={true}
+              name="columns"
+              value={this.props.query.get('columns', Immutable.List()).toJS()}
+              disabled={this.isSimpleDisabled() || !this.props.query.get('table')}
+              placeholder="All columns will be imported"
+              onChange={this.handleChangeColumns}
+              options={this.getColumnsOptions()}/>
+          </div>
+        </div>
+      );
+    }
+  },
+
+  renderQueryHelpBlock() {
+    if (this.props.componentId === 'keboola.ex-db-oracle') {
+      return (
+        <div className="col-md-12">
+          <div className="help-block">
+            Please do not put semicolons at the end of the query.
+          </div>
+        </div>
+      );
+    }
   }
 });

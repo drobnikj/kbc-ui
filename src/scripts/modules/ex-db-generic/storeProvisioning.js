@@ -40,10 +40,6 @@ function isValidQuery(query) {
   return nameValid && queryValid;
 }
 
-export function getLocalState(componentId, configId) {
-  return fetch(componentId, configId).localState;
-}
-
 export const componentsStore = store;
 export function createStore(componentId, configId) {
   const data = fetch(componentId, configId);
@@ -203,7 +199,14 @@ export function createStore(componentId, configId) {
     },
 
     getConfigQuery(qid) {
-      return this.getQueries().find((q) => q.get('id') === qid );
+      var query = this.getQueries().find((q) => q.get('id') === qid );
+      if (!query.get('table')) {
+        query = query.set('table', '');
+      }
+      if (!query.get('columns')) {
+        query = query.set('columns', []);
+      }
+      return query;
     },
 
     getQueryName(qid) {
@@ -212,6 +215,10 @@ export function createStore(componentId, configId) {
 
     getSourceTables() {
       return data.localState.get(sourceTablesPath);
+    },
+
+    getLocalState() {
+      return fetch(componentId, configId).localState;
     }
   };
 }

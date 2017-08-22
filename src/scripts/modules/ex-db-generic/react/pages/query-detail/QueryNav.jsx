@@ -29,6 +29,7 @@ export default React.createClass({
       return this.props.queries.map(function(query) {
         return (
           <NavRow
+            key={query.get('name')}
             query={query}
             configurationId={this.props.configurationId}
             componentId={this.props.componentId}/>

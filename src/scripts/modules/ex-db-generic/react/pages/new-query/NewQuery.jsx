@@ -25,6 +25,7 @@ export default function(componentId) {
         tables: StorageTablesStore.getAll(),
         sourceTables: ExDbStore.getSourceTables(),
         defaultOutputTable: ExDbStore.getDefaultOutputTableId(newQuery),
+        componentSupportsSimpleSetup: ExDbActionCreators.componentSupportsSimpleSetup(),
         localState: ExDbStore.getLocalState()
       };
     },
@@ -45,7 +46,8 @@ export default function(componentId) {
               configId = {this.state.configId}
               defaultOutputTable = {this.state.defaultOutputTable}
               componentId = {componentId}
-              simpleDisabled = {false}
+              showSimple = {this.state.componentSupportsSimpleSetup}
+              {... ExDbActionCreators.prepareLocalState(this.state.configId)}
             />
           </div>
         </div>

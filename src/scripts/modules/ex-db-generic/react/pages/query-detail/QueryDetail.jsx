@@ -36,9 +36,12 @@ export default function(componentId, actionsProvisioning, storeProvisioning) {
         isSaving: ExDbStore.isSavingQuery(),
         isValid: ExDbStore.isEditingQueryValid(queryId),
         tables: StorageTablesStore.getAll(),
+        sourceTables: ExDbStore.getSourceTables(),
         queriesFilter: ExDbStore.getQueriesFilter(),
         queriesFiltered: ExDbStore.getQueriesFiltered(),
-        defaultOutputTable: ExDbStore.getDefaultOutputTableId(editingQuery)
+        defaultOutputTable: ExDbStore.getDefaultOutputTableId(editingQuery),
+        componentSupportsSimpleSetup: ExDbActionCreators.componentSupportsSimpleSetup(),
+        localState: ExDbStore.getLocalState()
       };
     },
 
@@ -64,10 +67,14 @@ export default function(componentId, actionsProvisioning, storeProvisioning) {
           <QueryEditor
             query={this.state.editingQuery}
             tables={this.state.tables}
-            onChange={this._handleQueryChange}
+            onChange={this.handleQueryChange}
+            showSimple={this.state.componentSupportsSimpleSetup}
+            sourceTables={this.state.sourceTables}
             configId={this.state.configId}
             componentId={componentId}
-            defaultOutputTable={this.state.defaultOutputTable}/>
+            defaultOutputTable={this.state.defaultOutputTable}
+            {... ExDbActionCreators.prepareLocalState(this.state.configId)}
+          />
         );
       } else {
         return (

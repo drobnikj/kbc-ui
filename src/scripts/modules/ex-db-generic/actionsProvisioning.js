@@ -1,11 +1,11 @@
 import * as storeProvisioning from './storeProvisioning';
 import {Map, List, fromJS} from 'immutable';
+import _ from 'underscore';
 import componentsActions from '../components/InstalledComponentsActionCreators';
 import callDockerAction from '../components/DockerActionsApi';
 
 import getDefaultPort from './templates/defaultPorts';
 import {getProtectedProperties} from './templates/credentials';
-
 
 export function loadConfiguration(componentId, configId) {
   return componentsActions.loadComponentConfigData(componentId, configId).then(function() {
@@ -41,23 +41,26 @@ export function createActions(componentId) {
     return storeProvisioning.createStore(componentId, configId);
   }
 
-  function localState(configId) {
-    return storeProvisioning.getLocalState(componentId, configId);
-  }
-
-  function updateLocalState(configId, path, data) {
-    const ls = localState(configId);
-    const newLocalState = ls.setIn([].concat(path), data);
-    componentsActions.updateLocalState(componentId, configId, newLocalState, path);
-  }
-
   function saveConfigData(configId, data, waitingPath, changeDescription) {
     updateLocalState(configId, waitingPath, true);
     return componentsActions.saveComponentConfigData(componentId, configId, data, changeDescription)
       .then(() => updateLocalState(configId, waitingPath, false));
   }
 
+  function updateLocalState(configId, path, data) {
+    const ls = getStore(configId).getLocalState();
+    const newLocalState = ls.setIn([].concat(path), data);
+    componentsActions.updateLocalState(componentId, configId, newLocalState, path);
+  }
+
   return {
+    componentSupportsSimpleSetup() {
+      if (componentId !== 'keboola.ex-db-db2') {
+        return false;
+      }
+      return true;
+    },
+
     setQueriesFilter(configId, query) {
       updateLocalState(configId, 'queriesFilter', query);
     },
@@ -209,6 +212,24 @@ export function createActions(componentId) {
           updateLocalState(configId, storeProvisioning.sourceTablesPath, fromJS(data.tables))
         );
       }
+    },
+
+    // returns localState for @path and function to update local state
+    // on @path+@subPath
+    prepareLocalState(configId, path) {
+      const ls = getStore(configId).getLocalState(path);
+      const updateLocalSubstateFn = (subPath, newData)  =>  {
+        if (_.isEmpty(subPath)) {
+          return updateLocalState([].concat(path), newData);
+        } else {
+          return updateLocalState([].concat(path).concat(subPath), newData);
+        }
+      };
+      return {
+        localState: ls,
+        updateLocalState: updateLocalSubstateFn,
+        prepareLocalState: (newSubPath) => this.prepareLocalState([].concat(path).concat(newSubPath))
+      };
     }
   };
 }
