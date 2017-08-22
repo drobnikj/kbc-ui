@@ -11,12 +11,13 @@ import VersionsStore from '../../../../components/stores/VersionsStore';
 import QueryTable from './QueryTable';
 import ComponentDescription from '../../../../components/react/components/ComponentDescription';
 import ComponentMetadata from '../../../../components/react/components/ComponentMetadata';
-import {LatestVersions} from '../../../../components/react/components/SidebarVersionsWrapper';
+import SidebarVersions from '../../../../components/react/components/SidebarVersionsWrapper';
 
 import DeleteConfigurationButton from '../../../../components/react/components/DeleteConfigurationButton';
 
-import {LatestJobs} from '../../../../components/react/components/SidebarJobs';
-import {RunExtractionButton} from '../../../../components/react/components/RunComponentButton';
+import LatestJobs from '../../../../components/react/components/SidebarJobs';
+import RunComponentButton from '../../../../components/react/components/RunComponentButton';
+
 import {Link} from 'react-router';
 import SearchRow from '../../../../../react/common/SearchRow';
 import * as actionsProvisioning from '../../../actionsProvisioning';
@@ -176,16 +177,16 @@ export default function(componentId) {
             <ul className="nav nav-stacked">
               {this.renderCredentialsLink()}
               <li className={classnames({ disabled: !this.state.hasEnabledQueries })}>
-                <RunExtractionButton
+                <RunComponentButton
                   title="Run Extraction"
                   component={componentId}
                   mode="link"
                   disabled={!this.state.hasEnabledQueries}
                   disabledReason="There are no queries to be executed"
-                  runParams={{ config: configurationId }}
+                  runParams={function() { return { config: configurationId }; }}
                 >
                   You are about to run the extraction
-                </RunExtractionButton>
+                </RunComponentButton>
               </li>
               <li>
                 <DeleteConfigurationButton
@@ -195,9 +196,9 @@ export default function(componentId) {
               </li>
             </ul>
 
-            <LatestJobs limit="3" jobs={this.state.latestJobs}/>
+            <LatestJobs limit={3} jobs={this.state.latestJobs}/>
 
-            <LatestVersions limit="3" componentId={componentId}/>
+            <SidebarVersions limit={3} componentId={componentId}/>
 
           </div>
         </div>
