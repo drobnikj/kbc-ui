@@ -69,7 +69,6 @@ export default function(componentId, actionsProvisioning, storeProvisioning) {
             tables={this.state.tables}
             onChange={this.handleQueryChange}
             showSimple={this.state.componentSupportsSimpleSetup}
-            sourceTables={this.state.sourceTables}
             configId={this.state.configId}
             componentId={componentId}
             defaultOutputTable={this.state.defaultOutputTable}

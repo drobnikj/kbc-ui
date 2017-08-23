@@ -42,7 +42,6 @@ export default function(componentId) {
             <QueryEditor
               query = {this.state.newQuery}
               tables = {this.state.tables}
-              sourceTables = {this.state.sourceTables}
               onChange = {this.handleQueryChange}
               configId = {this.state.configId}
               defaultOutputTable = {this.state.defaultOutputTable}

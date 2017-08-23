@@ -251,7 +251,7 @@ export default React.createClass({
         <Select
           multi={true}
           name="columns"
-          value={this.props.query.get('columns', Immutable.List()).toJS()}
+          value={this.props.query.get('columns', Immutable.List())}
           disabled={this.isSimpleDisabled() || !this.props.query.get('table')}
           placeholder="All columns will be imported"
           onChange={this.handleChangeColumns}
