@@ -14,7 +14,8 @@ import {loadSourceTables} from './actionsProvisioning';
 
 const defaultSshPort = 22;
 
-export const sourceTablesPath = 'sourceTables';
+export const sourceTablesPath = ['sourceTables', 'data'];
+export const loadingSourceTablesPath = ['sourceTables', 'loading'];
 
 function fetch(componentId, configId) {
   const config = store.getConfigData(componentId, configId) || Map();
@@ -214,7 +215,11 @@ export function createStore(componentId, configId) {
     },
 
     getSourceTables() {
-      return data.localState.get(sourceTablesPath);
+      return data.localState.getIn(sourceTablesPath);
+    },
+
+    getSourceTablesLoading() {
+      return data.localState.getIn(loadingSourceTablesPath);
     },
 
     getLocalState() {

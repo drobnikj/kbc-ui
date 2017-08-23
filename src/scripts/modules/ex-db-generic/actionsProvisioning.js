@@ -8,9 +8,8 @@ import getDefaultPort from './templates/defaultPorts';
 import {getProtectedProperties} from './templates/credentials';
 
 export function loadConfiguration(componentId, configId) {
-  return componentsActions.loadComponentConfigData(componentId, configId).then(function() {
-    loadSourceTables(componentId, configId);
-  });
+  createActions(componentId).updateLocalState(configId, storeProvisioning.loadingSourceTablesPath, false);
+  return componentsActions.loadComponentConfigData(componentId, configId);
 }
 
 export function loadSourceTables(componentId, config) {
@@ -208,10 +207,15 @@ export function createActions(componentId) {
         const params = {
           configData: runData.toJS()
         };
-        return callDockerAction(componentId, 'getTables', params).then( (data) =>
-          updateLocalState(configId, storeProvisioning.sourceTablesPath, fromJS(data.tables))
-        );
+        return callDockerAction(componentId, 'getTables', params).then(function(data) {
+          updateLocalState(configId, storeProvisioning.sourceTablesPath, fromJS(data.tables));
+          updateLocalState(configId, storeProvisioning.loadingSourceTablesPath, false);
+        });
       }
+    },
+
+    updateLocalState(configId, path, data) {
+      return updateLocalState(configId, path, data);
     },
 
     // returns localState for @path and function to update local state
