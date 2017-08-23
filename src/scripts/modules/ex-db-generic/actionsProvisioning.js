@@ -8,7 +8,7 @@ import getDefaultPort from './templates/defaultPorts';
 import {getProtectedProperties} from './templates/credentials';
 
 export function loadConfiguration(componentId, configId) {
-  createActions(componentId).updateLocalState(configId, storeProvisioning.loadingSourceTablesPath, false);
+  createActions(componentId).updateLocalState(configId, storeProvisioning.loadingSourceTablesPath, true);
   return componentsActions.loadComponentConfigData(componentId, configId);
 }
 

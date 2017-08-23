@@ -219,7 +219,7 @@ export function createStore(componentId, configId) {
     },
 
     getSourceTablesLoading() {
-      return data.localState.getIn(loadingSourceTablesPath);
+      return !!data.localState.getIn(loadingSourceTablesPath);
     },
 
     getLocalState() {

@@ -24,6 +24,7 @@ export default function(componentId) {
         newQuery: newQuery,
         tables: StorageTablesStore.getAll(),
         sourceTables: ExDbStore.getSourceTables(),
+        sourceTablesLoading: ExDbStore.getSourceTablesLoading(),
         defaultOutputTable: ExDbStore.getDefaultOutputTableId(newQuery),
         componentSupportsSimpleSetup: ExDbActionCreators.componentSupportsSimpleSetup(),
         localState: ExDbStore.getLocalState()

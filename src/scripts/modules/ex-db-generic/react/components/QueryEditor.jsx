@@ -2,8 +2,12 @@
 import React from 'react';
 import Immutable from 'immutable';
 import _ from 'underscore';
+import {Loader} from 'kbc-react-components';
 import {CodeEditor} from '../../../../react/common/common';
 import Select from '../../../../react/common/Select';
+
+import {loadingSourceTablesPath} from '../../storeProvisioning';
+import {sourceTablesPath} from '../../storeProvisioning';
 
 import AutoSuggestWrapper from '../../../transformations/react/components/mapping/AutoSuggestWrapper';
 import editorMode from '../../templates/editorMode';
@@ -13,9 +17,8 @@ export default React.createClass({
   propTypes: {
     query: React.PropTypes.object.isRequired,
     tables: React.PropTypes.object.isRequired,
-    sourceTables: React.PropTypes.object,
     onChange: React.PropTypes.func.isRequired,
-    showSimple: React.PropTypes.bool,
+    showSimple: React.PropTypes.bool.isRequired,
     configId: React.PropTypes.string.isRequired,
     defaultOutputTable: React.PropTypes.string.isRequired,
     componentId: React.PropTypes.string.isRequired,
@@ -47,8 +50,16 @@ export default React.createClass({
     return 'default: ' + this.props.defaultOutputTable;
   },
 
+  isLoadingSourceTables() {
+    return this.localState(loadingSourceTablesPath);
+  },
+
+  sourceTables() {
+    return this.localState(sourceTablesPath);
+  },
+
   isSimpleDisabled() {
-    if (this.props.sourceTables.count() > 0) {
+    if (this.sourceTables() && this.sourceTables().count() > 0) {
       return false;
     } else {
       return true;
@@ -56,8 +67,8 @@ export default React.createClass({
   },
 
   sourceTableSelectOptions() {
-    if (this.props.sourceTables.count() > 0) {
-      return this.props.sourceTables.map(function(table) {
+    if (this.sourceTables() && this.sourceTables().count() > 0) {
+      return this.sourceTables().map(function(table) {
         return table.get('name');
       });
     } else {
@@ -90,7 +101,7 @@ export default React.createClass({
   getColumnsOptions() {
     var columns = [];
     if (this.props.query.get('table')) {
-      var matchedTable = this.props.sourceTables.find((table) =>
+      var matchedTable = this.sourceTables().find((table) =>
         table.get('name') === this.props.query.get('table')
       );
       if (!matchedTable) {
@@ -112,7 +123,11 @@ export default React.createClass({
   handleChangeColumns(newValue) {
     const query = this.props.query.withMutations(function(valmap) {
       var mapping = valmap.set('columns', newValue);
-      mapping = mapping.set('query', 'SELECT ' + newValue.join(', ') + ' FROM ' + valmap.get('table'));
+      if (newValue.count() === 0) {
+        mapping = mapping.set('query', 'SELECT * FROM ' + valmap.get('table'));
+      } else {
+        mapping = mapping.set('query', 'SELECT ' + newValue.join(', ') + ' FROM ' + valmap.get('table'));
+      }
       return mapping;
     });
     return this.props.onChange(query);
@@ -152,7 +167,7 @@ export default React.createClass({
                 value={this.props.query.get('outputTable')}
                 onChange={this.handleOutputTableChange}/>
               <div className="help-block">
-                if empty then default will be used
+                If left empty, the above default table will be used
               </div>
             </div>
           </div>
@@ -198,6 +213,10 @@ export default React.createClass({
                 }
               />
             </div>
+            <div className="help-block col-md-12">
+              Note: If you edit the query, the table and column selectors will be disabled.
+              To re-enable the selectors, delete your query.
+            </div>
           </div>
         </div>
       </div>
@@ -206,16 +225,20 @@ export default React.createClass({
 
   renderSimpleTable() {
     if (this.props.showSimple) {
+      var tableSelect = ( <AutoSuggestWrapper
+                            suggestions={this.sourceTableSelectOptions()}
+                            placeholder="Select Source Table"
+                            value={this.props.query.get('table')}
+                            disabled={this.isSimpleDisabled()}
+                            onChange={this.handleSourceTableChange}/> );
+
+      var loader = <Loader/>;
+
       return (
         <div className="form-group">
           <label className="col-md-2 control-label">Source Table</label>
           <div className="col-md-4">
-            <AutoSuggestWrapper
-              suggestions={this.sourceTableSelectOptions()}
-              placeholder="Select Source Table"
-              value={this.props.query.get('table')}
-              disabled={this.isSimpleDisabled()}
-              onChange={this.handleSourceTableChange}/>
+            { (this.isLoadingSourceTables()) ? loader : tableSelect }
           </div>
         </div>
       );
@@ -224,18 +247,22 @@ export default React.createClass({
 
   renderSimpleColumns() {
     if (this.props.showSimple) {
+      var columnSelect = (
+        <Select
+          multi={true}
+          name="columns"
+          value={this.props.query.get('columns', Immutable.List()).toJS()}
+          disabled={this.isSimpleDisabled() || !this.props.query.get('table')}
+          placeholder="All columns will be imported"
+          onChange={this.handleChangeColumns}
+          options={this.getColumnsOptions()}/>
+      );
+      var loader = <Loader/>;
       return (
         <div className="form-group">
           <label className="col-md-2 control-label">Columns</label>
           <div className="col-md-4">
-            <Select
-              multi={true}
-              name="columns"
-              value={this.props.query.get('columns', Immutable.List()).toJS()}
-              disabled={this.isSimpleDisabled() || !this.props.query.get('table')}
-              placeholder="All columns will be imported"
-              onChange={this.handleChangeColumns}
-              options={this.getColumnsOptions()}/>
+            { (this.isLoadingSourceTables()) ? loader : columnSelect }
           </div>
         </div>
       );
