@@ -8,12 +8,16 @@ import getDefaultPort from './templates/defaultPorts';
 import {getProtectedProperties} from './templates/credentials';
 
 export function loadConfiguration(componentId, configId) {
-  createActions(componentId).updateLocalState(configId, storeProvisioning.loadingSourceTablesPath, true);
+  if (!createActions(componentId).sourceTablesLoaded(configId)) {
+    createActions(componentId).updateLocalState(configId, storeProvisioning.loadingSourceTablesPath, true);
+  }
   return componentsActions.loadComponentConfigData(componentId, configId);
 }
 
-export function loadSourceTables(componentId, config) {
-  return createActions(componentId).getSourceTables(config);
+export function loadSourceTables(componentId, configId) {
+  if (!createActions(componentId).sourceTablesLoaded(configId)) {
+    return createActions(componentId).getSourceTables(configId);
+  }
 }
 
 export function createActions(componentId) {
@@ -198,8 +202,13 @@ export function createActions(componentId) {
       return runData;
     },
 
+    sourceTablesLoaded(configId) {
+      const store = getStore(configId);
+      return !!store.getSourceTables(configId);
+    },
+
     getSourceTables(configId) {
-      const store = storeProvisioning.createStore(componentId, configId);
+      const store = getStore(configId);
       const credentials = store.getCredentials();
       if (credentials) {
         let runData = store.configData.setIn(['parameters', 'tables'], List());
