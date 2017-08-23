@@ -62,6 +62,19 @@ export default React.createClass({
     }
   },
 
+  renderQuery() {
+    if (!this.props.query.get('table')) {
+      return (
+        <div className="form-group">
+          <label className="col-md-12 control-label">SQL Query</label>
+          <div className="col-md-12">
+            {this.renderQueryEditor()}
+          </div>
+        </div>
+      );
+    }
+  },
+
   render() {
     return (
       <div className="row">
@@ -110,12 +123,7 @@ export default React.createClass({
             </div>
           </div>
           {this.renderSimpleStatic()}
-          <div className="form-group">
-            <label className="col-md-12 control-label">SQL Query</label>
-            <div className="col-md-12">
-              {this.renderQueryEditor()}
-            </div>
-          </div>
+          {this.renderQuery()}
         </div>
       </div>
     );
