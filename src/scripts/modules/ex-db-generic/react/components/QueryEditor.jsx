@@ -167,7 +167,7 @@ export default React.createClass({
                 value={this.props.query.get('outputTable')}
                 onChange={this.handleOutputTableChange}/>
               <div className="help-block">
-                If left empty, the above default table will be used
+                If left empty, the default value will be used
               </div>
             </div>
           </div>

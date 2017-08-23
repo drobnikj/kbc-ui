@@ -35,6 +35,33 @@ export default React.createClass({
     }
   },
 
+  renderSimpleStatic() {
+    if (!!this.props.query.get('table')) {
+      return [(
+        <div className="form-group">
+          <label className="col-md-2 control-label">Source Table</label>
+          <div className="col-md-4">
+            <input
+              className="form-control"
+              type="text"
+              value={this.props.query.get('table')}
+              disabled={true}/>
+          </div>
+        </div>), (
+        <div className="form-group">
+          <label className="col-md-2 control-label">Columns</label>
+          <div className="col-md-4">
+            <input
+              className="form-control"
+              type="text"
+              value={ (!!this.props.query.get('columns')) ? this.props.query.get('columns').join(', ') : 'All columns' }
+              disabled={true}/>
+          </div>
+        </div>
+      )];
+    }
+  },
+
   render() {
     return (
       <div className="row">
@@ -49,6 +76,18 @@ export default React.createClass({
                 placeholder="Untitled Query"
                 disabled={true}/>
             </div>
+          </div>
+          <div className="form-group">
+            <label className="col-md-2 control-label">Output table</label>
+            <div className="col-md-4">
+              <SapiTableLinkEx tableId={this.props.query.get('outputTable')}>
+                <div className="form-control-static col-md-12">
+                  {this.props.query.get('outputTable')}
+                </div>
+              </SapiTableLinkEx>
+            </div>
+          </div>
+          <div className="form-group">
             <label className="col-md-2 control-label">Primary Key</label>
             <div className="col-md-4">
               <input
@@ -60,24 +99,17 @@ export default React.createClass({
             </div>
           </div>
           <div className="form-group">
-            <label className="col-md-2 control-label">Output table</label>
+            <label className="col-md-2 control-label">Incremental</label>
             <div className="col-md-4">
-              <SapiTableLinkEx tableId={this.props.query.get('outputTable')}>
-                <div className="form-control-static col-md-12">
-                  {this.props.query.get('outputTable')}
-                </div>
-              </SapiTableLinkEx>
-            </div>
-            <div className="col-md-4 col-md-offset-2 checkbox">
-              <label>
-                <input
-                  type="checkbox"
-                  checked={this.props.query.get('incremental')}
-                  disabled={true}/>
-                Incremental
-              </label>
+              <input
+                className="form-control"
+                type="text"
+                value={ (this.props.query.get('incremental')) ? 'true' : 'false' }
+                disabled={true}
+              />
             </div>
           </div>
+          {this.renderSimpleStatic()}
           <div className="form-group">
             <label className="col-md-12 control-label">SQL Query</label>
             <div className="col-md-12">
