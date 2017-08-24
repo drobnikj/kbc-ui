@@ -41,6 +41,18 @@ function isValidQuery(query) {
   return nameValid && queryValid;
 }
 
+export function getSimpleQuery(table, columns) {
+  if (table) {
+    if (columns && columns.count() > 0) {
+      return 'SELECT ' + columns.join(', ') + ' FROM ' + table;
+    } else {
+      return 'SELECT * FROM ' + table;
+    }
+  } else {
+    return '';
+  }
+}
+
 export const componentsStore = store;
 export function createStore(componentId, configId) {
   const data = fetch(componentId, configId);
@@ -148,6 +160,7 @@ export function createStore(componentId, configId) {
         outputTable: '',
         table: '',
         columns: [],
+        simple: '',
         primaryKey: [],
         query: '',
         id: generateId(ids)
@@ -201,13 +214,7 @@ export function createStore(componentId, configId) {
 
     getConfigQuery(qid) {
       var query = this.getQueries().find((q) => q.get('id') === qid );
-      if (!query.get('table')) {
-        query = query.set('table', '');
-      }
-      if (!query.get('columns')) {
-        query = query.set('columns', []);
-      }
-      return query;
+      return query.set('simple', this.getSimpleQuery(query.get('table'), query.get('columns')));
     },
 
     getQueryName(qid) {

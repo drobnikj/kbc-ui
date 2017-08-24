@@ -8,12 +8,10 @@ import Select from '../../../../react/common/Select';
 
 import {loadingSourceTablesPath} from '../../storeProvisioning';
 import {sourceTablesPath} from '../../storeProvisioning';
+import {getSimpleQuery} from '../../storeProvisioning';
 
 import AutoSuggestWrapper from '../../../transformations/react/components/mapping/AutoSuggestWrapper';
 import editorMode from '../../templates/editorMode';
-
-const simpleDisabledPath = ['simple', 'disabled'];
-const simpleQueryPath = ['simple', 'query'];
 
 export default React.createClass({
   displayName: 'ExDbQueryEditor',
@@ -29,8 +27,10 @@ export default React.createClass({
     updateLocalState: React.PropTypes.func.isRequired
   },
 
-  componentsWillReceiveProps: function(nextProps) {
-    this.setState(this.getState(nextProps));
+  getInitialState() {
+    return {
+      simpleDisabled: false
+    };
   },
 
   handleOutputTableChange(newValue) {
@@ -46,19 +46,17 @@ export default React.createClass({
   },
 
   handleQueryChange(data) {
-    if (data.value !== this.localState(simpleQueryPath)) {
+    if (data.value !== this.props.query.get('simple') && this.props.query.get('table') !== '') {
       // query has been changed by hand, reset and disable table/columns
-      var query = this.props.query.withMutations(function(valmap) {
-        var mapping = valmap.set('table', '');
-        mapping = mapping.set('columns', Immutable.List());
-        mapping = mapping.set('query', data.value);
-        return mapping;
-      });
-      this.updateLocalState(simpleDisabledPath, true);
-      return this.props.onChange(query);
+      this.setState({ simpleDisabled: true });
+      this.props.onChange(this.props.query.set('table', ''));
+      if (!!this.props.query.get('columns')) {
+        this.props.onChange(this.props.query.set('columns', Immutable.List()));
+      }
+      return this.props.onChange(this.props.query.set('query', data.value));
     } else {
       if (data.value === '') {
-        this.updateLocalState(simpleDisabledPath, false);
+        this.setState({ simpleDisabled: false });
       }
       return this.props.onChange(this.props.query.set('query', data.value));
     }
@@ -77,7 +75,7 @@ export default React.createClass({
   },
 
   isSimpleDisabled() {
-    return !!this.localState(simpleDisabledPath);
+    return !!this.state.simpleDisabled;
   },
 
   sourceTables() {
@@ -104,14 +102,10 @@ export default React.createClass({
 
   handleSourceTableChange(newValue) {
     const query = this.props.query.withMutations(function(valmap) {
+      var simpleQuery = getSimpleQuery(newValue, valmap.get('columns'));
       var mapping = valmap.set('table', newValue);
-      mapping = mapping.set('columns', Immutable.List());
-      if (newValue === '') {
-        mapping = mapping.set('query', '');
-      } else {
-        mapping = mapping.set('query', 'SELECT * FROM ' + newValue);
-      }
-      this.updateLocalState(simpleQueryPath, mapping.get('query'));
+      mapping = mapping.set('simple', simpleQuery);
+      mapping = mapping.set('query', simpleQuery);
       return mapping;
     });
     return this.props.onChange(query);
@@ -145,13 +139,10 @@ export default React.createClass({
 
   handleChangeColumns(newValue) {
     const query = this.props.query.withMutations(function(valmap) {
+      var simpleQuery = getSimpleQuery(valmap.get('table'), newValue);
       var mapping = valmap.set('columns', newValue);
-      if (newValue.count() === 0) {
-        mapping = mapping.set('query', 'SELECT * FROM ' + valmap.get('table'));
-      } else {
-        mapping = mapping.set('query', 'SELECT ' + newValue.join(', ') + ' FROM ' + valmap.get('table'));
-      }
-      this.updateLocalState(simpleQueryPath, mapping.get('query'));
+      mapping = mapping.set('simple', simpleQuery);
+      mapping = mapping.set('query', simpleQuery);
       return mapping;
     });
     return this.props.onChange(query);
