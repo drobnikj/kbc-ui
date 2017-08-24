@@ -12,6 +12,9 @@ import {sourceTablesPath} from '../../storeProvisioning';
 import AutoSuggestWrapper from '../../../transformations/react/components/mapping/AutoSuggestWrapper';
 import editorMode from '../../templates/editorMode';
 
+const simpleDisabledPath = ['simple', 'disabled'];
+const simpleQueryPath = ['simple', 'query'];
+
 export default React.createClass({
   displayName: 'ExDbQueryEditor',
   propTypes: {
@@ -24,6 +27,10 @@ export default React.createClass({
     componentId: React.PropTypes.string.isRequired,
     localState: React.PropTypes.object.isRequired,
     updateLocalState: React.PropTypes.func.isRequired
+  },
+
+  componentsWillReceiveProps: function(nextProps) {
+    this.setState(this.getState(nextProps));
   },
 
   handleOutputTableChange(newValue) {
@@ -39,7 +46,22 @@ export default React.createClass({
   },
 
   handleQueryChange(data) {
-    return this.props.onChange(this.props.query.set('query', data.value));
+    if (data.value !== this.localState(simpleQueryPath)) {
+      // query has been changed by hand, reset and disable table/columns
+      var query = this.props.query.withMutations(function(valmap) {
+        var mapping = valmap.set('table', '');
+        mapping = mapping.set('columns', Immutable.List());
+        mapping = mapping.set('query', data.value);
+        return mapping;
+      });
+      this.updateLocalState(simpleDisabledPath, true);
+      return this.props.onChange(query);
+    } else {
+      if (data.value === '') {
+        this.updateLocalState(simpleDisabledPath, false);
+      }
+      return this.props.onChange(this.props.query.set('query', data.value));
+    }
   },
 
   handleNameChange(event) {
@@ -54,16 +76,12 @@ export default React.createClass({
     return this.localState(loadingSourceTablesPath);
   },
 
-  sourceTables() {
-    return this.localState(sourceTablesPath);
+  isSimpleDisabled() {
+    return !!this.localState(simpleDisabledPath);
   },
 
-  isSimpleDisabled() {
-    if (this.sourceTables() && this.sourceTables().count() > 0) {
-      return false;
-    } else {
-      return true;
-    }
+  sourceTables() {
+    return this.localState(sourceTablesPath);
   },
 
   sourceTableSelectOptions() {
@@ -93,6 +111,7 @@ export default React.createClass({
       } else {
         mapping = mapping.set('query', 'SELECT * FROM ' + newValue);
       }
+      this.updateLocalState(simpleQueryPath, mapping.get('query'));
       return mapping;
     });
     return this.props.onChange(query);
@@ -101,13 +120,17 @@ export default React.createClass({
   getColumnsOptions() {
     var columns = [];
     if (this.props.query.get('table')) {
-      var matchedTable = this.sourceTables().find((table) =>
-        table.get('name') === this.props.query.get('table')
-      );
-      if (!matchedTable) {
+      if (this.isLoadingSourceTables()) {
         return [];
+      } else {
+        var matchedTable = this.sourceTables().find((table) =>
+          table.get('name') === this.props.query.get('table')
+        );
+        if (!matchedTable) {
+          return [];
+        }
+        columns = matchedTable.get('columns', Immutable.List()).toJS();
       }
-      columns = matchedTable.get('columns', Immutable.List()).toJS();
     } else {
       return [];
     }
@@ -128,9 +151,14 @@ export default React.createClass({
       } else {
         mapping = mapping.set('query', 'SELECT ' + newValue.join(', ') + ' FROM ' + valmap.get('table'));
       }
+      this.updateLocalState(simpleQueryPath, mapping.get('query'));
       return mapping;
     });
     return this.props.onChange(query);
+  },
+
+  getQuery() {
+    return this.props.query.get('query');
   },
 
   localState(path, defaultVal) {
@@ -205,7 +233,7 @@ export default React.createClass({
               <CodeEditor
                 readOnly={false}
                 placeholder="e.g. SELECT `id`, `name` FROM `myTable`"
-                value={this.props.query.get('query')}
+                value={this.getQuery()}
                 mode={editorMode(this.props.componentId)}
                 onChange={this.handleQueryChange}
                 style={

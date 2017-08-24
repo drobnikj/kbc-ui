@@ -37,7 +37,7 @@ export default React.createClass({
 
   renderSimpleStatic() {
     if (!!this.props.query.get('table')) {
-      return [(
+      return ((
         <div className="form-group">
           <label className="col-md-2 control-label">Source Table</label>
           <div className="col-md-4">
@@ -58,7 +58,7 @@ export default React.createClass({
               disabled={true}/>
           </div>
         </div>
-      )];
+      ));
     }
   },
 

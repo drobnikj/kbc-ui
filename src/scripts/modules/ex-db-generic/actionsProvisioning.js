@@ -212,7 +212,7 @@ export function createActions(componentId) {
       const credentials = store.getCredentials();
       if (credentials) {
         let runData = store.configData.setIn(['parameters', 'tables'], List());
-        runData = store.configData.setIn(['parameters', 'db'], store.getCredentials());
+        runData = runData.setIn(['parameters', 'db'], store.getCredentials());
         const params = {
           configData: runData.toJS()
         };
