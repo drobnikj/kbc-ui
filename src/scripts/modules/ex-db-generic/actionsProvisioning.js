@@ -62,7 +62,7 @@ export function createActions(componentId) {
         'keboola.ex-db-firebird',
         'keboola.ex-db-impala'
       ];
-      if (nonSupportedComponents.contains(componentId)) {
+      if (nonSupportedComponents.indexOf(componentId) > -1) {
         return false;
       }
       return true;
