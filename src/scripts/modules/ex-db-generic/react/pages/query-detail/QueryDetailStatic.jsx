@@ -37,28 +37,30 @@ export default React.createClass({
 
   renderSimpleStatic() {
     if (!!this.props.query.get('table')) {
-      return ((
-        <div className="form-group">
-          <label className="col-md-2 control-label">Source Table</label>
-          <div className="col-md-4">
-            <input
-              className="form-control"
-              type="text"
-              value={this.props.query.get('table')}
-              disabled={true}/>
+      return (
+        <div>
+          <div className="form-group">
+            <label className="col-md-3 control-label">Source Table</label>
+            <div className="col-md-8">
+              <input
+                className="form-control"
+                type="text"
+                value={this.props.query.get('table')}
+                disabled={true}/>
+            </div>
           </div>
-        </div>), (
-        <div className="form-group">
-          <label className="col-md-2 control-label">Columns</label>
-          <div className="col-md-4">
-            <input
-              className="form-control"
-              type="text"
-              value={ (!!this.props.query.get('columns')) ? this.props.query.get('columns').join(', ') : 'All columns' }
-              disabled={true}/>
+          <div className="form-group">
+            <label className="col-md-3 control-label">Columns</label>
+            <div className="col-md-8">
+              <input
+                className="form-control"
+                type="text"
+                value={ (!!this.props.query.get('columns')) ? this.props.query.get('columns').join(', ') : 'All columns' }
+                disabled={true}/>
+            </div>
           </div>
         </div>
-      ));
+      );
     }
   },
 
@@ -80,8 +82,8 @@ export default React.createClass({
       <div className="row">
         <div className="form-horizontal">
           <div className="form-group">
-            <label className="col-md-2 control-label">Name</label>
-            <div className="col-md-4">
+            <label className="col-md-3 control-label">Name</label>
+            <div className="col-md-8">
               <input
                 className="form-control"
                 type="text"
@@ -91,8 +93,8 @@ export default React.createClass({
             </div>
           </div>
           <div className="form-group">
-            <label className="col-md-2 control-label">Output table</label>
-            <div className="col-md-4">
+            <label className="col-md-3 control-label">Output table</label>
+            <div className="col-md-8">
               <SapiTableLinkEx tableId={this.props.query.get('outputTable')}>
                 <div className="form-control-static col-md-12">
                   {this.props.query.get('outputTable')}
@@ -101,7 +103,7 @@ export default React.createClass({
             </div>
           </div>
           <div className="form-group">
-            <label className="col-md-2 control-label">Primary Key</label>
+            <label className="col-md-3 control-label">Primary Key</label>
             <div className="col-md-4">
               <input
                 className="form-control"
@@ -112,7 +114,7 @@ export default React.createClass({
             </div>
           </div>
           <div className="form-group">
-            <label className="col-md-2 control-label">Incremental</label>
+            <label className="col-md-3 control-label">Incremental</label>
             <div className="col-md-4">
               <input
                 className="form-control"
