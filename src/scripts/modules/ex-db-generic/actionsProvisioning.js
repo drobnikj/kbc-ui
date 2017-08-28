@@ -58,7 +58,11 @@ export function createActions(componentId) {
 
   return {
     componentSupportsSimpleSetup() {
-      if (componentId !== 'keboola.ex-db-db2') {
+      const nonSupportedComponents = [
+        'keboola.ex-db-firebird',
+        'keboola.ex-db-impala'
+      ];
+      if (nonSupportedComponents.contains(componentId)) {
         return false;
       }
       return true;
