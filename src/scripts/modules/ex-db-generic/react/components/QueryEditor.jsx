@@ -84,11 +84,17 @@ export default React.createClass({
 
   sourceTableSelectOptions() {
     if (this.sourceTables() && this.sourceTables().count() > 0) {
-      return this.sourceTables().map(function(table) {
-        return table.get('name');
+      const tableMap = this.sourceTables().map(function(table) {
+        return {
+          label: table.get('name'),
+          value: table.get('name')
+        };
       });
+      return tableMap.toList().sort(function(valA, valB) {
+        return (valA.label - valB.label);
+      }).toJS();
     } else {
-      return {};
+      return [];
     }
   },
 
@@ -244,12 +250,16 @@ export default React.createClass({
 
   renderSimpleTable() {
     if (this.props.showSimple) {
-      var tableSelect = ( <AutoSuggestWrapper
-                            suggestions={this.sourceTableSelectOptions()}
-                            placeholder="Select Source Table"
-                            value={this.props.query.get('table')}
-                            disabled={this.isSimpleDisabled()}
-                            onChange={this.handleSourceTableChange}/> );
+      var tableSelect = (
+        <Select
+          name="sourceTable"
+          value={this.props.query.get('table')}
+          disabled={this.isSimpleDisabled()}
+          placeholder="Select source table"
+          onChange={this.handleSourceTableChange}
+          options={this.sourceTableSelectOptions()}
+        />
+      );
 
       var loader = <Loader/>;
 
