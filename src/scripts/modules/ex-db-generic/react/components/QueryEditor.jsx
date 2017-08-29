@@ -28,10 +28,18 @@ export default React.createClass({
   },
 
   getInitialState() {
-    return {
-      simpleDisabled: false,
-      useQueryEditor: false
-    };
+    const query = this.props.query;
+    if (query.get('query') !== getSimpleQuery(query.get('table'), query.get('columns'))) {
+      return {
+        simpleDisabled: true,
+        useQueryEditor: true
+      };
+    } else {
+      return {
+        simpleDisabled: false,
+        useQueryEditor: false
+      };
+    }
   },
 
   handleToggleUseQueryEditor(e) {
@@ -164,8 +172,8 @@ export default React.createClass({
       <div className="row">
         <div className="form-horizontal">
           <div className="form-group">
-            <label className="col-md-2 control-label">Name</label>
-            <div className="col-md-10">
+            <label className="col-md-3 control-label">Name</label>
+            <div className="col-md-9">
               <input
               className="form-control"
               type="text"
@@ -177,8 +185,8 @@ export default React.createClass({
             </div>
           </div>
           <div className="form-group">
-            <label className="col-md-2 control-label">Output Table</label>
-            <div className="col-md-10">
+            <label className="col-md-3 control-label">Output Table</label>
+            <div className="col-md-9">
               <AutoSuggestWrapper
                 suggestions={this.tableSelectOptions()}
                 placeholder={this.tableNamePlaceholder()}
@@ -190,8 +198,8 @@ export default React.createClass({
             </div>
           </div>
           <div className="form-group">
-            <label className="col-md-2 control-label">Primary Key</label>
-            <div className="col-md-6">
+            <label className="col-md-3 control-label">Primary Key</label>
+            <div className="col-md-5">
               <Select
                 name="primaryKey"
                 value={this.props.query.get('primaryKey')}
@@ -218,7 +226,7 @@ export default React.createClass({
           {this.renderSimpleColumns()}
 
           <div className="form-group">
-            <div className="help-block col-md-8 col-md-offset-4 checkbox">
+            <div className="help-block col-md-8 col-md-offset-3 checkbox">
               <label>
                 <input
                   standalone={true}
@@ -280,8 +288,8 @@ export default React.createClass({
 
       return (
         <div className="form-group">
-          <label className="col-md-2 control-label">Source Table</label>
-          <div className="col-md-4">
+          <label className="col-md-3 control-label">Source Table</label>
+          <div className="col-md-5">
             { (this.isLoadingSourceTables()) ? loader : tableSelect }
           </div>
         </div>
@@ -308,8 +316,8 @@ export default React.createClass({
       );
       return (
         <div className="form-group">
-          <label className="col-md-2 control-label">Columns</label>
-          <div className="col-md-4">
+          <label className="col-md-3 control-label">Columns</label>
+          <div className="col-md-5">
             { (this.isLoadingSourceTables()) ? loader : columnSelect }
           </div>
         </div>

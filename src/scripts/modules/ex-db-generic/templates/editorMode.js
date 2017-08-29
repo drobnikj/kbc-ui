@@ -5,11 +5,11 @@ export default function(componentId) {
       return 'text/x-sql';
     case 'keboola.ex-db-redshift':
       return 'text/x-sql';
-    case 'mysql':
+    case 'keboola.ex-db-mysql':
       return 'text/x-mysql';
-    case 'mssql':
+    case 'keboola.ex-db-mssql':
       return 'text/x-mssql';
-    case 'oracle':
+    case 'keboola.ex-db-oracle':
       return 'text/x-plsql';
     default:
       return 'text/x-mysql';
