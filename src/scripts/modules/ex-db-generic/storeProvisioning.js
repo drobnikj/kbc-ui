@@ -160,7 +160,6 @@ export function createStore(componentId, configId) {
         outputTable: '',
         table: '',
         columns: [],
-        simple: '',
         primaryKey: [],
         query: '',
         id: generateId(ids)
@@ -214,7 +213,10 @@ export function createStore(componentId, configId) {
 
     getConfigQuery(qid) {
       var query = this.getQueries().find((q) => q.get('id') === qid );
-      return query.set('simple', getSimpleQuery(query.get('table'), query.get('columns')));
+      if (query.get('query') === '') {
+        query = query.set('query', getSimpleQuery(query.get('table'), query.get('columns')));
+      }
+      return query;
     },
 
     getQueryName(qid) {

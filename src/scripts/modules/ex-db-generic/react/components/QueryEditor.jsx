@@ -29,8 +29,16 @@ export default React.createClass({
 
   getInitialState() {
     return {
-      simpleDisabled: false
+      simpleDisabled: false,
+      useQueryEditor: false
     };
+  },
+
+  handleToggleUseQueryEditor(e) {
+    return this.setState({
+      useQueryEditor: e.target.checked,
+      simpleDisabled: e.target.checked
+    });
   },
 
   handleOutputTableChange(newValue) {
@@ -46,20 +54,7 @@ export default React.createClass({
   },
 
   handleQueryChange(data) {
-    if (data.value !== this.props.query.get('simple') && this.props.query.get('table') !== '') {
-      // query has been changed by hand, reset and disable table/columns
-      this.setState({ simpleDisabled: true });
-      this.props.onChange(this.props.query.set('table', ''));
-      if (!!this.props.query.get('columns')) {
-        this.props.onChange(this.props.query.set('columns', Immutable.List()));
-      }
-      return this.props.onChange(this.props.query.set('query', data.value));
-    } else {
-      if (data.value === '') {
-        this.setState({ simpleDisabled: false });
-      }
-      return this.props.onChange(this.props.query.set('query', data.value));
-    }
+    return this.props.onChange(this.props.query.set('query', data.value));
   },
 
   handleNameChange(event) {
@@ -110,7 +105,6 @@ export default React.createClass({
     const query = this.props.query.withMutations(function(valmap) {
       var simpleQuery = getSimpleQuery(newValue, valmap.get('columns'));
       var mapping = valmap.set('table', newValue);
-      mapping = mapping.set('simple', simpleQuery);
       mapping = mapping.set('query', simpleQuery);
       return mapping;
     });
@@ -147,7 +141,6 @@ export default React.createClass({
     const query = this.props.query.withMutations(function(valmap) {
       var simpleQuery = getSimpleQuery(valmap.get('table'), newValue);
       var mapping = valmap.set('columns', newValue);
-      mapping = mapping.set('simple', simpleQuery);
       mapping = mapping.set('query', simpleQuery);
       return mapping;
     });
@@ -223,29 +216,47 @@ export default React.createClass({
           </div>
           {this.renderSimpleTable()}
           {this.renderSimpleColumns()}
+
           <div className="form-group">
-            <label className="col-md-12 control-label">SQL Query</label>
-            {this.renderQueryHelpBlock()}
-            <div className="col-md-12">
-              <CodeEditor
-                readOnly={false}
-                placeholder="e.g. SELECT `id`, `name` FROM `myTable`"
-                value={this.getQuery()}
-                mode={editorMode(this.props.componentId)}
-                onChange={this.handleQueryChange}
-                style={
-                  {width: '100%'}
-                }
-              />
+            <div className="help-block col-md-8 col-md-offset-4 checkbox">
+              <label>
+                <input
+                  standalone={true}
+                  type="checkbox"
+                  label="Use query editor"
+                  checked={this.state.useQueryEditor}
+                  onChange={this.handleToggleUseQueryEditor}/>
+                Use Query Editor
+              </label>
             </div>
-            <div className="help-block col-md-12">
-              Note: If you edit the query, the table and column selectors will be disabled.
-              To re-enable the selectors, delete your query.
-            </div>
+            {this.renderQueryEditor()}
           </div>
         </div>
       </div>
     );
+  },
+
+  renderQueryEditor() {
+    if (this.state.useQueryEditor) {
+      return (
+        <div>
+          <label className="col-md-12 control-label">SQL Query</label>
+          {this.renderQueryHelpBlock()}
+          <div className="col-md-12">
+            <CodeEditor
+              readOnly={false}
+              placeholder="e.g. SELECT `id`, `name` FROM `myTable`"
+              value={this.getQuery()}
+              mode={editorMode(this.props.componentId)}
+              onChange={this.handleQueryChange}
+              style={
+                {width: '100%'}
+              }
+            />
+          </div>
+        </div>
+      );
+    }
   },
 
   renderSimpleTable() {
@@ -258,7 +269,6 @@ export default React.createClass({
           placeholder="Select source table"
           onChange={this.handleSourceTableChange}
           options={this.sourceTableSelectOptions()}
-          className="form-control-static"
         />
       );
 
