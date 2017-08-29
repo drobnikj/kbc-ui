@@ -78,7 +78,10 @@ export default function(componentId) {
         return (
           <div className="row component-empty-state text-center">
             <p>Please setup database credentials for this extractor</p>
-            <Link to={link} params={{ conifg: this.state.configId }}>
+            <Link
+              to={link}
+              params={{ config: this.state.configId }}
+            >
               <button className="btn btn-success">Setup Database Credentials</button>
             </Link>
           </div>
