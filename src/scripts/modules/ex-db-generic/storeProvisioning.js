@@ -213,7 +213,7 @@ export function createStore(componentId, configId) {
 
     getConfigQuery(qid) {
       var query = this.getQueries().find((q) => q.get('id') === qid );
-      if (query.get('query') === '') {
+      if (!query.get('query')) {
         query = query.set('query', getSimpleQuery(query.get('table'), query.get('columns')));
       }
       return query;

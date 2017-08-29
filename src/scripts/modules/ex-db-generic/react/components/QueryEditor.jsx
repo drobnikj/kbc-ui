@@ -29,7 +29,7 @@ export default React.createClass({
 
   getInitialState() {
     const query = this.props.query;
-    if (query.get('query') !== getSimpleQuery(query.get('table'), query.get('columns'))) {
+    if (query.get('query') && query.get('query') !== getSimpleQuery(query.get('table'), query.get('columns'))) {
       return {
         simpleDisabled: true,
         useQueryEditor: true
