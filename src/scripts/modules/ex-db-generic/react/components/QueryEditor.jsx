@@ -258,10 +258,15 @@ export default React.createClass({
           placeholder="Select source table"
           onChange={this.handleSourceTableChange}
           options={this.sourceTableSelectOptions()}
+          className="form-control-static"
         />
       );
 
-      var loader = <Loader/>;
+      var loader = (
+        <div className="form-control-static">
+          <Loader/>
+        </div>
+      );
 
       return (
         <div className="form-group">
@@ -286,7 +291,11 @@ export default React.createClass({
           onChange={this.handleChangeColumns}
           options={this.getColumnsOptions()}/>
       );
-      var loader = <Loader/>;
+      var loader = (
+        <div className="form-control-static">
+          <Loader/>
+        </div>
+      );
       return (
         <div className="form-group">
           <label className="col-md-2 control-label">Columns</label>
