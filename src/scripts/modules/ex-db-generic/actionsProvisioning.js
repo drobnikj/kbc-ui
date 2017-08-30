@@ -6,7 +6,6 @@ import callDockerAction from '../components/DockerActionsApi';
 
 import getDefaultPort from './templates/defaultPorts';
 import {getProtectedProperties} from './templates/credentials';
-import {getSimpleQuery} from './storeProvisioning';
 
 export function loadConfiguration(componentId, configId) {
   if (!createActions(componentId).sourceTablesLoaded(configId)) {
@@ -183,7 +182,7 @@ export function createActions(componentId) {
     saveQueryEdit(configId, queryId) {
       const store = getStore(configId);
       let newQuery = store.getEditingQuery(queryId);
-      if (newQuery.get('query') === getSimpleQuery(newQuery.get('table'), newQuery.get('columns'))) {
+      if (newQuery.get('query') === '') {
         newQuery = newQuery.delete('query');
       } else {
         newQuery = newQuery.delete('table');
