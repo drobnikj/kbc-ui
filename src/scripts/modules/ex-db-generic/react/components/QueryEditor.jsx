@@ -110,13 +110,7 @@ export default React.createClass({
   },
 
   handleSourceTableChange(newValue) {
-    const query = this.props.query.withMutations(function(valmap) {
-      var simpleQuery = getSimpleQuery(newValue, valmap.get('columns'));
-      var mapping = valmap.set('table', newValue);
-      mapping = mapping.set('query', simpleQuery);
-      return mapping;
-    });
-    return this.props.onChange(query);
+    return this.props.onChange(this.props.query.set('table', newValue));
   },
 
   getColumnsOptions() {
@@ -146,13 +140,7 @@ export default React.createClass({
   },
 
   handleChangeColumns(newValue) {
-    const query = this.props.query.withMutations(function(valmap) {
-      var simpleQuery = getSimpleQuery(valmap.get('table'), newValue);
-      var mapping = valmap.set('columns', newValue);
-      mapping = mapping.set('query', simpleQuery);
-      return mapping;
-    });
-    return this.props.onChange(query);
+    return this.props.onChange(this.props.query.set('columns', newValue));
   },
 
   getQuery() {

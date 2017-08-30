@@ -36,18 +36,6 @@ function isValidQuery(query) {
   return nameValid && queryValid;
 }
 
-export function getSimpleQuery(table, columns) {
-  if (table) {
-    if (columns && columns.count() > 0) {
-      return 'SELECT ' + columns.join(', ') + ' FROM ' + table;
-    } else {
-      return 'SELECT * FROM ' + table;
-    }
-  } else {
-    return '';
-  }
-}
-
 export const componentsStore = store;
 export function createStore(componentId, configId) {
   const data = fetch(componentId, configId);
@@ -207,11 +195,7 @@ export function createStore(componentId, configId) {
     },
 
     getConfigQuery(qid) {
-      var query = this.getQueries().find((q) => q.get('id') === qid );
-      if (!query.get('query')) {
-        query = query.set('query', getSimpleQuery(query.get('table'), query.get('columns')));
-      }
-      return query;
+      return this.getQueries().find((q) => q.get('id') === qid );
     },
 
     getQueryName(qid) {
