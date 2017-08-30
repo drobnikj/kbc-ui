@@ -33,6 +33,10 @@ export default function(componentId) {
       return this.setState(this.getStateFromStores());
     },
 
+    componentDidMount() {
+      return actionsProvisioning.loadSourceTables(componentId, this.state.configId);
+    },
+
     getStateFromStores() {
       const config = RoutesStore.getRouterState().getIn(['params', 'config']);
       const ExDbStore = storeProvisioning.createStore(componentId, config);

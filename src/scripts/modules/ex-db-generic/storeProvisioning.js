@@ -7,11 +7,6 @@ import _ from 'underscore';
 import string from '../../utils/string';
 import getDefaultPort from './templates/defaultPorts';
 
-import dispatcher from '../../Dispatcher';
-import Constants from '../components/Constants';
-
-import {loadSourceTables} from './actionsProvisioning';
-
 const defaultSshPort = 22;
 
 export const sourceTablesPath = ['sourceTables', 'data'];
@@ -236,16 +231,3 @@ export function createStore(componentId, configId) {
     }
   };
 }
-
-dispatcher.register(function(payload) {
-  var action;
-  action = payload.action;
-
-  switch (action.type) {
-    case Constants.ActionTypes.INSTALLED_COMPONENTS_CONFIGDATA_LOAD_SUCCESS:
-      loadSourceTables(action.componentId, action.configId);
-      break;
-    default:
-  }
-});
-

@@ -9,6 +9,7 @@ import QueryEditor from '../../components/QueryEditor';
 import QueryDetailStatic from './QueryDetailStatic';
 import QueryNav from './QueryNav';
 import EditButtons from '../../../../../react/common/EditButtons';
+import {loadSourceTables} from '../../../actionsProvisioning';
 
 export default function(componentId, actionsProvisioning, storeProvisioning) {
   const ExDbActionCreators = actionsProvisioning.createActions(componentId);
@@ -18,6 +19,13 @@ export default function(componentId, actionsProvisioning, storeProvisioning) {
 
     componentWillReceiveProps() {
       return this.setState(this.getStateFromStores());
+    },
+
+    componentDidMount() {
+      // fetch sourceTable info if not done already
+      if (!this.state.sourceTables) {
+        return loadSourceTables(componentId, this.state.configId);
+      }
     },
 
     getStateFromStores() {
