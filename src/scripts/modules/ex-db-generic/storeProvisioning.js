@@ -33,7 +33,8 @@ function generateId(existingIds) {
 function isValidQuery(query) {
   const nameValid = query.get('name', '').trim().length > 0;
   const queryValid = query.get('query', '').trim().length > 0;
-  return nameValid && queryValid;
+  const tableValid = query.get('table', '').trim().length > 0;
+  return nameValid && (queryValid || tableValid);
 }
 
 export const componentsStore = store;
