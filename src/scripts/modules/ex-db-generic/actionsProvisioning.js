@@ -141,7 +141,13 @@ export function createActions(componentId) {
 
     createQuery(configId) {
       const store = getStore(configId);
-      const newQuery = this.checkTableName(store.getNewQuery(), store);
+      let newQuery = this.checkTableName(store.getNewQuery(), store);
+      if (newQuery.get('query') === '') {
+        newQuery = newQuery.delete('query');
+      } else {
+        newQuery = newQuery.delete('table');
+        newQuery = newQuery.delete('columns');
+      }
       const newQueries = store.getQueries().push(newQuery);
       const newData = store.configData.setIn(['parameters', 'tables'], newQueries);
       const diffMsg = 'Create query ' + newQuery.get('name');
