@@ -237,16 +237,13 @@ export default React.createClass({
         <div>
           <label className="col-md-12 control-label">SQL Query</label>
           {this.renderQueryHelpBlock()}
-          <div className="col-md-12">
+          <div className="col-md-12 kbc-queries-editor">
             <CodeEditor
               readOnly={false}
               placeholder="e.g. SELECT `id`, `name` FROM `myTable`"
               value={this.getQuery()}
               mode={editorMode(this.props.componentId)}
               onChange={this.handleQueryChange}
-              style={
-                {width: '100%'}
-              }
             />
           </div>
         </div>
