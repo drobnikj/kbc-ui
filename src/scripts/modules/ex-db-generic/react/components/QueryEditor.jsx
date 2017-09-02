@@ -8,7 +8,6 @@ import Select from '../../../../react/common/Select';
 
 import {loadingSourceTablesPath} from '../../storeProvisioning';
 import {sourceTablesPath} from '../../storeProvisioning';
-import {getSimpleQuery} from '../../storeProvisioning';
 
 import AutoSuggestWrapper from '../../../transformations/react/components/mapping/AutoSuggestWrapper';
 import editorMode from '../../templates/editorMode';
@@ -29,7 +28,7 @@ export default React.createClass({
 
   getInitialState() {
     const query = this.props.query;
-    if (query.get('query') && query.get('query') !== getSimpleQuery(query.get('table'), query.get('columns'))) {
+    if (query.get('query') && query.get('query') !== '') {
       return {
         simpleDisabled: true,
         useQueryEditor: true
