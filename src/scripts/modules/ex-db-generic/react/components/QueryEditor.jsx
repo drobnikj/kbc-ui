@@ -86,15 +86,19 @@ export default React.createClass({
 
   sourceTableSelectOptions() {
     if (this.sourceTables() && this.sourceTables().count() > 0) {
-      const tableMap = this.sourceTables().map(function(table) {
+      const groupedTables = this.sourceTables().groupBy(table => table.get('schema'));
+      return groupedTables.keySeq().map(function(group) {
         return {
-          label: table.get('name'),
-          value: table.get('name')
+          value: group,
+          label: group,
+          children: groupedTables.get(group).map(function(table) {
+            return {
+              value: table.get('name'),
+              label: table.get('name')
+            };
+          }).toJS()
         };
       });
-      return tableMap.toList().sort(function(valA, valB) {
-        return (valA.label - valB.label);
-      }).toJS();
     } else {
       return [];
     }
@@ -260,7 +264,8 @@ export default React.createClass({
           disabled={this.isSimpleDisabled()}
           placeholder="Select source table"
           onChange={this.handleSourceTableChange}
-          options={this.sourceTableSelectOptions()}
+          optionRenderer={this.optionRenderer}
+          options={this.transformOptions(this.sourceTableSelectOptions())}
         />
       );
 
@@ -319,5 +324,21 @@ export default React.createClass({
         </div>
       );
     }
+  },
+
+  transformOptions(options) {
+    const option = (value, label, render, disabled = false) => ({value, label, render, disabled});
+
+    return options.reduce((acc, o) => {
+      const parent = option(o.value, o.label, (<strong style={{color: '#000'}}>{o.label}</strong>), true);
+      const children = o.children.map(c => option(c.value, c.label, <div style={{paddingLeft: 10}}>{c.label}</div>));
+
+      return acc.concat(parent).concat(children);
+    }, []);
+  },
+
+  optionRenderer(option) {
+    return option.render;
   }
+
 });
