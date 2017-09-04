@@ -71,7 +71,7 @@ export default function(componentId) {
             params={{ config: this.state.configId }}
           >
             <button className="btn btn-success">
-              <span className="kbc-icon-plus"/> Add Query
+              <i className="kbc-icon-plus"/> New Query
             </button>
           </Link>
         );
@@ -136,7 +136,7 @@ export default function(componentId) {
             <p>There are no queries configured yet.</p>
             <Link to={link} params={{ config: this.state.configId }}>
               <button className="btn btn-success">
-                <span className="kbc-icon-plus"/> Add Query
+                <i className="kbc-icon-plus"/> New Query
               </button>
             </Link>
           </div>
