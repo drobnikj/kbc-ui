@@ -28,7 +28,7 @@ export default React.createClass({
 
   getInitialState() {
     const query = this.props.query;
-    if (query.get('query') && query.get('query') !== '') {
+    if ((query.get('query') && query.get('query') !== '') || !this.props.showSimple) {
       return {
         simpleDisabled: true,
         useQueryEditor: true
@@ -268,24 +268,31 @@ export default React.createClass({
           </div>
           {this.renderSimpleTable()}
           {this.renderSimpleColumns()}
-
           <div className="form-group">
-            <div className="help-block col-md-8 col-md-offset-3 checkbox">
-              <label>
-                <input
-                  standalone={true}
-                  type="checkbox"
-                  label="Use query editor"
-                  checked={this.state.useQueryEditor}
-                  onChange={this.handleToggleUseQueryEditor}/>
-                Use Query Editor
-              </label>
-            </div>
+            {this.renderQueryToggle()}
             {this.renderQueryEditor()}
           </div>
         </div>
       </div>
     );
+  },
+
+  renderQueryToggle() {
+    if (this.props.showSimple) {
+      return (
+        <div className="help-block col-md-8 col-md-offset-3 checkbox">
+          <label>
+            <input
+              standalone={true}
+              type="checkbox"
+              label="Use query editor"
+              checked={this.state.useQueryEditor}
+              onChange={this.handleToggleUseQueryEditor}/>
+            Use Query Editor
+          </label>
+        </div>
+      );
+    }
   },
 
   renderQueryEditor() {
