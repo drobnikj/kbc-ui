@@ -188,7 +188,7 @@ export function createActions(componentId) {
     saveQueryEdit(configId, queryId) {
       const store = getStore(configId);
       let newQuery = store.getEditingQuery(queryId);
-      if (newQuery.get('query') === '' || !store.localState.get('useQueryEditor')) {
+      if (newQuery.get('query') === '' || !store.getLocalState().get(['useQueryEditor'])) {
         newQuery = newQuery.delete('query');
       } else {
         newQuery = newQuery.delete('table');

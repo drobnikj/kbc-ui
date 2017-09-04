@@ -29,11 +29,13 @@ export default React.createClass({
   getInitialState() {
     const query = this.props.query;
     if (query.get('query') && query.get('query') !== '') {
+      this.updateLocalState(['useQueryEditor'], true);
       return {
         simpleDisabled: true,
         useQueryEditor: true
       };
     } else {
+      this.updateLocalState(['useQueryEditor'], false);
       return {
         simpleDisabled: false,
         useQueryEditor: false
@@ -42,6 +44,7 @@ export default React.createClass({
   },
 
   handleToggleUseQueryEditor(e) {
+    this.updateLocalState(['useQueryEditor'], e.target.checked);
     return this.setState({
       useQueryEditor: e.target.checked,
       simpleDisabled: e.target.checked
