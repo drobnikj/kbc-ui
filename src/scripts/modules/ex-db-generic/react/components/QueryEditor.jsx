@@ -29,18 +29,20 @@ export default React.createClass({
   getInitialState() {
     const query = this.props.query;
     if (query.get('query') && query.get('query') !== '') {
-      this.updateLocalState(['useQueryEditor'], true);
       return {
         simpleDisabled: true,
         useQueryEditor: true
       };
     } else {
-      this.updateLocalState(['useQueryEditor'], false);
       return {
         simpleDisabled: false,
         useQueryEditor: false
       };
     }
+  },
+
+  componentDidMount() {
+    return this.updateLocalState(['useQueryEditor'], this.state.useQueryEditor);
   },
 
   handleToggleUseQueryEditor(e) {
@@ -53,6 +55,36 @@ export default React.createClass({
 
   handleOutputTableChange(newValue) {
     return this.props.onChange(this.props.query.set('outputTable', newValue));
+  },
+
+  primaryKeyOptions() {
+    if (this.sourceTables() && this.sourceTables().count() > 0) {
+      if (!this.state.useQueryEditor) {
+        if (this.props.query.get('table')) {
+          var matchedTable = this.sourceTables().find((table) =>
+            table.get('schema') === this.props.query.get('table').get('schema')
+            && table.get('name') === this.props.query.get('table').get('tableName')
+          );
+          if (!matchedTable) {
+            return [];
+          }
+          const groupedColumns = matchedTable.get('columns').groupBy(column => column.get('primaryKey'));
+          return groupedColumns.keySeq().map(function(isPK) {
+            return {
+              value: !!isPK,
+              label: (isPK) ? 'Primary keys at source' : 'Regular columns',
+              children: groupedColumns.get(isPK).map(function(column) {
+                return {
+                  value: column.get('name'),
+                  label: column.get('name')
+                };
+              }).toJS()
+            };
+          });
+        }
+      }
+    }
+    return [];
   },
 
   handlePrimaryKeyChange(newValue) {
@@ -220,6 +252,8 @@ export default React.createClass({
                 placeholder="No primary key"
                 emptyStrings={false}
                 onChange={this.handlePrimaryKeyChange}
+                options={this.transformOptions(this.primaryKeyOptions())}
+                optionRenderer={this.optionRenderer}
               />
             </div>
             <div className="col-md-4 checkbox">
