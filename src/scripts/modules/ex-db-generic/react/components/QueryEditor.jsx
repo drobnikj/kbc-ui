@@ -93,7 +93,11 @@ export default React.createClass({
           label: group,
           children: groupedTables.get(group).map(function(table) {
             return {
-              value: table.get('name'),
+              value: {
+                schema: table.get('schema'),
+                tableName: table.get('name'),
+                label: table.get('name')
+              },
               label: table.get('name')
             };
           }).toJS()
@@ -113,7 +117,7 @@ export default React.createClass({
   },
 
   handleSourceTableChange(newValue) {
-    return this.props.onChange(this.props.query.set('table', newValue));
+    return this.props.onChange(this.props.query.set('table', Immutable.fromJS(newValue)));
   },
 
   getColumnsOptions() {
@@ -123,7 +127,8 @@ export default React.createClass({
         return [];
       } else {
         var matchedTable = this.sourceTables().find((table) =>
-          table.get('name') === this.props.query.get('table')
+          table.get('schema') === this.props.query.get('table').get('schema')
+          && table.get('name') === this.props.query.get('table').get('tableName')
         );
         if (!matchedTable) {
           return [];
@@ -148,6 +153,18 @@ export default React.createClass({
 
   getQuery() {
     return this.props.query.get('query');
+  },
+
+  getTableValue() {
+    if (this.props.query.get('table')) {
+      return this.props.query.get('table').get('tableName');
+    } else return '';
+  },
+
+  getTableLabel() {
+    if (this.props.query.get('table')) {
+      return this.props.query.get('table').get('name');
+    } else return '';
   },
 
   localState(path, defaultVal) {
@@ -260,7 +277,7 @@ export default React.createClass({
       var tableSelect = (
         <Select
           name="sourceTable"
-          value={this.props.query.get('table')}
+          value={this.getTableValue()}
           disabled={this.isSimpleDisabled()}
           placeholder="Select source table"
           onChange={this.handleSourceTableChange}
