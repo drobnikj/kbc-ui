@@ -16,6 +16,7 @@ export default React.createClass({
     help: PropTypes.string,
     delimiter: PropTypes.string,
     onChange: PropTypes.func.isRequired,
+    optionRenderer: PropTypes.func,
     filterOption: PropTypes.func
   },
 
