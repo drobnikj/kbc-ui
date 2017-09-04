@@ -95,8 +95,7 @@ export default React.createClass({
             return {
               value: {
                 schema: table.get('schema'),
-                tableName: table.get('name'),
-                label: table.get('name')
+                tableName: table.get('name')
               },
               label: table.get('name')
             };

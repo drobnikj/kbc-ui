@@ -142,7 +142,7 @@ export function createActions(componentId) {
     createQuery(configId) {
       const store = getStore(configId);
       let newQuery = this.checkTableName(store.getNewQuery(), store);
-      if (newQuery.get('query') === '') {
+      if (newQuery.get('query') === '' || !store.localState.get('useQueryEditor')) {
         newQuery = newQuery.delete('query');
       } else {
         newQuery = newQuery.delete('table');
@@ -188,7 +188,7 @@ export function createActions(componentId) {
     saveQueryEdit(configId, queryId) {
       const store = getStore(configId);
       let newQuery = store.getEditingQuery(queryId);
-      if (newQuery.get('query') === '') {
+      if (newQuery.get('query') === '' || !store.localState.get('useQueryEditor')) {
         newQuery = newQuery.delete('query');
       } else {
         newQuery = newQuery.delete('table');

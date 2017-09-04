@@ -45,7 +45,7 @@ export default React.createClass({
               <input
                 className="form-control"
                 type="text"
-                value={this.props.query.get('table')}
+                value={this.props.query.get('table').get('tableName')}
                 disabled={true}/>
             </div>
           </div>
