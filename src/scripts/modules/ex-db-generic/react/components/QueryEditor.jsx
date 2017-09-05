@@ -57,10 +57,10 @@ export default React.createClass({
     return this.props.onChange(this.props.query.set('outputTable', newValue));
   },
 
-  getColumnsGroupedByPrimaryKey() {
+  getColumnsGroupedByPrimaryKey(targetTable) {
     var matchedTable = this.sourceTables().find((table) =>
-      table.get('schema') === this.props.query.get('table').get('schema')
-      && table.get('name') === this.props.query.get('table').get('tableName')
+      table.get('schema') === targetTable.get('schema')
+      && table.get('name') === targetTable.get('tableName')
     );
     if (!matchedTable) {
       return [];
@@ -72,7 +72,7 @@ export default React.createClass({
     if (this.sourceTables() && this.sourceTables().count() > 0) {
       if (!this.state.useQueryEditor) {
         if (this.props.query.get('table')) {
-          const groupedColumns = this.getColumnsGroupedByPrimaryKey();
+          const groupedColumns = this.getColumnsGroupedByPrimaryKey(this.props.query.get('table'));
           return groupedColumns.keySeq().map(function(isPK) {
             return {
               value: !!isPK,
@@ -154,20 +154,23 @@ export default React.createClass({
     });
   },
 
-  handleSourceTableChange(newValue) {
-    const groupedCols = this.getColumnsGroupedByPrimaryKey();
-    var pks = null;
+  getPksOnSourceTableChange(newValue) {
+    const groupedCols = this.getColumnsGroupedByPrimaryKey(Immutable.fromJS(newValue));
     if (groupedCols.has(true)) {
-      pks = groupedCols.get(true).map((column) => {
+      return groupedCols.get(true).map((column) => {
         return column.get('name');
-      });
+      }).toJS();
+    } else {
+      return [];
     }
+  },
 
+  handleSourceTableChange(newValue) {
     return this.props.onChange(
       this.props.query
         .set('table', Immutable.fromJS(newValue))
         .set('name', newValue.tableName)
-        .set('primaryKey', (pks) ? pks : '')
+        .set('primaryKey', this.getPksOnSourceTableChange(newValue))
     );
   },
 
@@ -230,9 +233,8 @@ export default React.createClass({
     return (
       <div className="row">
         <div className="form-horizontal">
-          <div className="form-group">
-            {this.renderQueryToggle()}
-          </div>
+          {this.renderQueryToggle()}
+          <div className="form-group"/>
           <div className="form-group">
             {this.renderQueryEditor()}
           </div>
@@ -350,7 +352,7 @@ export default React.createClass({
 
       var loader = (
         <div className="form-control-static">
-          <Loader/>
+          <Loader/> Fetching table information from source database ...
         </div>
       );
 
@@ -377,16 +379,11 @@ export default React.createClass({
           onChange={this.handleChangeColumns}
           options={this.getColumnsOptions()}/>
       );
-      var loader = (
-        <div className="form-control-static">
-          <Loader/>
-        </div>
-      );
       return (
         <div className="form-group">
           <label className="col-md-3 control-label">Columns</label>
           <div className="col-md-5">
-            { (this.isLoadingSourceTables()) ? loader : columnSelect }
+            { columnSelect }
           </div>
         </div>
       );
