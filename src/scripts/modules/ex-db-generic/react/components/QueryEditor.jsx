@@ -57,18 +57,22 @@ export default React.createClass({
     return this.props.onChange(this.props.query.set('outputTable', newValue));
   },
 
+  getColumnsGroupedByPrimaryKey() {
+    var matchedTable = this.sourceTables().find((table) =>
+      table.get('schema') === this.props.query.get('table').get('schema')
+      && table.get('name') === this.props.query.get('table').get('tableName')
+    );
+    if (!matchedTable) {
+      return [];
+    }
+    return matchedTable.get('columns').groupBy(column => column.get('primaryKey'));
+  },
+
   primaryKeyOptions() {
     if (this.sourceTables() && this.sourceTables().count() > 0) {
       if (!this.state.useQueryEditor) {
         if (this.props.query.get('table')) {
-          var matchedTable = this.sourceTables().find((table) =>
-            table.get('schema') === this.props.query.get('table').get('schema')
-            && table.get('name') === this.props.query.get('table').get('tableName')
-          );
-          if (!matchedTable) {
-            return [];
-          }
-          const groupedColumns = matchedTable.get('columns').groupBy(column => column.get('primaryKey'));
+          const groupedColumns = this.getColumnsGroupedByPrimaryKey();
           return groupedColumns.keySeq().map(function(isPK) {
             return {
               value: !!isPK,
@@ -151,7 +155,20 @@ export default React.createClass({
   },
 
   handleSourceTableChange(newValue) {
-    return this.props.onChange(this.props.query.set('table', Immutable.fromJS(newValue)).set('name', newValue.tableName));
+    const groupedCols = this.getColumnsGroupedByPrimaryKey();
+    var pks = null;
+    if (groupedCols.has(true)) {
+      pks = groupedCols.get(true).map((column) => {
+        return column.get('name');
+      });
+    }
+
+    return this.props.onChange(
+      this.props.query
+        .set('table', Immutable.fromJS(newValue))
+        .set('name', newValue.tableName)
+        .set('primaryKey', (pks) ? pks : '')
+    );
   },
 
   getColumnsOptions() {
