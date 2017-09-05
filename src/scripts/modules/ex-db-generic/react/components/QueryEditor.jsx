@@ -151,7 +151,7 @@ export default React.createClass({
   },
 
   handleSourceTableChange(newValue) {
-    return this.props.onChange(this.props.query.set('table', Immutable.fromJS(newValue)));
+    return this.props.onChange(this.props.query.set('table', Immutable.fromJS(newValue)).set('name', newValue.tableName));
   },
 
   getColumnsOptions() {
@@ -214,31 +214,13 @@ export default React.createClass({
       <div className="row">
         <div className="form-horizontal">
           <div className="form-group">
-            <label className="col-md-3 control-label">Name</label>
-            <div className="col-md-9">
-              <input
-              className="form-control"
-              type="text"
-              value={this.props.query.get('name')}
-              ref="queryName"
-              placeholder="e.g. Untitled Query"
-              onChange={this.handleNameChange}
-              autoFocus={true}/>
-            </div>
+            {this.renderQueryToggle()}
           </div>
           <div className="form-group">
-            <label className="col-md-3 control-label">Output Table</label>
-            <div className="col-md-9">
-              <AutoSuggestWrapper
-                suggestions={this.tableSelectOptions()}
-                placeholder={this.tableNamePlaceholder()}
-                value={this.props.query.get('outputTable')}
-                onChange={this.handleOutputTableChange}/>
-              <div className="help-block">
-                If left empty, the default value will be used
-              </div>
-            </div>
+            {this.renderQueryEditor()}
           </div>
+          {this.renderSimpleTable()}
+          {this.renderSimpleColumns()}
           <div className="form-group">
             <label className="col-md-3 control-label">Primary Key</label>
             <div className="col-md-5">
@@ -266,11 +248,31 @@ export default React.createClass({
               </label>
             </div>
           </div>
-          {this.renderSimpleTable()}
-          {this.renderSimpleColumns()}
           <div className="form-group">
-            {this.renderQueryToggle()}
-            {this.renderQueryEditor()}
+            <label className="col-md-3 control-label">Name</label>
+            <div className="col-md-9">
+              <input
+                className="form-control"
+                type="text"
+                value={this.props.query.get('name')}
+                ref="queryName"
+                placeholder="e.g. Untitled Query"
+                onChange={this.handleNameChange}
+                autoFocus={true}/>
+            </div>
+          </div>
+          <div className="form-group">
+            <label className="col-md-3 control-label">Output Table</label>
+            <div className="col-md-9">
+              <AutoSuggestWrapper
+                suggestions={this.tableSelectOptions()}
+                placeholder={this.tableNamePlaceholder()}
+                value={this.props.query.get('outputTable')}
+                onChange={this.handleOutputTableChange}/>
+              <div className="help-block">
+                If left empty, the default value will be used
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -301,13 +303,14 @@ export default React.createClass({
         <div>
           <label className="col-md-12 control-label">SQL Query</label>
           {this.renderQueryHelpBlock()}
-          <div className="col-md-12 kbc-queries-editor">
+          <div className="col-md-12">
             <CodeEditor
               readOnly={false}
               placeholder="e.g. SELECT `id`, `name` FROM `myTable`"
               value={this.getQuery()}
               mode={editorMode(this.props.componentId)}
               onChange={this.handleQueryChange}
+              style={{ width: '100%' }}
             />
           </div>
         </div>
@@ -316,12 +319,11 @@ export default React.createClass({
   },
 
   renderSimpleTable() {
-    if (this.props.showSimple) {
+    if (this.props.showSimple && !this.state.simpleDisabled) {
       var tableSelect = (
         <Select
           name="sourceTable"
           value={this.getTableValue()}
-          disabled={this.isSimpleDisabled()}
           placeholder="Select source table"
           onChange={this.handleSourceTableChange}
           optionRenderer={this.optionRenderer}
@@ -347,7 +349,7 @@ export default React.createClass({
   },
 
   renderSimpleColumns() {
-    if (this.props.showSimple) {
+    if (this.props.showSimple && !this.state.simpleDisabled) {
       var columnSelect = (
         <Select
           multi={true}
