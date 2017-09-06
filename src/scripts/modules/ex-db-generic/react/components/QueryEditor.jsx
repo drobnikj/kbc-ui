@@ -272,7 +272,7 @@ export default React.createClass({
                 ref="queryName"
                 placeholder="e.g. Untitled Query"
                 onChange={this.handleNameChange}
-                autoFocus={true}/>
+              />
             </div>
           </div>
           <div className="form-group">
