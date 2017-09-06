@@ -233,11 +233,6 @@ export default React.createClass({
     return (
       <div className="row">
         <div className="form-horizontal">
-          {this.renderQueryToggle()}
-          <div className="form-group"/>
-          <div className="form-group">
-            {this.renderQueryEditor()}
-          </div>
           {this.renderSimpleTable()}
           {this.renderSimpleColumns()}
           <div className="form-group">
@@ -293,6 +288,10 @@ export default React.createClass({
               </div>
             </div>
           </div>
+          {this.renderQueryToggle()}
+          <div className="form-group">
+            {this.renderQueryEditor()}
+          </div>
         </div>
       </div>
     );
@@ -309,7 +308,7 @@ export default React.createClass({
               label="Use query editor"
               checked={this.state.useQueryEditor}
               onChange={this.handleToggleUseQueryEditor}/>
-            Use Query Editor
+            Advanced Mode: Create your own query
           </label>
         </div>
       );
