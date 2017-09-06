@@ -351,7 +351,7 @@ export default React.createClass({
 
       var loader = (
         <div className="form-control-static">
-          <Loader/> Fetching table information from source database ...
+          <Loader/> Fetching table list from source database ...
         </div>
       );
 

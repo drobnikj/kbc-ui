@@ -14,6 +14,13 @@ export default function(componentId) {
     displayName: 'ExDbNewQuery',
     mixins: [createStoreMixin(storeProvisioning.componentsStore, StorageTablesStore)],
 
+    componentDidMount() {
+      // fetch sourceTable info if not done already
+      if (!this.state.sourceTables) {
+        return actionsProvisioning.loadSourceTables(componentId, this.state.configId);
+      }
+    },
+
     getStateFromStores() {
       const configId = RoutesStore.getRouterState().getIn(['params', 'config']);
       const ExDbStore = storeProvisioning.createStore(componentId, configId);
