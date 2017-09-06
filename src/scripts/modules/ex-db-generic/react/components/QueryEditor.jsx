@@ -28,7 +28,7 @@ export default React.createClass({
 
   getInitialState() {
     const query = this.props.query;
-    if ((query.get('query') && query.get('query') !== '') || !this.props.showSimple) {
+    if (query.get('advancedMode') || !this.props.showSimple) {
       return {
         simpleDisabled: true,
         useQueryEditor: true
@@ -41,16 +41,12 @@ export default React.createClass({
     }
   },
 
-  componentDidMount() {
-    return this.updateLocalState(['useQueryEditor'], this.state.useQueryEditor);
-  },
-
   handleToggleUseQueryEditor(e) {
-    this.updateLocalState(['useQueryEditor'], e.target.checked);
-    return this.setState({
+    this.setState({
       useQueryEditor: e.target.checked,
       simpleDisabled: e.target.checked
     });
+    return this.props.onChange(this.props.query.set('advancedMode', e.target.checked));
   },
 
   handleOutputTableChange(newValue) {
@@ -226,7 +222,7 @@ export default React.createClass({
   },
 
   updateLocalState(path, newValue) {
-    return this.props.updateLocalState(this.props.configId, [].concat(path), newValue);
+    return this.props.updateLocalState([].concat(path), newValue);
   },
 
   render() {

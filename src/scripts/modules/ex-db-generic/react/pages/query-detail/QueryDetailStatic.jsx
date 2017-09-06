@@ -55,7 +55,7 @@ export default React.createClass({
               <input
                 className="form-control"
                 type="text"
-                value={ (!!this.props.query.get('columns')) ? this.props.query.get('columns').join(', ') : 'All columns' }
+                value={ (this.props.query.get('columns').count() > 0) ? this.props.query.get('columns').join(', ') : 'All columns' }
                 disabled={true}/>
             </div>
           </div>

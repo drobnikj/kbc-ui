@@ -142,12 +142,13 @@ export function createActions(componentId) {
     createQuery(configId) {
       const store = getStore(configId);
       let newQuery = this.checkTableName(store.getNewQuery(), store);
-      if (newQuery.get('query') === '' || !store.getLocalState().get(['useQueryEditor'])) {
-        newQuery = newQuery.delete('query');
-      } else {
+      if (newQuery.get('advancedMode')) {
         newQuery = newQuery.delete('table');
         newQuery = newQuery.delete('columns');
+      } else {
+        newQuery = newQuery.delete('query');
       }
+      newQuery = newQuery.delete('advancedMode');
       const newQueries = store.getQueries().push(newQuery);
       const newData = store.configData.setIn(['parameters', 'tables'], newQueries);
       const diffMsg = 'Create query ' + newQuery.get('name');
@@ -177,7 +178,10 @@ export function createActions(componentId) {
     },
 
     editQuery(configId, queryId) {
-      const query = getStore(configId).getConfigQuery(queryId);
+      let query = getStore(configId).getConfigQuery(queryId);
+      if (query.has('query')) {
+        query = query.set('advancedMode', true);
+      }
       updateLocalState(configId, ['editingQueries', queryId], query);
     },
 
@@ -188,12 +192,13 @@ export function createActions(componentId) {
     saveQueryEdit(configId, queryId) {
       const store = getStore(configId);
       let newQuery = store.getEditingQuery(queryId);
-      if (newQuery.get('query') === '' || !store.getLocalState().get(['useQueryEditor'])) {
-        newQuery = newQuery.delete('query');
-      } else {
+      if (newQuery.get('advancedMode')) {
         newQuery = newQuery.delete('table');
         newQuery = newQuery.delete('columns');
+      } else {
+        newQuery = newQuery.delete('query');
       }
+      newQuery = newQuery.delete('advancedMode');
       newQuery = this.checkTableName(newQuery, store);
       const newQueries = store.getQueries().map((q) => q.get('id') === queryId ? newQuery : q);
       const newData = store.configData.setIn(['parameters', 'tables'], newQueries);
