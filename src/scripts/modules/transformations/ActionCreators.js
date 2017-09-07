@@ -147,7 +147,7 @@ module.exports = {
         type: constants.ActionTypes.DELETED_TRANSFORMATION_BUCKET_RESTORE_SUCCESS,
         bucketId: bucketId
       });
-      return InstalledComponentsActionCreators.loadComponentsForce().then(function() {
+      return InstalledComponentsActionCreators.loadComponentConfigsData('transformation').then(function() {
         return ApplicationActionCreators.sendNotification({
           message: React.createClass({
             propTypes: {
