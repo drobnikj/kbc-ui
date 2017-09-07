@@ -42,11 +42,29 @@ export default React.createClass({
   },
 
   handleToggleUseQueryEditor(e) {
-    this.setState({
-      useQueryEditor: e.target.checked,
-      simpleDisabled: e.target.checked
-    });
-    return this.props.onChange(this.props.query.set('advancedMode', e.target.checked));
+    var pk = [];
+    if (e.target.checked) {
+      this.setState({
+        useQueryEditor: e.target.checked,
+        simpleDisabled: e.target.checked,
+        simplePk: this.props.query.get('primaryKey')
+      });
+      pk = this.state.advancedPk;
+    } else {
+      this.setState({
+        useQueryEditor: e.target.checked,
+        simpleDisabled: e.target.checked,
+        advancedPk: this.props.query.get('primaryKey')
+      });
+      pk = this.state.simplePk;
+    }
+
+    var immutable = this.props.query.withMutations(function(mapping) {
+      let query = mapping.set('advancedMode', e.target.checked);
+      query = query.set('primaryKey', pk);
+      return query;
+    }, e);
+    return this.props.onChange(immutable);
   },
 
   handleOutputTableChange(newValue) {
@@ -88,6 +106,11 @@ export default React.createClass({
   },
 
   handlePrimaryKeyChange(newValue) {
+    if (!this.props.query.get('advancedMode')) {
+      this.setState({
+        simplePk: newValue
+      });
+    }
     return this.props.onChange(this.props.query.set('primaryKey', newValue));
   },
 
