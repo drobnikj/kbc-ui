@@ -5,7 +5,10 @@ export default function(componentId, configId, versionId) {
   return function() {
     var reloadCallback = function(component, config) {
       var promises = [];
-      promises.push(InstalledComponentsActionCreators.loadComponentConfigDataForce(component, config));
+      if (componentId === 'transformations') {
+        promises.push(InstalledComponentsActionCreators.loadComponentConfigsData(component));
+      }
+      promises.push(InstalledComponentsActionCreators.loadComponentConfigData(component, config));
       return promises;
     };
     VersionsActionCreators.rollbackVersion(componentId, configId, versionId, reloadCallback);
