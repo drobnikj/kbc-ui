@@ -18,6 +18,19 @@ var _store = Map({
 
 var MetadataStore = StoreUtils.createStore({
 
+  // returns Map of Lists of table ids grouped by metadata value defined by metadata key
+  // example {ex-google-drive: ["in.c-ex-gdrive.mydata"]}
+  groupTablesByMetadataValue(key) {
+    const allTablesMetadata = _store.getIn(['metadata', 'table'], Map());
+    const grouped = allTablesMetadata.groupBy((tableMetadata) => {
+      const mtItem = tableMetadata.find(m => m.get('key') === key);
+      return mtItem ? mtItem.get('value') : 'N/A';
+    });
+    return grouped.map((tgroups) =>
+      tgroups.map((mt, tableId) => tableId).toList()
+    );
+  },
+
   getColumnMetadata: function(tableId, column, provider, metadataKey) {
     var columnId = tableId + '.' + column;
     return this.getMetadata('column', columnId, provider, metadataKey);
