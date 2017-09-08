@@ -88,18 +88,12 @@ export default React.createClass({
       if (!this.state.useQueryEditor) {
         if (this.props.query.get('table')) {
           const groupedColumns = this.getColumnsGroupedByPrimaryKey(this.props.query.get('table'));
-          return groupedColumns.keySeq().map(function(isPK) {
+          return groupedColumns.map(function(column) {
             return {
-              value: !!isPK,
-              label: (isPK) ? 'Primary keys at source' : 'Regular columns',
-              children: groupedColumns.get(isPK).map(function(column) {
-                return {
-                  value: column.get('name'),
-                  label: column.get('name')
-                };
-              }).toJS()
+              value: column.get('name'),
+              label: column.get('name')
             };
-          });
+          }).toJS();
         }
       }
     }
@@ -269,8 +263,8 @@ export default React.createClass({
                 placeholder="No primary key"
                 emptyStrings={false}
                 onChange={this.handlePrimaryKeyChange}
-                options={this.transformOptions(this.primaryKeyOptions())}
-                optionRenderer={this.optionRenderer}
+                options={this.primaryKeyOptions()}
+                promptTextCreator={(label) => (label) ? 'Add column "' + label + '" as primary key' : ''}
               />
             </div>
             <div className="col-md-4 checkbox">
