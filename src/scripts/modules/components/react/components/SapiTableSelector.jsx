@@ -1,5 +1,6 @@
 import React from 'react';
 import storageTablesStore from '../../stores/StorageTablesStore';
+import MetadataStore from '../../stores/MetadataStore';
 import storageActionCreators from '../../StorageActionCreators';
 // import {Loader} from 'kbc-react-components';
 import Select from 'react-select';
@@ -7,7 +8,7 @@ import createStoreMixin from  '../../../../react/mixins/createStoreMixin';
 // import validateStorageTableId from  '../../../../utils/validateStorageTableId';
 
 export default  React.createClass({
-  mixins: [createStoreMixin(storageTablesStore)],
+  mixins: [createStoreMixin(storageTablesStore, MetadataStore)],
   propTypes: {
     onSelectTableFn: React.PropTypes.func.isRequired,
     placeholder: React.PropTypes.string.isRequired,
@@ -30,7 +31,9 @@ export default  React.createClass({
     const tables = storageTablesStore.getAll();
     return {
       isTablesLoading: isTablesLoading,
-      tables: tables
+      tables: tables,
+      tablesByComponent: MetadataStore.groupTablesByMetadataValue('KBC.lastUpdatedBy.component.id'),
+      tablesByConfig: MetadataStore.groupTablesByMetadataValue('KBC.lastUpdatedBy.configuration.id')
     };
   },
 
