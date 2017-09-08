@@ -85,17 +85,7 @@ export default React.createClass({
 
   primaryKeyOptions() {
     if (this.sourceTables() && this.sourceTables().count() > 0) {
-      if (!this.state.useQueryEditor) {
-        if (this.props.query.get('table')) {
-          const groupedColumns = this.getColumnsGroupedByPrimaryKey(this.props.query.get('table'));
-          return groupedColumns.map(function(column) {
-            return {
-              value: column.get('name'),
-              label: column.get('name')
-            };
-          }).toJS();
-        }
-      }
+      return this.getColumnsOptions();
     }
     return [];
   },
