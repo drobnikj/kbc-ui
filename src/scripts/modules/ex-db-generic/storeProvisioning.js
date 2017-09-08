@@ -10,6 +10,7 @@ import getDefaultPort from './templates/defaultPorts';
 const defaultSshPort = 22;
 
 export const sourceTablesPath = ['sourceTables', 'data'];
+export const sourceTablesErrorPath = ['sourceTables', 'error'];
 export const loadingSourceTablesPath = ['sourceTables', 'loading'];
 
 function fetch(componentId, configId) {

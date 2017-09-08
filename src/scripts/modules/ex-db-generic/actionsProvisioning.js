@@ -238,6 +238,9 @@ export function createActions(componentId) {
           configData: runData.toJS()
         };
         return callDockerAction(componentId, 'getTables', params).then(function(data) {
+          if (data.status === 'error') {
+            updateLocalState(configId, storeProvisioning.sourceTablesErrorPath, fromJS(data.message));
+          }
           updateLocalState(configId, storeProvisioning.sourceTablesPath, fromJS(data.tables));
           updateLocalState(configId, storeProvisioning.loadingSourceTablesPath, false);
         });

@@ -8,6 +8,7 @@ import Select from '../../../../react/common/Select';
 
 import {loadingSourceTablesPath} from '../../storeProvisioning';
 import {sourceTablesPath} from '../../storeProvisioning';
+import {sourceTablesErrorPath} from '../../storeProvisioning';
 
 import AutoSuggestWrapper from '../../../transformations/react/components/mapping/AutoSuggestWrapper';
 import editorMode from '../../templates/editorMode';
@@ -252,6 +253,7 @@ export default React.createClass({
     return (
       <div className="row">
         <div className="form-horizontal">
+          {this.renderError()}
           {this.renderSimpleTable()}
           {this.renderSimpleColumns()}
           <div className="form-group">
@@ -415,6 +417,16 @@ export default React.createClass({
           <div className="help-block">
             Please do not put semicolons at the end of the query.
           </div>
+        </div>
+      );
+    }
+  },
+
+  renderError() {
+    if (this.localState(sourceTablesErrorPath)) {
+      return (
+        <div className="alert alert-danger">
+          {this.localState(sourceTablesErrorPath)}
         </div>
       );
     }
