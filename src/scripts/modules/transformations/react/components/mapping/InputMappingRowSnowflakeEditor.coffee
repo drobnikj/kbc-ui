@@ -4,7 +4,7 @@ Immutable = require('immutable')
 {Input} = require('./../../../../../react/common/KbcBootstrap')
 Input = React.createFactory Input
 Select = React.createFactory require('../../../../../react/common/Select').default
-SapiTableSelector = React.createFactory(require('../../../../components/react/components/SapiTableSelector'))
+SapiTableSelector = React.createFactory(require('../../../../components/react/components/SapiTableSelector').default)
 SnowflakeDataTypesContainer = React.createFactory(require("./input/SnowflakeDataTypesContainer"))
 
 module.exports = React.createClass

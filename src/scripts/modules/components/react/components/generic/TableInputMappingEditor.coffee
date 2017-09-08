@@ -5,7 +5,7 @@ Immutable = require('immutable')
 {Input} = require('./../../../../../react/common/KbcBootstrap')
 Input = React.createFactory Input
 Select = React.createFactory require('../../../../../react/common/Select').default
-SapiTableSelector = React.createFactory(require('../SapiTableSelector'))
+SapiTableSelector = React.createFactory(require('../SapiTableSelector').default)
 DaysFilterInput = require('./DaysFilterInput').default
 DataFilterRow = require('./DataFilterRow').default
 

@@ -1,6 +1,6 @@
 React = require 'react'
 {ModalFooter, Modal, ModalHeader, ModalTitle, ModalBody} = require('react-bootstrap')
-SapiTableSelector = require '../../../../components/react/components/SapiTableSelector'
+SapiTableSelector = require('../../../../components/react/components/SapiTableSelector').default
 ConfirmButtons = require('../../../../../react/common/ConfirmButtons').default
 
 module.exports = React.createClass
