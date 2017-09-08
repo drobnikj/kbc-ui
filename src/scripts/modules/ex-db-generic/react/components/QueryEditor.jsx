@@ -242,7 +242,7 @@ export default React.createClass({
           {this.renderSimpleColumns()}
           <div className="form-group">
             <label className="col-md-3 control-label">Primary Key</label>
-            <div className="col-md-5">
+            <div className="col-md-6">
               <Select
                 name="primaryKey"
                 value={this.props.query.get('primaryKey')}
@@ -257,19 +257,10 @@ export default React.createClass({
                 promptTextCreator={(label) => (label) ? 'Add column "' + label + '" as primary key' : ''}
               />
             </div>
-            <div className="col-md-4 checkbox">
-              <label>
-                <input
-                  type="checkbox"
-                  checked={this.props.query.get('incremental')}
-                  onChange={this.handleIncrementalChange}/>
-                Incremental
-              </label>
-            </div>
           </div>
           <div className="form-group">
             <label className="col-md-3 control-label">Name</label>
-            <div className="col-md-9">
+            <div className="col-md-6">
               <input
                 className="form-control"
                 type="text"
@@ -282,7 +273,7 @@ export default React.createClass({
           </div>
           <div className="form-group">
             <label className="col-md-3 control-label">Output Table</label>
-            <div className="col-md-9">
+            <div className="col-md-6">
               <AutoSuggestWrapper
                 suggestions={this.tableSelectOptions()}
                 placeholder={this.tableNamePlaceholder()}
@@ -291,6 +282,15 @@ export default React.createClass({
               <div className="help-block">
                 If left empty, the default value will be used
               </div>
+            </div>
+            <div className="col-md-3 checkbox">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={this.props.query.get('incremental')}
+                  onChange={this.handleIncrementalChange}/>
+                Incremental
+              </label>
             </div>
           </div>
           {this.renderQueryToggle()}
@@ -363,7 +363,7 @@ export default React.createClass({
       return (
         <div className="form-group">
           <label className="col-md-3 control-label">Source Table</label>
-          <div className="col-md-5">
+          <div className="col-md-6">
             { (this.isLoadingSourceTables()) ? loader : tableSelect }
           </div>
         </div>
@@ -386,7 +386,7 @@ export default React.createClass({
       return (
         <div className="form-group">
           <label className="col-md-3 control-label">Columns</label>
-          <div className="col-md-5">
+          <div className="col-md-6">
             { columnSelect }
           </div>
         </div>
