@@ -240,6 +240,8 @@ export function createActions(componentId) {
         return callDockerAction(componentId, 'getTables', params).then(function(data) {
           if (data.status === 'error') {
             updateLocalState(configId, storeProvisioning.sourceTablesErrorPath, fromJS(data.message));
+          } else if (data.status === 'success') {
+            updateLocalState(configId, storeProvisioning.sourceTablesErrorPath, null);
           }
           updateLocalState(configId, storeProvisioning.sourceTablesPath, fromJS(data.tables));
           updateLocalState(configId, storeProvisioning.loadingSourceTablesPath, false);

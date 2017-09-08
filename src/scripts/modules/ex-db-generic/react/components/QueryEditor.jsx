@@ -197,7 +197,7 @@ export default React.createClass({
   getColumnsOptions() {
     var columns = [];
     if (this.props.query.get('table')) {
-      if (this.isLoadingSourceTables()) {
+      if (this.isLoadingSourceTables() || this.localState(sourceTablesErrorPath)) {
         return [];
       } else {
         var matchedTable = this.sourceTables().find((table) =>
@@ -426,7 +426,11 @@ export default React.createClass({
     if (this.localState(sourceTablesErrorPath)) {
       return (
         <div className="alert alert-danger">
+          <h4>An Error occured fetching table listing</h4>
           {this.localState(sourceTablesErrorPath)}
+          <h5>
+            Refresh the page to force a retry
+          </h5>
         </div>
       );
     }
