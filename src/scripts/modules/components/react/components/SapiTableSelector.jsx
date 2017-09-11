@@ -1,14 +1,17 @@
 import React from 'react';
+import {Map} from 'immutable';
 import storageTablesStore from '../../stores/StorageTablesStore';
 import MetadataStore from '../../stores/MetadataStore';
 import storageActionCreators from '../../StorageActionCreators';
 // import {Loader} from 'kbc-react-components';
 import Select from 'react-select';
 import createStoreMixin from  '../../../../react/mixins/createStoreMixin';
+import ComponentsStore from '../../stores/ComponentsStore';
 // import validateStorageTableId from  '../../../../utils/validateStorageTableId';
+import InstalledComponentStore from '../../stores/InstalledComponentsStore';
 
 export default  React.createClass({
-  mixins: [createStoreMixin(storageTablesStore, MetadataStore)],
+  mixins: [createStoreMixin(storageTablesStore, MetadataStore, ComponentsStore, InstalledComponentStore)],
   propTypes: {
     onSelectTableFn: React.PropTypes.func.isRequired,
     placeholder: React.PropTypes.string.isRequired,
@@ -30,6 +33,9 @@ export default  React.createClass({
     const isTablesLoading = storageTablesStore.getIsLoading();
     const tables = storageTablesStore.getAll();
     return {
+      tablesByComponentAndConfig: MetadataStore.groupTablesByComponentAndConfig(),
+      components: ComponentsStore.getAll(),
+      getConfigFn: InstalledComponentStore.getConfig,
       isTablesLoading: isTablesLoading,
       tables: tables,
       tablesByComponent: MetadataStore.groupTablesByMetadataValue('KBC.lastUpdatedBy.component.id'),
@@ -79,6 +85,30 @@ export default  React.createClass({
     } else {
       return <span className="text-muted">{op.label} </span>;
     }
+  },
+
+  generateOptions() {
+    const allTables = this._getTables();
+    const allTablesIds = allTables.map(t => t.value);
+    const {tables, getConfigFn, components, tablesByComponentAndConfig} = this.state;
+    const groups = tablesByComponentAndConfig.reduce((memo, tablesIds, key) => {
+      const filteredTablesIds = tablesIds.filter(tid => allTablesIds.includes(tid));
+      if (filteredTablesIds.count() === 0) return memo;
+      const componentId = key.get('componentId');
+      const component = components.get(componentId);
+      const componentName = component ? `${component.get('name')} ${component.get('type')}` : componentId;
+      const configId = key.get('configId');
+      const config = getConfigFn(componentId, configId);
+      const configName = config.count() > 0 ? config.get('name') : configId;
+      const isUnknownSource = !component;
+      const tableNames = filteredTablesIds.map(tid => {
+        const tableName = isUnknownSource ? tid : tables.getIn([tid, 'name']);
+        return {label: tableName, value: tid};
+      });
+      return memo.set(`${componentName} / ${configName}`, tableNames);
+    }, Map());
+
+    return this.transformOptions(groups);
   },
 
   _getTables() {
