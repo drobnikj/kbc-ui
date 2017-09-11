@@ -103,5 +103,16 @@ export default  React.createClass({
     } else {
       return result;
     }
+  },
+
+  transformOptions(options) {
+    const option = (value, label, render, disabled = false) => ({value, label, render, disabled});
+
+    return options.reduce((acc, tables, componentName) => {
+      const parent = option(componentName, componentName, (<strong style={{color: '#000'}}>{componentName}</strong>), true);
+      const children = tables.toJS().map(c => option(c.value, c.label, <div style={{paddingLeft: 10}}>{c.label}</div>));
+
+      return acc.concat(parent).concat(children);
+    }, []);
   }
 });
