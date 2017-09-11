@@ -69,7 +69,7 @@ export default React.createClass({
           <RunExtractionButton
             title="Run Extraction"
             component={this.props.componentId}
-            runParams={function() {
+            runParams={() => {
               return {
                 config: this.props.configurationId,
                 configData: actionCreators.prepareSingleQueryRunData(this.props.configurationId, this.props.query)
