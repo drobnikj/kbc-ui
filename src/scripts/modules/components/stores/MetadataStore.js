@@ -15,6 +15,10 @@ var _store = Map({
 
   filters: Map()
 });
+const getMetadataValueByKey = (metadata, key, notFoundValue) => {
+  const found = metadata.find(m => m.get('key') === key );
+  return found ? found.get('value') : notFoundValue;
+};
 
 var MetadataStore = StoreUtils.createStore({
 
@@ -25,6 +29,18 @@ var MetadataStore = StoreUtils.createStore({
     const grouped = allTablesMetadata.groupBy((tableMetadata) => {
       const mtItem = tableMetadata.find(m => m.get('key') === key);
       return mtItem ? mtItem.get('value') : 'N/A';
+    });
+    return grouped.map((tgroups) =>
+      tgroups.map((mt, tableId) => tableId).toList()
+    );
+  },
+
+  groupTablesByComponentAndConfig() {
+    const allTablesMetadata = _store.getIn(['metadata', 'table'], Map());
+    const grouped = allTablesMetadata.groupBy((tableMetadata) => {
+      const componentId = getMetadataValueByKey(tableMetadata, 'KBC.lastUpdatedBy.component.id', 'Unknown component');
+      const configId = getMetadataValueByKey(tableMetadata, 'KBC.lastUpdatedBy.configuration.id', 'Unknown config');
+      return Map({configId, componentId});
     });
     return grouped.map((tgroups) =>
       tgroups.map((mt, tableId) => tableId).toList()
