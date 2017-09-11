@@ -70,7 +70,7 @@ export default  React.createClass({
         valueRenderer={this.valueRenderer}
         optionRenderer={this.valueRenderer}
         onChange={this.onSelectTable}
-        options={this._getTables()}
+        options={this.generateOptions()}
       />
     );
   },
