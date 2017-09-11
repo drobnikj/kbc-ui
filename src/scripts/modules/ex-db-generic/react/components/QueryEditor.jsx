@@ -42,6 +42,14 @@ export default React.createClass({
     }
   },
 
+  isExistingTable() {
+    const destinationTable = this.props.query.get('outputTable');
+    if (!destinationTable || destinationTable === '') {
+      return false;
+    }
+    return this.props.tables.has(destinationTable);
+  },
+
   handleToggleUseQueryEditor(e) {
     var pk = [];
     if (e.target.checked) {
@@ -84,10 +92,14 @@ export default React.createClass({
   },
 
   primaryKeyOptions() {
-    if (this.sourceTables() && this.sourceTables().count() > 0) {
-      return this.getColumnsOptions();
+    return this.getColumnsOptions();
+  },
+
+  primaryKeyPlaceholder() {
+    if (this.isExistingTable()) {
+      return 'Cannot add a column';
     }
-    return [];
+    return 'Add a column';
   },
 
   handlePrimaryKeyChange(newValue) {
@@ -247,10 +259,10 @@ export default React.createClass({
                 name="primaryKey"
                 value={this.props.query.get('primaryKey')}
                 multi={true}
-                disabled={false}
+                disabled={this.isExistingTable()}
                 allowCreate={true}
                 delimiter=","
-                placeholder="No primary key"
+                placeholder={this.primaryKeyPlaceholder()}
                 emptyStrings={false}
                 onChange={this.handlePrimaryKeyChange}
                 options={this.primaryKeyOptions()}
