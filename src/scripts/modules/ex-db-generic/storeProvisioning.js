@@ -164,8 +164,8 @@ export function createStore(componentId, configId) {
       return data.localState.getIn(['editingQueries']);
     },
 
-    isSavingQuery() {
-      return data.localState.get('savingQueries');
+    isSavingQuery(queryId) {
+      return !!data.localState.getIn(['isSaving', queryId]);
     },
 
     isEditingQueryValid(queryId) {

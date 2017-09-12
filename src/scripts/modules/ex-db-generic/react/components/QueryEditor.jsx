@@ -16,12 +16,19 @@ export default React.createClass({
     tables: React.PropTypes.object.isRequired,
     onChange: React.PropTypes.func.isRequired,
     showSimple: React.PropTypes.bool.isRequired,
+    disabled: React.PropTypes.bool,
     configId: React.PropTypes.string.isRequired,
     defaultOutputTable: React.PropTypes.string.isRequired,
     componentId: React.PropTypes.string.isRequired,
     isLoadingSourceTables: React.PropTypes.bool.isRequired,
     sourceTables: React.PropTypes.object.isRequired,
     sourceTablesError: React.PropTypes.string
+  },
+
+  getDefaultProps() {
+    return {
+      disabled: false
+    };
   },
 
   componentWillReceiveProps() {
@@ -260,7 +267,7 @@ export default React.createClass({
                 name="primaryKey"
                 value={this.props.query.get('primaryKey')}
                 multi={true}
-                disabled={this.isExistingTable()}
+                disabled={this.props.disabled || this.isExistingTable()}
                 allowCreate={true}
                 delimiter=","
                 placeholder={this.primaryKeyPlaceholder()}
@@ -280,6 +287,7 @@ export default React.createClass({
                 value={this.props.query.get('name')}
                 ref="queryName"
                 placeholder="e.g. Untitled Query"
+                disabled={this.props.disabled}
                 onChange={this.handleNameChange}
               />
             </div>
@@ -291,7 +299,9 @@ export default React.createClass({
                 suggestions={this.tableSelectOptions()}
                 placeholder={this.tableNamePlaceholder()}
                 value={this.props.query.get('outputTable')}
-                onChange={this.handleOutputTableChange}/>
+                onChange={this.handleOutputTableChange}
+                disabled={this.props.disabled}
+              />
               <div className="help-block">
                 If left empty, the default value will be used
               </div>
@@ -301,7 +311,9 @@ export default React.createClass({
                 <input
                   type="checkbox"
                   checked={this.props.query.get('incremental')}
-                  onChange={this.handleIncrementalChange}/>
+                  onChange={this.handleIncrementalChange}
+                  disabled={this.props.disabled}
+                />
                 Incremental
               </label>
             </div>
@@ -325,6 +337,7 @@ export default React.createClass({
               type="checkbox"
               label="Use query editor"
               checked={this.state.useQueryEditor}
+              disabled={this.props.disabled}
               onChange={this.handleToggleUseQueryEditor}/>
             Advanced Mode: Create your own query
           </label>
@@ -346,6 +359,7 @@ export default React.createClass({
               value={this.getQuery()}
               mode={editorMode(this.props.componentId)}
               onChange={this.handleQueryChange}
+              disabled={this.props.disabled}
               style={{ width: '100%' }}
             />
           </div>
@@ -364,6 +378,7 @@ export default React.createClass({
           onChange={this.handleSourceTableChange}
           optionRenderer={this.optionRenderer}
           options={this.transformOptions(this.sourceTableSelectOptions())}
+          disabled={this.props.disabled}
         />
       );
 
@@ -391,7 +406,7 @@ export default React.createClass({
           multi={true}
           name="columns"
           value={this.props.query.get('columns', Immutable.List())}
-          disabled={this.isSimpleDisabled() || !this.props.query.get('table')}
+          disabled={this.props.disabled || !this.props.query.get('table')}
           placeholder="All columns will be imported"
           onChange={this.handleChangeColumns}
           options={this.getColumnsOptions()}/>

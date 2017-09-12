@@ -42,7 +42,7 @@ export default function(componentId, actionsProvisioning, storeProvisioning) {
         queryId: queryId,
         editingQuery: (ExDbStore.isEditingQuery(queryId)) ? ExDbStore.getEditingQuery(queryId) : query,
         editingQueries: ExDbStore.getEditingQueries(),
-        isSaving: ExDbStore.isSavingQuery(),
+        isSaving: ExDbStore.isSavingQuery(queryId),
         isValid: ExDbStore.isEditingQueryValid(queryId),
         tables: StorageTablesStore.getAll(),
         sourceTables: ExDbStore.getSourceTables(),
@@ -72,6 +72,7 @@ export default function(componentId, actionsProvisioning, storeProvisioning) {
           query={this.state.editingQuery}
           tables={this.state.tables}
           onChange={this.handleQueryChange}
+          disabled={this.state.isSaving}
           showSimple={this.state.componentSupportsSimpleSetup}
           configId={this.state.configId}
           componentId={componentId}
