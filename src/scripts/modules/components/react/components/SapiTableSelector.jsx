@@ -67,8 +67,8 @@ export default  React.createClass({
         value={this.props.value}
         isLoading={this.state.isTablesLoading}
         placeholder={this.props.placeholder}
-        valueRenderer={this.valueRenderer}
-        optionRenderer={this.valueRenderer}
+        valueRenderer={this.optionRenderer}
+        optionRenderer={this.optionRenderer}
         onChange={this.onSelectTable}
         options={this.generateOptions()}
       />
@@ -79,12 +79,13 @@ export default  React.createClass({
     return this.state.tables.find((t) => tableId === t.get('id'));
   },
 
-  valueRenderer(op) {
-    if (this.tableExist(op.value) || op.disabled) {
-      return op.label;
-    } else {
-      return <span className="text-muted">{op.label} </span>;
+  optionRenderer(op) {
+    if (op.isParent) {
+      return <strong style={{color: '#000'}}>{op.label}</strong>;
     }
+    let value = op.label;
+    if (!this.tableExist(op.value)) value = <span className="text-muted">{op.label}</span>;
+    return <div style={{paddingLeft: 20}}>{value}</div>;
   },
 
   generateOptions() {
@@ -136,12 +137,11 @@ export default  React.createClass({
   },
 
   transformOptions(options) {
-    const option = (value, label, render, disabled = false) => ({value, label, render, disabled});
+    const option = (value, label, disabled = false) => ({value, label, disabled, isParent: disabled});
 
     return options.reduce((acc, tables, componentName) => {
-      const parent = option(componentName, componentName, (<strong style={{color: '#000'}}>{componentName}</strong>), true);
-      const children = tables.toJS().map(c => option(c.value, c.label, <div style={{paddingLeft: 10}}>{c.label}</div>));
-
+      const parent = option(componentName, componentName, true);
+      const children = tables.toJS().map(c => option(c.value, c.label));
       return acc.concat(parent).concat(children);
     }, []);
   }
