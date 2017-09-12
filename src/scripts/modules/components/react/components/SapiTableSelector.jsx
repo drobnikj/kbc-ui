@@ -66,7 +66,7 @@ export default  React.createClass({
         value={this.props.value}
         isLoading={this.state.isTablesLoading}
         placeholder={this.props.placeholder}
-        valueRenderer={this.optionRenderer}
+        valueRenderer={this.valueRenderer}
         optionRenderer={this.optionRenderer}
         filterOption={this.filterOption}
         onChange={this.onSelectTable}
@@ -96,6 +96,14 @@ export default  React.createClass({
     return <div style={{paddingLeft: 20}}>{value}</div>;
   },
 
+  valueRenderer(op) {
+    if (op.isUnknownSource) {
+      return op.value;
+    } else {
+      return `${op.parent.label} / ${op.label}`;
+    }
+  },
+
   groupTablesByMetadata(tables, getConfigFn, components, tablesByComponentAndConfig) {
     const allTables = this._getTables(tables);
     const allTablesIds = allTables.map(t => t.value);
@@ -111,7 +119,7 @@ export default  React.createClass({
       const isUnknownSource = !component;
       const tableNames = filteredTablesIds.map(tid => {
         const tableName = isUnknownSource ? tid : tables.getIn([tid, 'name']);
-        return {label: tableName, value: tid};
+        return {label: tableName, value: tid, isUnknownSource};
       });
       return memo.set(`${componentName} / ${configName}`, tableNames);
     }, Map());
@@ -144,10 +152,10 @@ export default  React.createClass({
   },
 
   transformOptionsMap() {
-    const option = (value, label, disabled = false, parent = null) => ({value, label, disabled, isParent: disabled, parent});
+    const option = (value, label, disabled = false, parent = null, isUnknownSource = false) => ({value, label, disabled, isParent: disabled, parent, isUnknownSource});
     return this.state.parsedTablesMap.reduce((acc, tables, componentName) => {
       const parent = option(componentName, componentName, true);
-      const children = tables.toJS().map(c => option(c.value, c.label, false, parent));
+      const children = tables.toJS().map(c => option(c.value, c.label, false, parent, c.isUnknownSource));
       return acc.concat(parent).concat(children);
     }, []);
   }
