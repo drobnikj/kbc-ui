@@ -15,7 +15,9 @@ export default function(componentId, storeProvisioning) {
 
     getStateFromStores() {
       const ExDbStore = storeProvisioning.createStore(componentId, this.props.configId);
-      const query = ExDbStore.getConfigQuery(this.props.queryId);
+      const isEditingQuery = ExDbStore.isEditingQuery(this.props.queryId);
+      const editingQuery = ExDbStore.getEditingQuery(this.props.queryId);
+      const query = (isEditingQuery) ? editingQuery : ExDbStore.getConfigQuery(this.props.queryId);
       return {
         name: (query) ? query.get('name') : null
       };

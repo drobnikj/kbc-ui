@@ -160,6 +160,10 @@ export function createStore(componentId, configId) {
       return data.localState.getIn(['editingQueries', queryId]);
     },
 
+    getEditingQueries() {
+      return data.localState.getIn(['editingQueries']);
+    },
+
     isSavingQuery() {
       return data.localState.get('savingQueries');
     },

@@ -41,6 +41,7 @@ export default function(componentId, actionsProvisioning, storeProvisioning) {
         configId: configId,
         queryId: queryId,
         editingQuery: (ExDbStore.isEditingQuery(queryId)) ? ExDbStore.getEditingQuery(queryId) : query,
+        editingQueries: ExDbStore.getEditingQueries(),
         isSaving: ExDbStore.isSavingQuery(),
         isValid: ExDbStore.isEditingQueryValid(queryId),
         tables: StorageTablesStore.getAll(),
@@ -90,10 +91,12 @@ export default function(componentId, actionsProvisioning, storeProvisioning) {
               <div className="kbc-container">
                 <QueryNav
                   queries={this.state.queriesFiltered}
+                  editingQueries={this.state.editingQueries}
                   configurationId={this.state.configId}
                   filter={this.state.queriesFilter}
                   componentId={componentId}
-                  actionsProvisioning={actionsProvisioning}/>
+                  actionsProvisioning={actionsProvisioning}
+                />
               </div>
             </div>
             <div className="col-md-9 kbc-main-content-with-nav">
