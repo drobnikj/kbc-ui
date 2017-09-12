@@ -200,6 +200,8 @@ export function createStore(componentId, configId) {
       let query = this.getQueries().find((q) => q.get('id') === qid );
       if (query.has('query')) {
         query = query.set('advancedMode', true);
+      } else {
+        query = query.set('advancedMode', false);
       }
       return query;
     },

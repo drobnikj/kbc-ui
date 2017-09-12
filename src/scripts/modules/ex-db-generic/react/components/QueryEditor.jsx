@@ -24,7 +24,26 @@ export default React.createClass({
     sourceTablesError: React.PropTypes.string
   },
 
+  componentWillReceiveProps() {
+    this.setState(this.getStateFromStores());
+  },
+
   getInitialState() {
+    const query = this.props.query;
+    if (query.get('advancedMode') || !this.props.showSimple) {
+      return {
+        simpleDisabled: true,
+        useQueryEditor: true
+      };
+    } else {
+      return {
+        simpleDisabled: false,
+        useQueryEditor: false
+      };
+    }
+  },
+
+  getStateFromStores() {
     const query = this.props.query;
     if (query.get('advancedMode') || !this.props.showSimple) {
       return {
