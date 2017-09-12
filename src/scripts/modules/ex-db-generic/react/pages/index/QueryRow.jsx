@@ -56,6 +56,7 @@ export default React.createClass({
             query={this.props.query}
             configurationId={this.props.configurationId}
             isPending={!!this.props.pendingActions.get('deleteQuery')}
+            deleteFn={actionCreators.deleteQuery}
             componentId={this.props.componentId}
             actionsProvisioning={actionsProvisioning}
           />
