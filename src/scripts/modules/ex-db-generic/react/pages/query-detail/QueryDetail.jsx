@@ -39,6 +39,7 @@ export default function(componentId, actionsProvisioning, storeProvisioning) {
 
       return {
         configId: configId,
+        queryId: queryId,
         editingQuery: (ExDbStore.isEditingQuery(queryId)) ? ExDbStore.getEditingQuery(queryId) : query,
         isSaving: ExDbStore.isSavingQuery(),
         isValid: ExDbStore.isEditingQueryValid(queryId),
@@ -53,11 +54,11 @@ export default function(componentId, actionsProvisioning, storeProvisioning) {
     },
 
     handleQueryChange(newQuery) {
-      return ExDbActionCreators.editChange(this.state.configId, newQuery);
+      return ExDbActionCreators.changeQueryEdit(this.state.configId, newQuery);
     },
 
     handleReset() {
-      return ExDbActionCreators.cancelQueryEdit(this.state.configId, this.state.editingQuery.get('id'));
+      return ExDbActionCreators.resetQueryEdit(this.state.configId, this.state.editingQuery.get('id'));
     },
 
     handleSave() {
@@ -98,17 +99,16 @@ export default function(componentId, actionsProvisioning, storeProvisioning) {
             <div className="col-md-9 kbc-main-content-with-nav">
               <div className="row kbc-header">
                 <div className="kbc-buttons">
-                  <EditButtons
-                    isEditing={this.state.isEditing}
-                    isSaving={this.state.isSaving}
-                    isDisabled={!this.state.isValid}
-                    onCancel={this.handleCancel}
+                  <SaveButtons
+                    isSaving={this.state.localState.getIn(['isSaving', this.state.queryId], false)}
+                    isChanged={this.state.localState.getIn(['isChanged', this.state.queryId], false)}
+                    onReset={this.handleReset}
                     onSave={this.handleSave}
-                    onEditStart={this.handleEditStart}/>
+                  />
                 </div>
               </div>
-              {this.getQueryElement()}
             </div>
+            {this.getQueryElement()}
           </div>
         </div>
       );

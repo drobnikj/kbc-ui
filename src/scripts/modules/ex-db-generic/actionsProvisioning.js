@@ -182,32 +182,6 @@ export function createActions(componentId) {
       return saveConfigData(configId, newData, ['pending', qid, 'deleteQuery'], diffMsg);
     },
 
-    updateEditingQuery(configId, query) {
-      const queryId = query.get('id');
-      updateLocalState(configId, ['editingQueries', queryId], query);
-    },
-
-    cancelQueryEdit(configId, queryId) {
-      updateLocalState(configId, ['editingQueries', queryId], null);
-    },
-
-    saveQueryEdit(configId, queryId) {
-      const store = getStore(configId);
-      let newQuery = store.getEditingQuery(queryId);
-      if (newQuery.get('advancedMode')) {
-        newQuery = newQuery.delete('table');
-        newQuery = newQuery.delete('columns');
-      } else {
-        newQuery = newQuery.delete('query');
-      }
-      newQuery = newQuery.delete('advancedMode');
-      newQuery = this.checkTableName(newQuery, store);
-      const newQueries = store.getQueries().map((q) => q.get('id') === queryId ? newQuery : q);
-      const newData = store.configData.setIn(['parameters', 'tables'], newQueries);
-      const diffMsg = 'Edit query '  + newQuery.get('name');
-      return saveConfigData(configId, newData, ['savingQueries'], diffMsg).then(() => this.cancelQueryEdit(configId, queryId));
-    },
-
     testCredentials(configId, credentials) {
       const store = getStore(configId);
       const testingCredentials = updateProtectedProperties(credentials, store.getCredentials());
@@ -225,21 +199,21 @@ export function createActions(componentId) {
       return runData;
     },
 
-    editReset(configId) {
-      removeFromLocalState(configId, ['isChanged']);
-      removeFromLocalState(configId, ['query']);
-      removeFromLocalState(configId, ['isDestinationEditing']);
+    resetQueryEdit(configId, queryId) {
+      removeFromLocalState(configId, ['isChanged', queryId]);
+      removeFromLocalState(configId, ['editingQueries', queryId]);
+      removeFromLocalState(configId, ['isDestinationEditing', queryId]);
     },
 
-    editChange(configId, newQuery) {
+    changeQueryEdit(configId, newQuery) {
       const queryId = newQuery.get('id');
       updateLocalState(configId, ['editingQueries', queryId], newQuery);
-      if (!getLocalState(configId).get('isChanged', false)) {
-        updateLocalState(configId, ['isChanged'], true);
+      if (!getLocalState(configId).getIn(['isChanged', queryId], false)) {
+        updateLocalState(configId, ['isChanged', queryId], true);
       }
     },
 
-    editSave(configId, queryId) {
+    saveQueryEdit(configId, queryId) {
       const store = getStore(configId);
       let newQuery = store.getEditingQuery(queryId);
       if (newQuery.get('advancedMode')) {
@@ -254,12 +228,12 @@ export function createActions(componentId) {
       const newData = store.configData.setIn(['parameters', 'tables'], newQueries);
       const diffMsg = 'Edit query '  + newQuery.get('name');
 
-      removeFromLocalState(configId, ['isDestinationEditing']);
+      removeFromLocalState(configId, ['isDestinationEditing', queryId]);
 
-      saveConfigData(configId, newData, ['isSaving'], diffMsg).then(() => {
+      saveConfigData(configId, newData, ['isSaving', queryId], diffMsg).then(() => {
         removeFromLocalState(configId, ['editingQueries', queryId]);
-        removeFromLocalState(configId, ['isSaving']);
-        removeFromLocalState(configId, ['isChanged']);
+        removeFromLocalState(configId, ['isSaving', queryId]);
+        removeFromLocalState(configId, ['isChanged', queryId]);
       });
     },
 
