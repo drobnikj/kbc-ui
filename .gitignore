@@ -9,3 +9,4 @@ npm-debug.log
 /stats.json
 /start-chrome-debug.sh
 /.dir-locals.el
+.vscode/launch.json

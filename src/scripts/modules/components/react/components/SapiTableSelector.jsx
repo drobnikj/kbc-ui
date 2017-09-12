@@ -80,7 +80,7 @@ export default  React.createClass({
   },
 
   valueRenderer(op) {
-    if (this.tableExist(op.value)) {
+    if (this.tableExist(op.value) || op.disabled) {
       return op.label;
     } else {
       return <span className="text-muted">{op.label} </span>;
@@ -107,8 +107,8 @@ export default  React.createClass({
       });
       return memo.set(`${componentName} / ${configName}`, tableNames);
     }, Map());
-
-    return this.transformOptions(groups);
+    const sortedGroups = groups.sortBy((value, key) => key);
+    return this.transformOptions(sortedGroups);
   },
 
   _getTables() {
