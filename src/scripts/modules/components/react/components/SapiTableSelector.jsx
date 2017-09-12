@@ -1,5 +1,5 @@
 import React from 'react';
-import {Map} from 'immutable';
+import {Map, List} from 'immutable';
 import storageTablesStore from '../../stores/StorageTablesStore';
 import MetadataStore from '../../stores/MetadataStore';
 import storageActionCreators from '../../StorageActionCreators';
@@ -32,14 +32,13 @@ export default  React.createClass({
   getStateFromStores() {
     const isTablesLoading = storageTablesStore.getIsLoading();
     const tables = storageTablesStore.getAll();
+    const metadataGroupedTables = MetadataStore.groupTablesByComponentAndConfig();
+    const components = ComponentsStore.getAll();
+    const parsedTables = this.groupTablesByMetadata(tables, InstalledComponentStore.getConfig, components, metadataGroupedTables);
     return {
-      tablesByComponentAndConfig: MetadataStore.groupTablesByComponentAndConfig(),
-      components: ComponentsStore.getAll(),
-      getConfigFn: InstalledComponentStore.getConfig,
       isTablesLoading: isTablesLoading,
       tables: tables,
-      tablesByComponent: MetadataStore.groupTablesByMetadataValue('KBC.lastUpdatedBy.component.id'),
-      tablesByConfig: MetadataStore.groupTablesByMetadataValue('KBC.lastUpdatedBy.configuration.id')
+      parsedTablesMap: parsedTables
     };
   },
 
@@ -69,14 +68,23 @@ export default  React.createClass({
         placeholder={this.props.placeholder}
         valueRenderer={this.optionRenderer}
         optionRenderer={this.optionRenderer}
+        filterOption={this.filterOption}
         onChange={this.onSelectTable}
-        options={this.generateOptions()}
+        options={this.transformOptionsMap()}
       />
     );
   },
 
   tableExist(tableId) {
     return this.state.tables.find((t) => tableId === t.get('id'));
+  },
+
+  filterOption(op, filter) {
+    if (!filter) return true;
+    const compareFn = (what) => what.toLowerCase().indexOf(filter.toLowerCase()) >= 0;
+    const {parsedTablesMap} = this.state;
+    const isNestedMatch = op.isParent && parsedTablesMap.get(op.value, List()).find(t => compareFn(t.value));
+    return isNestedMatch || compareFn(op.label) || compareFn(op.value) || (op.parent && compareFn(op.parent.label));
   },
 
   optionRenderer(op) {
@@ -88,10 +96,9 @@ export default  React.createClass({
     return <div style={{paddingLeft: 20}}>{value}</div>;
   },
 
-  generateOptions() {
-    const allTables = this._getTables();
+  groupTablesByMetadata(tables, getConfigFn, components, tablesByComponentAndConfig) {
+    const allTables = this._getTables(tables);
     const allTablesIds = allTables.map(t => t.value);
-    const {tables, getConfigFn, components, tablesByComponentAndConfig} = this.state;
     const groups = tablesByComponentAndConfig.reduce((memo, tablesIds, key) => {
       const filteredTablesIds = tablesIds.filter(tid => allTablesIds.includes(tid));
       if (filteredTablesIds.count() === 0) return memo;
@@ -109,11 +116,11 @@ export default  React.createClass({
       return memo.set(`${componentName} / ${configName}`, tableNames);
     }, Map());
     const sortedGroups = groups.sortBy((value, key) => key);
-    return this.transformOptions(sortedGroups);
+    return sortedGroups;
   },
 
-  _getTables() {
-    let tables = this.state.tables;
+  _getTables(allTables) {
+    let tables = allTables;
     tables = tables.filter((table) => {
       const stage = table.get('bucket').get('stage');
       const excludeTable = this.props.excludeTableFn(table.get('id'), table);
@@ -136,12 +143,11 @@ export default  React.createClass({
     }
   },
 
-  transformOptions(options) {
-    const option = (value, label, disabled = false) => ({value, label, disabled, isParent: disabled});
-
-    return options.reduce((acc, tables, componentName) => {
+  transformOptionsMap() {
+    const option = (value, label, disabled = false, parent = null) => ({value, label, disabled, isParent: disabled, parent});
+    return this.state.parsedTablesMap.reduce((acc, tables, componentName) => {
       const parent = option(componentName, componentName, true);
-      const children = tables.toJS().map(c => option(c.value, c.label));
+      const children = tables.toJS().map(c => option(c.value, c.label, false, parent));
       return acc.concat(parent).concat(children);
     }, []);
   }
