@@ -9,7 +9,7 @@ import {Navigation} from 'react-router';
 import {Loader} from 'kbc-react-components';
 
 export default function(componentId, actionsProvisioning, storeProvisioning) {
-  const actionCreators = actionsProvisioning.createActions(componentId);
+  const ExDbActionCreators = actionsProvisioning.createActions(componentId);
   return React.createClass({
     displayName: 'CredentialsHeaderButtons',
     mixins: [createStoreMixin(storeProvisioning.componentsStore), Navigation],
@@ -35,15 +35,14 @@ export default function(componentId, actionsProvisioning, storeProvisioning) {
     },
 
     handleCreate() {
-      ExDbActionCreators.saveCredentialsEdit(this.state.currentConfigId);
+      return ExDbActionCreators.saveCredentialsEdit(this.state.currentConfigId);
     },
 
     render() {
-
       if (this.state.isEditing) {
         return (
           <div className="kbc-buttons">
-            {(this.state.loading) ? <Loader/>}
+            {(this.state.loading) ? <Loader/> : ''}
             <button
               className="btn btn-link"
               disabled={this.state.isSaving}
