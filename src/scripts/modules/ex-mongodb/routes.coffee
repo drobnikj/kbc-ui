@@ -10,12 +10,12 @@ ExDbNewCredentialsPage = require('../ex-db-generic/react/pages/credentials/NewCr
 ExDbQueryDetail = require './react/pages/query-detail/QueryDetail'
 ExDbNewQuery = require './react/pages/new-query/NewQuery'
 
-ExDbNewQueryHeaderButtons = require '../ex-db-generic/react/components/NewQueryHeaderButtons'
+ExDbNewQueryHeaderButtons = require('../ex-db-generic/react/components/NewQueryHeaderButtons').default
 ExDbQueryHeaderButtons = require('../ex-db-generic/react/components/QueryActionButtons').default
-ExDbCredentialsHeaderButtons = require '../ex-db-generic/react/components/CredentialsHeaderButtons'
+ExDbCredentialsHeaderButtons = require('../ex-db-generic/react/components/CredentialsHeaderButtons').default
 ExDbNewCredentialsHeaderButtons = require('../ex-db-generic/react/components/NewCredentialsHeaderButtons').default
 
-ExDbQueryName = require '../ex-db-generic/react/components/QueryName'
+ExDbQueryName = require('../ex-db-generic/react/components/QueryName').default
 
 JobsActionCreators = require '../jobs/ActionCreators'
 StorageActionCreators = require('../components/StorageActionCreators')
@@ -23,7 +23,7 @@ VersionsActionsCreators = require('../components/VersionsActionCreators')
 {createTablesRoute} = require '../table-browser/routes'
 storeProvisioning = require './storeProvisioning'
 
-credentialsTemplate = require '../ex-db-generic/templates/credentials'
+credentialsTemplate = require('../ex-db-generic/templates/credentials').default
 hasSshTunnel = require('../ex-db-generic/templates/hasSshTunnel').default
 
 module.exports = (componentId) ->
