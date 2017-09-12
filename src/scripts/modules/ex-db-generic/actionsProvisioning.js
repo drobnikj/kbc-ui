@@ -1,6 +1,6 @@
 import * as storeProvisioning from './storeProvisioning';
 import {Map, List, fromJS} from 'immutable';
-import _ from 'underscore';
+
 import componentsActions from '../components/InstalledComponentsActionCreators';
 import callDockerAction from '../components/DockerActionsApi';
 
@@ -50,9 +50,19 @@ export function createActions(componentId) {
       .then(() => updateLocalState(configId, waitingPath, false));
   }
 
+  function getLocalState(configId) {
+    return getStore(configId).getLocalState();
+  }
+
   function updateLocalState(configId, path, data) {
     const ls = getStore(configId).getLocalState();
     const newLocalState = ls.setIn([].concat(path), data);
+    componentsActions.updateLocalState(componentId, configId, newLocalState, path);
+  }
+
+  function removeFromLocalState(configId, path) {
+    const ls = getStore(configId).getLocalState();
+    const newLocalState = ls.deleteIn([].concat(path));
     componentsActions.updateLocalState(componentId, configId, newLocalState, path);
   }
 
@@ -177,14 +187,6 @@ export function createActions(componentId) {
       updateLocalState(configId, ['editingQueries', queryId], query);
     },
 
-    editQuery(configId, queryId) {
-      let query = getStore(configId).getConfigQuery(queryId);
-      if (query.has('query')) {
-        query = query.set('advancedMode', true);
-      }
-      updateLocalState(configId, ['editingQueries', queryId], query);
-    },
-
     cancelQueryEdit(configId, queryId) {
       updateLocalState(configId, ['editingQueries', queryId], null);
     },
@@ -223,9 +225,51 @@ export function createActions(componentId) {
       return runData;
     },
 
+    editReset(configId) {
+      removeFromLocalState(configId, ['isChanged']);
+      removeFromLocalState(configId, ['query']);
+      removeFromLocalState(configId, ['isDestinationEditing']);
+    },
+
+    editChange(configId, newQuery) {
+      const queryId = newQuery.get('id');
+      updateLocalState(configId, ['editingQueries', queryId], newQuery);
+      if (!getLocalState(configId).get('isChanged', false)) {
+        updateLocalState(configId, ['isChanged'], true);
+      }
+    },
+
+    editSave(configId, queryId) {
+      const store = getStore(configId);
+      let newQuery = store.getEditingQuery(queryId);
+      if (newQuery.get('advancedMode')) {
+        newQuery = newQuery.delete('table');
+        newQuery = newQuery.delete('columns');
+      } else {
+        newQuery = newQuery.delete('query');
+      }
+      newQuery = newQuery.delete('advancedMode');
+      newQuery = this.checkTableName(newQuery, store);
+      const newQueries = store.getQueries().map((q) => q.get('id') === queryId ? newQuery : q);
+      const newData = store.configData.setIn(['parameters', 'tables'], newQueries);
+      const diffMsg = 'Edit query '  + newQuery.get('name');
+
+      removeFromLocalState(configId, ['isDestinationEditing']);
+
+      saveConfigData(configId, newData, ['isSaving'], diffMsg).then(() => {
+        removeFromLocalState(configId, ['editingQueries', queryId]);
+        removeFromLocalState(configId, ['isSaving']);
+        removeFromLocalState(configId, ['isChanged']);
+      });
+    },
+
     sourceTablesLoaded(configId) {
       const store = getStore(configId);
       return !!store.getSourceTables(configId);
+    },
+
+    updateLocalState(configId, path, data) {
+      return updateLocalState(configId, path, data);
     },
 
     getSourceTables(configId) {
@@ -247,28 +291,6 @@ export function createActions(componentId) {
           updateLocalState(configId, storeProvisioning.loadingSourceTablesPath, false);
         });
       }
-    },
-
-    updateLocalState(configId, path, data) {
-      return updateLocalState(configId, path, data);
-    },
-
-    // returns localState for @path and function to update local state
-    // on @path+@subPath
-    prepareLocalState(configId, path) {
-      const ls = getStore(configId).getLocalState(path);
-      const updateLocalSubstateFn = (subPath, newData)  =>  {
-        if (_.isEmpty(subPath)) {
-          return updateLocalState([].concat(path), newData);
-        } else {
-          return updateLocalState([].concat(path).concat(subPath), newData);
-        }
-      };
-      return {
-        localState: ls,
-        updateLocalState: updateLocalSubstateFn,
-        prepareLocalState: (newSubPath) => this.prepareLocalState([].concat(path).concat(newSubPath))
-      };
     }
   };
 }

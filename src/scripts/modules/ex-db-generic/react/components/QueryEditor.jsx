@@ -6,10 +6,6 @@ import {Loader} from 'kbc-react-components';
 import {CodeEditor} from '../../../../react/common/common';
 import Select from '../../../../react/common/Select';
 
-import {loadingSourceTablesPath} from '../../storeProvisioning';
-import {sourceTablesPath} from '../../storeProvisioning';
-import {sourceTablesErrorPath} from '../../storeProvisioning';
-
 import AutoSuggestWrapper from '../../../transformations/react/components/mapping/AutoSuggestWrapper';
 import editorMode from '../../templates/editorMode';
 
@@ -23,8 +19,9 @@ export default React.createClass({
     configId: React.PropTypes.string.isRequired,
     defaultOutputTable: React.PropTypes.string.isRequired,
     componentId: React.PropTypes.string.isRequired,
-    localState: React.PropTypes.object.isRequired,
-    updateLocalState: React.PropTypes.func.isRequired
+    isLoadingSourceTables: React.PropTypes.bool.isRequired,
+    sourceTables: React.PropTypes.object.isRequired,
+    sourceTablesError: React.PropTypes.string
   },
 
   getInitialState() {
@@ -81,7 +78,7 @@ export default React.createClass({
   },
 
   getColumnsGroupedByPrimaryKey(targetTable) {
-    var matchedTable = this.sourceTables().find((table) =>
+    var matchedTable = this.props.sourceTables.find((table) =>
       table.get('schema') === targetTable.get('schema')
       && table.get('name') === targetTable.get('tableName')
     );
@@ -127,21 +124,13 @@ export default React.createClass({
     return 'default: ' + this.props.defaultOutputTable;
   },
 
-  isLoadingSourceTables() {
-    return this.localState(loadingSourceTablesPath);
-  },
-
   isSimpleDisabled() {
     return !!this.state.simpleDisabled;
   },
 
-  sourceTables() {
-    return this.localState(sourceTablesPath);
-  },
-
   sourceTableSelectOptions() {
-    if (this.sourceTables() && this.sourceTables().count() > 0) {
-      const groupedTables = this.sourceTables().groupBy(table => table.get('schema'));
+    if (this.props.sourceTables && this.props.sourceTables.count() > 0) {
+      const groupedTables = this.props.sourceTables.groupBy(table => table.get('schema'));
       return groupedTables.keySeq().map(function(group) {
         return {
           value: group,
@@ -193,10 +182,8 @@ export default React.createClass({
   getColumnsOptions() {
     var columns = [];
     if (this.props.query.get('table')) {
-      if (this.isLoadingSourceTables() || this.localState(sourceTablesErrorPath)) {
-        return [];
-      } else {
-        var matchedTable = this.sourceTables().find((table) =>
+      if (this.props.sourceTables && this.props.sourceTables.count() > 0) {
+        var matchedTable = this.props.sourceTables.find((table) =>
           table.get('schema') === this.props.query.get('table').get('schema')
           && table.get('name') === this.props.query.get('table').get('tableName')
         );
@@ -204,6 +191,8 @@ export default React.createClass({
           return [];
         }
         columns = matchedTable.get('columns', Immutable.List()).toJS();
+      } else {
+        return [];
       }
     } else {
       return [];
@@ -218,7 +207,8 @@ export default React.createClass({
   },
 
   handleChangeColumns(newValue) {
-    return this.props.onChange(this.props.query.set('columns', newValue));
+    let query = this.props.query.set('columns', newValue);
+    return this.props.onChange(query);
   },
 
   getQuery() {
@@ -235,14 +225,6 @@ export default React.createClass({
     if (this.props.query.get('table')) {
       return this.props.query.get('table').get('name');
     } else return '';
-  },
-
-  localState(path, defaultVal) {
-    return this.props.localState.getIn(path, defaultVal);
-  },
-
-  updateLocalState(path, newValue) {
-    return this.props.updateLocalState([].concat(path), newValue);
   },
 
   render() {
@@ -376,7 +358,7 @@ export default React.createClass({
         <div className="form-group">
           <label className="col-md-3 control-label">Source Table</label>
           <div className="col-md-6">
-            { (this.isLoadingSourceTables()) ? loader : tableSelect }
+            { (this.props.isLoadingSourceTables) ? loader : tableSelect }
           </div>
         </div>
       );
@@ -419,11 +401,11 @@ export default React.createClass({
   },
 
   renderError() {
-    if (this.localState(sourceTablesErrorPath)) {
+    if (this.props.sourceTablesError) {
       return (
         <div className="alert alert-danger">
           <h4>An Error occured fetching table listing</h4>
-          {this.localState(sourceTablesErrorPath)}
+          {this.props.sourceTablesError}
           <h5>
             Refresh the page to force a retry
           </h5>
