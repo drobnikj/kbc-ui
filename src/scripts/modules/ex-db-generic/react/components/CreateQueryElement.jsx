@@ -4,9 +4,10 @@ import {Navigation} from 'react-router';
 
 
 export default React.createClass({
-  displayName: 'NewQueryButton',
+  displayName: 'CreateQueryElement',
   mixins: [Navigation],
   propTypes: {
+    isNav: React.PropTypes.bool.isRequired,
     configurationId: React.PropTypes.string.isRequired,
     componentId: React.PropTypes.string,
     actionsProvisioning: React.PropTypes.object.isRequired
@@ -25,12 +26,23 @@ export default React.createClass({
   },
 
   render() {
-    return (
-      <a className="list-group-item" onClick={this.createQuery}>
-        <strong><i className="kbc-icon-plus"/>
-          Create a new entry
-        </strong>
-      </a>
-    );
+    if (this.props.isNav) {
+      return (
+        <a className="list-group-item" onClick={this.createQuery}>
+          <strong><i className="kbc-icon-plus"/>
+            Create a new entry
+          </strong>
+        </a>
+      );
+    } else {
+      return (
+        <button
+          className="btn btn-success"
+          onClick={this.createQuery}
+        >
+          <i className="kbc-icon-plus"/> New Query
+        </button>
+      );
+    }
   }
 });

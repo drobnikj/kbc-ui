@@ -9,6 +9,7 @@ import LatestJobsStore from '../../../../jobs/stores/LatestJobsStore';
 import VersionsStore from '../../../../components/stores/VersionsStore';
 
 import QueryTable from './QueryTable';
+import CreateQueryElement from '../../components/CreateQueryElement';
 import ComponentDescription from '../../../../components/react/components/ComponentDescription';
 import ComponentMetadata from '../../../../components/react/components/ComponentMetadata';
 import SidebarVersions from '../../../../components/react/components/SidebarVersionsWrapper';
@@ -64,16 +65,13 @@ export default function(componentId) {
 
     renderNewQueryLink() {
       if (this.state.queries.count() >= 1) {
-        const link = 'ex-db-generic-' + componentId + '-new-query';
         return (
-          <Link
-            to={link}
-            params={{ config: this.state.configId }}
-          >
-            <button className="btn btn-success">
-              <i className="kbc-icon-plus"/> New Query
-            </button>
-          </Link>
+          <CreateQueryElement
+            isNav={false}
+            configurationId={this.state.configId}
+            componentId={componentId}
+            actionsProvisioning={actionsProvisioning}
+          />
         );
       }
     },
