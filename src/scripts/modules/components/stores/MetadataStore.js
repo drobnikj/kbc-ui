@@ -8,17 +8,33 @@ import _ from 'underscore';
 
 var Map = Immutable.Map, List = Immutable.List;
 
-var _store = Map({
-  savingMetadata: Map(),
-  editingMetadata: Map(),
-  metadata: Map(),
-
-  filters: Map()
-});
 const getMetadataValueByKey = (metadata, key, notFoundValue) => {
   const found = metadata.find(m => m.get('key') === key );
   return found ? found.get('value') : notFoundValue;
 };
+
+const groupTablesByInstalledComponents = (tables) => {
+  const allTables = Immutable.fromJS(tables);
+  const grouped = allTables.groupBy((table) => {
+    const tableMetadata = table.get('metadata');
+    const componentId = getMetadataValueByKey(tableMetadata, 'KBC.lastUpdatedBy.component.id', 'Unknown component');
+    const configId = getMetadataValueByKey(tableMetadata, 'KBC.lastUpdatedBy.configuration.id', 'Unknown config');
+    return Map({configId, componentId});
+  });
+  return grouped.map((tgroups) =>
+    tgroups.map((table) => table.get('id')).toList().sort()
+  );
+};
+
+var _store = Map({
+  savingMetadata: Map(),
+  editingMetadata: Map(),
+  metadata: Map(),
+  tablesByInstalledComponents: Map(),
+
+  filters: Map()
+});
+
 
 var MetadataStore = StoreUtils.createStore({
 
@@ -35,16 +51,8 @@ var MetadataStore = StoreUtils.createStore({
     );
   },
 
-  groupTablesByComponentAndConfig() {
-    const allTablesMetadata = _store.getIn(['metadata', 'table'], Map());
-    const grouped = allTablesMetadata.groupBy((tableMetadata) => {
-      const componentId = getMetadataValueByKey(tableMetadata, 'KBC.lastUpdatedBy.component.id', 'Unknown component');
-      const configId = getMetadataValueByKey(tableMetadata, 'KBC.lastUpdatedBy.configuration.id', 'Unknown config');
-      return Map({configId, componentId});
-    });
-    return grouped.map((tgroups) =>
-      tgroups.map((mt, tableId) => tableId).toList()
-    );
+  getTablesByInstalledComponents() {
+    return _store.get('tablesByInstalledComponents');
   },
 
   getColumnMetadata: function(tableId, column, provider, metadataKey) {
@@ -161,6 +169,7 @@ dispatcher.register(function(payload) {
       return MetadataStore.emitChange();
 
     case Constants.ActionTypes.STORAGE_TABLES_LOAD_SUCCESS:
+      _store = _store.setIn(['tablesByInstalledComponents'], groupTablesByInstalledComponents(action.tables));
       _.each(action.tables, function(table) {
         const tableMetadata = Immutable.fromJS(table.metadata);
         _store = _store.setIn(
