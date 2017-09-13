@@ -1,5 +1,5 @@
 import * as storeProvisioning from './storeProvisioning';
-import {Map, List, fromJS} from 'immutable';
+import {List, fromJS} from 'immutable';
 
 import componentsActions from '../components/InstalledComponentsActionCreators';
 import callDockerAction from '../components/DockerActionsApi';
@@ -100,10 +100,6 @@ export function createActions(componentId) {
       updateLocalState(configId, 'editingCredentials', newCredentials);
     },
 
-    resetNewQuery(configId) {
-      updateLocalState(configId, ['newQueries'], Map());
-    },
-
     changeQueryEnabledState(configId, qid, newValue) {
       const store = getStore(configId);
       const newQueries = store.getQueries().map((q) => {
@@ -152,10 +148,12 @@ export function createActions(componentId) {
     createQuery(configId) {
       const store = getStore(configId);
       let newQuery = this.checkTableName(store.getNewQuery(), store);
+      this.changeQueryEdit(configId, newQuery);
       const newQueries = store.getQueries().push(newQuery);
       const newData = store.configData.setIn(['parameters', 'tables'], newQueries);
       const diffMsg = 'Created empty query ';
-      return saveConfigData(configId, newData, ['newQueries', 'isSaving'], diffMsg).then(() => this.resetNewQuery(configId));
+      saveConfigData(configId, newData, ['newQueries', 'isSaving'], diffMsg);
+      return newQuery;
     },
 
     saveCredentialsEdit(configId) {

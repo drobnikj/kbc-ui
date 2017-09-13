@@ -141,12 +141,12 @@ export function createStore(componentId, configId) {
       const ids = this.getQueries().map((q) => q.get('id')).toJS();
       const defaultNewQuery = fromJS({
         enabled: true,
+        name: '[Untitled]',
         incremental: false,
         outputTable: '',
         table: '',
         columns: [],
         primaryKey: [],
-        query: '',
         id: generateId(ids)
       });
       return data.localState.getIn(['newQueries', 'query'], defaultNewQuery);
@@ -201,6 +201,9 @@ export function createStore(componentId, configId) {
     },
 
     getConfigQuery(qid) {
+      if (this.isEditingQuery(qid)) {
+        return this.getEditingQuery(qid);
+      }
       let query = this.getQueries().find((q) => q.get('id') === qid );
       if (query.has('query')) {
         query = query.set('advancedMode', true);

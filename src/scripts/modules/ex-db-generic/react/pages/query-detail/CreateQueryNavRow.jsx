@@ -26,13 +26,11 @@ export default React.createClass({
 
   render() {
     return (
-      <a
-        className="list-group-item"
-        onClick={this.createQuery}
-      >
-        <strong><i className="kbc-icon-plus"/> Create a new entry</strong>
+      <a className="list-group-item" onClick={this.createQuery}>
+        <strong><i className="kbc-icon-plus"/>
+          Create a new entry
+        </strong>
       </a>
     );
   }
 });
-
