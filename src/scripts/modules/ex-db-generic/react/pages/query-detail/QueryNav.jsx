@@ -1,6 +1,7 @@
 import React, {PropTypes} from 'react';
 import SearchRow from '../../../../../react/common/SearchRow';
 import NavRow from './QueryNavRow';
+import CreateQueryNavRow from './CreateQueryNavRow';
 
 export default React.createClass({
   propTypes: {
@@ -20,6 +21,11 @@ export default React.createClass({
           onChange={this.handleFilterChange}
           />
         <div className="list-group">
+          <CreateQueryNavRow
+            configurationId={this.props.configurationId}
+            actionsProvisioning={this.props.actionsProvisioning}
+            componentId={this.props.componentId}
+          />
           {this.rows()}
         </div>
       </div>

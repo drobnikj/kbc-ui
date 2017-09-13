@@ -152,16 +152,9 @@ export function createActions(componentId) {
     createQuery(configId) {
       const store = getStore(configId);
       let newQuery = this.checkTableName(store.getNewQuery(), store);
-      if (newQuery.get('advancedMode')) {
-        newQuery = newQuery.delete('table');
-        newQuery = newQuery.delete('columns');
-      } else {
-        newQuery = newQuery.delete('query');
-      }
-      newQuery = newQuery.delete('advancedMode');
       const newQueries = store.getQueries().push(newQuery);
       const newData = store.configData.setIn(['parameters', 'tables'], newQueries);
-      const diffMsg = 'Create query ' + newQuery.get('name');
+      const diffMsg = 'Created empty query ';
       return saveConfigData(configId, newData, ['newQueries', 'isSaving'], diffMsg).then(() => this.resetNewQuery(configId));
     },
 
