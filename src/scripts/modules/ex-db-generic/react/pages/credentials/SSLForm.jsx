@@ -1,5 +1,4 @@
 import React from 'react';
-import _ from 'underscore';
 
 import Textarea from 'react-textarea-autosize';
 import {Input} from './../../../../../react/common/KbcBootstrap';
@@ -15,6 +14,7 @@ export default React.createClass({
     enabled: React.PropTypes.bool.isRequired,
     onChange: React.PropTypes.func,
     componentId: React.PropTypes.string.isRequired,
+    configId: React.PropTypes.string.isRequired,
     actionsProvisioning: React.PropTypes.object.isRequired
   },
 
@@ -71,8 +71,8 @@ export default React.createClass({
 
   createStaticControl(labelValue, propName) {
     var staticProp = 'Not set.';
-    if (this.props.credentials.getIn['ssl', propName]) {
-      staticProp = <NewLineToBr text={this.props.credentials.getIn(['ssl', propName])}/>
+    if (this.props.credentials.getIn(['ssl', propName])) {
+      staticProp = <NewLineToBr text={this.props.credentials.getIn(['ssl', propName])}/>;
     }
     return (
       <div className="form-group">

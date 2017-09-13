@@ -1,10 +1,12 @@
+import React from 'react';
+
 // define as [labelValue, propName, type = 'text', isProtected = false, isRequired = false]
 
 const defaultFields = [
-  ['Host Name', 'host', 'text', false, true]
-  ['Port', 'port', 'number', false, true]
-  ['Username', 'user', 'text', false, true]
-  ['Password', '#password', 'password', true, true]
+  ['Host Name', 'host', 'text', false, true],
+  ['Port', 'port', 'number', false, true],
+  ['Username', 'user', 'text', false, true],
+  ['Password', '#password', 'password', true, true],
   ['Database', 'database', 'text', false, true]
 ];
 
@@ -19,26 +21,26 @@ const defaultFields = [
 */
 
 const firebirdFields = [
-  ['Database', 'dbname', 'text', false, true]
-  ['Username', 'user', 'text', false, true]
+  ['Database', 'dbname', 'text', false, true],
+  ['Username', 'user', 'text', false, true],
   ['Password', '#password', 'password', true, true]
 ];
 
 const oracleFields = [
-  ['Host Name', 'host', 'text', false, true]
-  ['Port', 'port', 'number', false, true]
-  ['Username', 'user', 'text', false, true]
-  ['Password', '#password', 'password', true, true]
+  ['Host Name', 'host', 'text', false, true],
+  ['Port', 'port', 'number', false, true],
+  ['Username', 'user', 'text', false, true],
+  ['Password', '#password', 'password', true, true],
   ['Service Name/SID', 'database', 'text', false, true]
 ];
 
 const snowflakeFields = [
-  ['Host Name', 'host', 'text', false, true]
-  ['Port', 'port', 'number', false, true]
-  ['Username', 'user', 'text', false, true]
-  ['Password', '#password', 'password', true, true]
-  ['Database', 'database', 'text', false, true]
-  ['Schema', 'schema', 'text', false, true]
+  ['Host Name', 'host', 'text', false, true],
+  ['Port', 'port', 'number', false, true],
+  ['Username', 'user', 'text', false, true],
+  ['Password', '#password', 'password', true, true],
+  ['Database', 'database', 'text', false, true],
+  ['Schema', 'schema', 'text', false, true],
   ['Warehouse', 'warehouse', 'text', false, false]
 ];
 
@@ -53,7 +55,7 @@ const COMPONENTS_FIELDS = {
   'keboola.ex-db-snowflake': snowflakeFields
 };
 
-export default react.createClass({
+export default React.createClass({
   getFields(componentId) {
     if (COMPONENTS_FIELDS[componentId]) {
       return COMPONENTS_FIELDS[componentId];
@@ -67,13 +69,13 @@ export default react.createClass({
   getProtectedProperties(componentId) {
     var result = [];
     let fields = this.getFields(componentId);
-    for (f in fields) {
+    fields.forEach(function(f) {
       let isProtected = f[3];
       let propName = f[1];
       if (isProtected) {
         result.push(propName);
       }
-    }
+    });
     return result;
   },
 
@@ -81,13 +83,13 @@ export default react.createClass({
   getRequiredProperties(componentId) {
     var result = [];
     let fields = this.getFields(componentId);
-    for (f in fields) {
+    fields.forEach(function(f) {
       let isRequired = f[4];
       let propName = f[1];
       if (isRequired) {
         result.push(propName);
       }
-    }
+    });
     return result;
   }
-})
+});

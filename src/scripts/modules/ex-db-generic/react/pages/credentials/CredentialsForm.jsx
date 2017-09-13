@@ -1,7 +1,6 @@
 import React from 'react';
 import {Map} from 'immutable';
-import _ from 'underscore';
-import Clipboard from '../../../../../react/common/Clipboard'
+import Clipboard from '../../../../../react/common/Clipboard';
 
 import {Input} from './../../../../../react/common/KbcBootstrap';
 import TestCredentialsButtonGroup from '../../../../../react/common/TestCredentialsButtonGroup';
@@ -26,7 +25,7 @@ export default React.createClass({
 
   getDefaultProps() {
     return {
-      onChange: function () {
+      onChange: function() {
         return {
           isValidEditingCredentials: true
         };
