@@ -1,5 +1,5 @@
 import React from 'react';
-import {Map, List} from 'immutable';
+import {Map, fromJS} from 'immutable';
 import storageTablesStore from '../../stores/StorageTablesStore';
 import MetadataStore from '../../stores/MetadataStore';
 import storageActionCreators from '../../StorageActionCreators';
@@ -32,7 +32,7 @@ export default  React.createClass({
   getStateFromStores() {
     const isTablesLoading = storageTablesStore.getIsLoading();
     const tables = storageTablesStore.getAll();
-    const metadataGroupedTables = MetadataStore.groupTablesByComponentAndConfig();
+    const metadataGroupedTables = MetadataStore.getTablesByInstalledComponents();
     const components = ComponentsStore.getAll();
     const parsedTables = this.groupTablesByMetadata(tables, InstalledComponentStore.getConfig, components, metadataGroupedTables);
     return {
@@ -83,7 +83,8 @@ export default  React.createClass({
     if (!filter) return true;
     const compareFn = (what) => what.toLowerCase().indexOf(filter.toLowerCase()) >= 0;
     const {parsedTablesMap} = this.state;
-    const isNestedMatch = op.isParent && parsedTablesMap.get(op.value, List()).find(t => compareFn(t.value));
+    const parentTables = op.isParent ? parsedTablesMap.find((v, key) => key.get('label') === op.value) : null;
+    const isNestedMatch = parentTables && parentTables.find(t => compareFn(t.value));
     return isNestedMatch || compareFn(op.label) || compareFn(op.value) || (op.parent && compareFn(op.parent.label));
   },
 
@@ -121,10 +122,9 @@ export default  React.createClass({
         const tableName = isUnknownSource ? tid : tables.getIn([tid, 'name']);
         return {label: tableName, value: tid, isUnknownSource};
       });
-
-      return memo.set(`${componentName} / ${configName}`, tableNames);
+      return memo.set(fromJS({label: `${componentName} / ${configName}`, config: config}), tableNames);
     }, Map());
-    const sortedGroups = groups.sortBy((value, key) => key);
+    const sortedGroups = groups.sortBy((value, key) => key.get('label'));
     return sortedGroups;
   },
 
@@ -153,10 +153,11 @@ export default  React.createClass({
   },
 
   transformOptionsMap() {
-    const option = (value, label, disabled = false, parent = null, isUnknownSource = false) => ({value, label, disabled, isParent: disabled, parent, isUnknownSource});
-    return this.state.parsedTablesMap.reduce((acc, tables, componentName) => {
-      const parent = option(componentName, componentName, true);
-      const children = tables.toJS().map(c => option(c.value, c.label, false, parent, c.isUnknownSource));
+    const option = (value, label, config, disabled = false, parent = null, isUnknownSource = false) => ({value, label, disabled, isParent: disabled, parent, isUnknownSource, config});
+    return this.state.parsedTablesMap.reduce((acc, tables, component) => {
+      const componentName = component.get('label');
+      const parent = option(componentName, componentName, component.get('config').toJS(), true);
+      const children = tables.toJS().map(c => option(c.value, c.label, null, false, parent, c.isUnknownSource));
       return acc.concat(parent).concat(children);
     }, []);
   }
