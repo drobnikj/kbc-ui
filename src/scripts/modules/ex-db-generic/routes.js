@@ -5,8 +5,6 @@ import ExDbIndex from './react/pages/index/Index';
 import ExDbCredentialsPage from './react/pages/credentials/CredentialsPage';
 import ExDbNewCredentialsPage from './react/pages/credentials/NewCredentialsPage';
 import ExDbQueryDetail from './react/pages/query-detail/QueryDetail';
-import ExDbNewQuery from './react/pages/new-query/NewQuery';
-import ExDbNewQueryHeaderButtons from './react/components/NewQueryHeaderButtons';
 import ExDbQueryHeaderButtons from './react/components/QueryActionButtons';
 import ExDbCredentialsHeaderButtons from './react/components/CredentialsHeaderButtons';
 import ExDbNewCredentialsHeaderButtons from './react/components/NewCredentialsHeaderButtons';
@@ -71,17 +69,6 @@ export default function(componentId) {
         ],
         handler: ExDbQueryDetail(componentId, actionsProvisioning, storeProvisioning),
         headerButtonsHandler: ExDbQueryHeaderButtons(componentId, actionsProvisioning, storeProvisioning)
-      }, {
-        name: 'ex-db-generic-' + componentId + '-new-query',
-        path: 'new-query',
-        title: function() {
-          return 'New query';
-        },
-        requireData: [
-          () => StorageActionCreators.loadTables()
-        ],
-        handler: ExDbNewQuery(componentId),
-        headerButtonsHandler: ExDbNewQueryHeaderButtons(componentId, actionsProvisioning, storeProvisioning)
       }, {
         name: 'ex-db-generic-' + componentId + '-credentials',
         path: 'credentials',
