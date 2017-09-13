@@ -117,10 +117,11 @@ export default  React.createClass({
       const config = getConfigFn(componentId, configId);
       const configName = config.count() > 0 ? config.get('name') : configId;
       const isUnknownSource = !component;
-      const tableNames = filteredTablesIds.map(tid => {
+      const tableNames = filteredTablesIds.sort().map(tid => {
         const tableName = isUnknownSource ? tid : tables.getIn([tid, 'name']);
         return {label: tableName, value: tid, isUnknownSource};
       });
+
       return memo.set(`${componentName} / ${configName}`, tableNames);
     }, Map());
     const sortedGroups = groups.sortBy((value, key) => key);
