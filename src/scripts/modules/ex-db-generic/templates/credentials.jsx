@@ -78,7 +78,7 @@ export function getProtectedProperties(componentId) {
 }
 
 // returns @array of properties that cannot be empty
-export function cgetRequiredProperties(componentId) {
+export function getRequiredProperties(componentId) {
   var result = [];
   let fields = this.getFields(componentId);
   fields.forEach(function(f) {

@@ -44,7 +44,6 @@ export default function(
             query={this.state.query}
             configurationId={this.state.configId}
             isPending={!!this.state.pendingActions.get('deleteQuery')}
-            deleteFn={actionCreators.deleteQuery}
             tooltipPlacement="bottom"
             actionsProvisioning={actionsProvisioning}
             entityName={entityName}

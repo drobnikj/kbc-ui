@@ -11,7 +11,6 @@ export default React.createClass({
   propTypes: {
     query: React.PropTypes.object.isRequired,
     configurationId: React.PropTypes.string.isRequired,
-    deleteFn: React.PropTypes.func.isRequired,
     isPending: React.PropTypes.bool.isRequired,
     tooltipPlacement: React.PropTypes.string,
     componentId: React.PropTypes.string,
@@ -24,6 +23,14 @@ export default React.createClass({
       tooltipPlacement: 'top',
       entityName: 'Query'
     };
+  },
+
+  deleteQuery() {
+    this.transitionTo(this.props.componentId, {config: this.props.configurationId});
+    const ExDbActionCreators = this.props.actionsProvisioning.createActions(this.props.componentId);
+    setTimeout(function() {
+      ExDbActionCreators.deleteQuery(this.props.configurationId, this.props.query.get('id'));
+    });
   },
 
   render() {
@@ -44,7 +51,7 @@ export default React.createClass({
           title={deleteLabel}
           text={deleteText}
           buttonLabel="Delete"
-          onConfirm={this.props.deleteFn(this.props.configurationId, this.props.query.get('id'))}
+          onConfirm={this.deleteQuery()}
         >
           <Tooltip
             tooltip={deleteLabel}

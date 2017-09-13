@@ -1,7 +1,7 @@
 import store from '../components/stores/InstalledComponentsStore';
 import {List, Map, fromJS} from 'immutable';
 import fuzzy from 'fuzzy';
-import templateFields from './templates/credentials';
+import * as templateFields from './templates/credentials';
 import hasSshTunnel from './templates/hasSshTunnel';
 import _ from 'underscore';
 import string from '../../utils/string';
