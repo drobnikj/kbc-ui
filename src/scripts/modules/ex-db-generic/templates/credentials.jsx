@@ -1,5 +1,3 @@
-import React from 'react';
-
 // define as [labelValue, propName, type = 'text', isProtected = false, isRequired = false]
 
 const defaultFields = [
@@ -55,41 +53,40 @@ const COMPONENTS_FIELDS = {
   'keboola.ex-db-snowflake': snowflakeFields
 };
 
-export default React.createClass({
-  getFields(componentId) {
-    if (COMPONENTS_FIELDS[componentId]) {
-      return COMPONENTS_FIELDS[componentId];
-    } else {
-      return defaultFields;
-    }
-  },
 
-  // returns @array of properties that needs to be hashed
-  // should return only password property in most cases
-  getProtectedProperties(componentId) {
-    var result = [];
-    let fields = this.getFields(componentId);
-    fields.forEach(function(f) {
-      let isProtected = f[3];
-      let propName = f[1];
-      if (isProtected) {
-        result.push(propName);
-      }
-    });
-    return result;
-  },
-
-  // returns @array of properties that cannot be empty
-  getRequiredProperties(componentId) {
-    var result = [];
-    let fields = this.getFields(componentId);
-    fields.forEach(function(f) {
-      let isRequired = f[4];
-      let propName = f[1];
-      if (isRequired) {
-        result.push(propName);
-      }
-    });
-    return result;
+export function getFields(componentId) {
+  if (COMPONENTS_FIELDS[componentId]) {
+    return COMPONENTS_FIELDS[componentId];
+  } else {
+    return defaultFields;
   }
-});
+}
+
+// returns @array of properties that needs to be hashed
+// should return only password property in most cases
+export function getProtectedProperties(componentId) {
+  var result = [];
+  let fields = this.getFields(componentId);
+  fields.forEach(function(f) {
+    let isProtected = f[3];
+    let propName = f[1];
+    if (isProtected) {
+      result.push(propName);
+    }
+  });
+  return result;
+}
+
+// returns @array of properties that cannot be empty
+export function cgetRequiredProperties(componentId) {
+  var result = [];
+  let fields = this.getFields(componentId);
+  fields.forEach(function(f) {
+    let isRequired = f[4];
+    let propName = f[1];
+    if (isRequired) {
+      result.push(propName);
+    }
+  });
+  return result;
+}
