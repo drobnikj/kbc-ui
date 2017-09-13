@@ -28,9 +28,9 @@ export default React.createClass({
   deleteQuery() {
     this.transitionTo(this.props.componentId, {config: this.props.configurationId});
     const ExDbActionCreators = this.props.actionsProvisioning.createActions(this.props.componentId);
-    setTimeout(function() {
-      ExDbActionCreators.deleteQuery(this.props.configurationId, this.props.query.get('id'));
-    });
+    setTimeout(
+      ExDbActionCreators.deleteQuery, null, this.props.configurationId, this.props.query.get('id')
+    );
   },
 
   render() {
@@ -51,7 +51,7 @@ export default React.createClass({
           title={deleteLabel}
           text={deleteText}
           buttonLabel="Delete"
-          onConfirm={this.deleteQuery()}
+          onConfirm={this.deleteQuery}
         >
           <Tooltip
             tooltip={deleteLabel}
