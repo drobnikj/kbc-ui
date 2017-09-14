@@ -3,7 +3,7 @@ import {Map} from 'immutable';
 import Clipboard from '../../../../../react/common/Clipboard';
 
 import TestCredentialsButtonGroup from '../../../../../react/common/TestCredentialsButtonGroup';
-import {FormControls} from './../../../../../react/common/KbcBootstrap';
+import {Input, FormControls} from './../../../../../react/common/KbcBootstrap';
 import Tooltip from '../../../../../react/common/Tooltip';
 import SshTunnelRow from '../../../../../react/common/SshTunnelRow';
 
@@ -69,16 +69,14 @@ export default React.createClass({
     let savedValue = this.props.savedCredentials.get(propName);
 
     return (
-      <div className="row">
-        <label className="col-xs-4">{this.renderProtectedLabel(labelValue, !!savedValue)}</label>
-        <div className="col-xs-8">
-          <input
+          <Input
+            label={this.renderProtectedLabel(labelValue, !!savedValue)}
             type="password"
+            labelClassName="col-xs-4"
+            wrapperClassName="col-xs-8"
             placeholder={(savedValue) ? 'type new password to change it' : ''}
             value={this.props.credentials.get(propName)}
             onChange={this.handleChange.bind(this, propName)}/>
-        </div>
-      </div>
     );
   },
 
@@ -88,15 +86,13 @@ export default React.createClass({
         return this.createProtectedInput(labelValue, propName);
       } else {
         return (
-          <div className="row">
-            <label className="col-xs-4">{labelValue}</label>
-            <div className="col-xs-8">
-              <input
-                type={type}
-                value={this.props.credentials.get(propName)}
-                onChange={this.handleChange.bind(this, propName)}/>
-            </div>
-          </div>
+          <Input
+            label={labelValue}
+            type={type}
+            labelClassName="col-xs-4"
+            wrapperClassName="col-xs-8"
+            value={this.props.credentials.get(propName)}
+            onChange={this.handleChange.bind(this, propName)}/>
         );
       }
     } else if (isProtected) {
