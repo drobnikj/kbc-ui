@@ -84,19 +84,9 @@ export function createStore(componentId, configId) {
       return validGeneralCreds && sshValid;
     },
 
-    // -------- LOCAL STATE manipulation -----------------
-    getDefaultOutputTableId(query) {
-      if (!query) {return ''; }
-      const qname = string.sanitizeKbcTableIdString(query.get('name', ''));
-      const bucketName = string.sanitizeKbcTableIdString(componentId);
-      return `in.c-${bucketName}.${qname}`;
-    },
-    getQueriesPendingActions() {
-      return data.localState.getIn(['pending'], Map());
-    },
-
-    getQueriesFilter() {
-      return data.localState.get('queriesFilter', '');
+    // Credentials -- start --
+    getCredentials() {
+      return data.parameters.get('db', Map());
     },
 
     isEditingCredentials() {
@@ -109,15 +99,6 @@ export function createStore(componentId, configId) {
 
     getEditingCredentials() {
       return data.localState.get('editingCredentials');
-    },
-
-    isSavingNewQuery() {
-      return data.localState.getIn(['newQueries', 'isSaving']);
-    },
-
-    isValidNewQuery() {
-      const query = this.getNewQuery();
-      return isValidQuery(query);
     },
 
     getNewCredentials() {
@@ -136,6 +117,17 @@ export function createStore(componentId, configId) {
         return defaultNewCredentials;
       }
     },
+    // Credentials -- end --
+
+    isSavingNewQuery() {
+      return data.localState.getIn(['newQueries', 'isSaving']);
+    },
+
+    isValidNewQuery() {
+      const query = this.getNewQuery();
+      return isValidQuery(query);
+    },
+
 
     getNewQuery() {
       const ids = this.getQueries().map((q) => q.get('id')).toJS();
@@ -175,6 +167,21 @@ export function createStore(componentId, configId) {
       }
       return isValidQuery(query);
     },
+
+    getDefaultOutputTableId(query) {
+      if (!query) {return ''; }
+      const qname = string.sanitizeKbcTableIdString(query.get('name', ''));
+      const bucketName = string.sanitizeKbcTableIdString(componentId);
+      return `in.c-${bucketName}.${qname}`;
+    },
+    getQueriesPendingActions() {
+      return data.localState.getIn(['pending'], Map());
+    },
+
+    getQueriesFilter() {
+      return data.localState.get('queriesFilter', '');
+    },
+
     // -------- CONFIGDATA manipulation -----------------
     configData: data.config,
 
@@ -194,10 +201,6 @@ export function createStore(componentId, configId) {
         return fuzzy.match(q, query.get('name')) ||
           fuzzy.match(q, query.get('outputTable'));
       }).sortBy((query) => query.get('name').toLowerCase());
-    },
-
-    getCredentials() {
-      return data.parameters.get('db', Map());
     },
 
     getConfigQuery(qid) {

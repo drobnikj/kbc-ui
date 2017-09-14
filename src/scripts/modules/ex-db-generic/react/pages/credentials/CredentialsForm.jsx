@@ -24,6 +24,10 @@ export default React.createClass({
     actionsProvisioning: React.PropTypes.object.isRequired
   },
 
+  componentWillReceiveProps(nextProps) {
+    this.props = nextProps;
+  },
+
   getDefaultProps() {
     return {
       onChange: function() {
@@ -125,13 +129,17 @@ export default React.createClass({
     }, this);
   },
 
+  sshRowOnChange(sshObject) {
+    return this.props.onChange(this.props.credentials.set('ssh', sshObject));
+  },
+
   renderSshRow() {
     if (this.props.hasSshTunnel(this.props.componentId)) {
       return (
         <SshTunnelRow
           isEditing={this.props.enabled}
           data={this.props.credentials.get('ssh', Map())}
-          onChange={(sshObject) => this.props.onChange(this.props.credentials.set('ssh', sshObject))}
+          onChange={this.sshRowOnChange}
         />
       );
     }

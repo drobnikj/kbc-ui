@@ -93,11 +93,15 @@ export function createActions(componentId) {
     },
 
     cancelCredentialsEdit(configId) {
-      updateLocalState(configId, 'editingCredentials', null);
+      removeFromLocalState(configId, ['isChangedCredentials']);
+      removeFromLocalState(configId, ['editingCredentials']);
     },
 
     updateEditingCredentials(configId, newCredentials) {
       updateLocalState(configId, 'editingCredentials', newCredentials);
+      if (!getLocalState(configId).get('isChangedCredentials', false)) {
+        updateLocalState(configId, ['isChangedCredentials'], true);
+      }
     },
 
     changeQueryEnabledState(configId, qid, newValue) {

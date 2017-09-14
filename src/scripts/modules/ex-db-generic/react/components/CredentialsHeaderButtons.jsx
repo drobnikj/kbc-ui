@@ -3,10 +3,10 @@ import React from 'react';
 import createStoreMixin from '../../../../react/mixins/createStoreMixin';
 
 import RoutesStore from '../../../../stores/RoutesStore';
-
 import {Navigation} from 'react-router';
 
-import {Loader} from 'kbc-react-components';
+import SaveButtons from '../../../../react/common/SaveButtons';
+
 
 export default function(componentId, actionsProvisioning, storeProvisioning) {
   const ExDbActionCreators = actionsProvisioning.createActions(componentId);
@@ -17,59 +17,32 @@ export default function(componentId, actionsProvisioning, storeProvisioning) {
     getStateFromStores() {
       const configId = RoutesStore.getCurrentRouteParam('config');
       const ExDbStore = storeProvisioning.createStore(componentId, configId);
-      const creds = ExDbStore.getEditingCredentials(configId);
       return {
-        currentConfigId: configId,
-        isEditing: ExDbStore.isEditingCredentials(),
-        isSaving: ExDbStore.isSavingCredentials(),
-        isValid: ExDbStore.hasValidCredentials(creds)
+        configId: configId,
+        localState: ExDbStore.getLocalState(componentId, configId)
       };
     },
 
-    handleEditStart() {
-      return ExDbActionCreators.editCredentials(this.state.currentConfigId);
+    handleReset() {
+      return ExDbActionCreators.cancelCredentialsEdit(this.state.configId);
     },
 
-    handleCancel() {
-      return ExDbActionCreators.cancelCredentialsEdit(this.state.currentConfigId);
-    },
-
-    handleCreate() {
-      return ExDbActionCreators.saveCredentialsEdit(this.state.currentConfigId);
+    handleSave() {
+      return ExDbActionCreators.saveCredentialsEdit(this.state.configId);
     },
 
     render() {
-      if (this.state.isEditing) {
-        return (
-          <div className="kbc-buttons">
-            {(this.state.loading) ? <Loader/> : ''}
-            <button
-              className="btn btn-link"
-              disabled={this.state.isSaving}
-              onClick={this.handleCancel}
-            >Cancel
-            </button>
-            <button
-              className="btn btn-success"
-              disabled={this.state.isSaving || !this.state.isValid}
-              onClick={this.handleCreate}
-            >Save
-            </button>
-          </div>
-        );
-      } else {
-        return (
-          <div>
-            <button
-              className="btn btn-success"
-              disabled={this.state.isSaving}
-              onClick={this.handleEditStart}
-            >
-              <span className="fa fa-edit">Edit Credentials</span>
-            </button>
-          </div>
-        );
-      }
+      return (
+        <div className="kbc-buttons">
+          <SaveButtons
+            isSaving={this.state.localState.get('isSavingCredentials', false)}
+            isChanged={this.state.localState.get('isChangedCredentials', false)}
+            onReset={this.handleReset}
+            onSave={this.handleSave}
+          />
+        </div>
+      );
     }
   });
 }
+
