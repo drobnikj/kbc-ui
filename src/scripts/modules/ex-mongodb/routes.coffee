@@ -5,7 +5,6 @@ actionsProvisioning = require './actionsProvisioning'
 ExDbIndex = require './react/pages/index/Index'
 
 ExDbCredentialsPage = require('../ex-db-generic/react/pages/credentials/CredentialsPage').default
-ExDbNewCredentialsPage = require('../ex-db-generic/react/pages/credentials/NewCredentialsPage').default
 
 ExDbQueryDetail = require './react/pages/query-detail/QueryDetail'
 ExDbNewQuery = require './react/pages/new-query/NewQuery'
@@ -13,7 +12,6 @@ ExDbNewQuery = require './react/pages/new-query/NewQuery'
 ExDbNewQueryHeaderButtons = require('./react/components/NewQueryHeaderButtons').default
 ExDbQueryHeaderButtons = require('../ex-db-generic/react/components/QueryActionButtons').default
 ExDbCredentialsHeaderButtons = require('../ex-db-generic/react/components/CredentialsHeaderButtons').default
-ExDbNewCredentialsHeaderButtons = require('../ex-db-generic/react/components/NewCredentialsHeaderButtons').default
 
 ExDbQueryName = require('../ex-db-generic/react/components/QueryName').default
 
