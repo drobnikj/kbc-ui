@@ -17,8 +17,11 @@ export default function(componentId, actionsProvisioning, storeProvisioning) {
     getStateFromStores() {
       const configId = RoutesStore.getCurrentRouteParam('config');
       const ExDbStore = storeProvisioning.createStore(componentId, configId);
+      const editingCredentials = ExDbStore.getEditingCredentials(configId);
       return {
         configId: configId,
+        isSavingCredentials: ExDbStore.isSavingCredentials(configId),
+        isValidEditingCredentials: ExDbStore.hasValidCredentials(editingCredentials),
         localState: ExDbStore.getLocalState(componentId, configId)
       };
     },
@@ -37,6 +40,7 @@ export default function(componentId, actionsProvisioning, storeProvisioning) {
           <SaveButtons
             isSaving={this.state.localState.get('isSavingCredentials', false)}
             isChanged={this.state.localState.get('isChangedCredentials', false)}
+            disabled={this.state.isSavingCredentials || !this.state.isValidEditingCredentials}
             onReset={this.handleReset}
             onSave={this.handleSave}
           />
