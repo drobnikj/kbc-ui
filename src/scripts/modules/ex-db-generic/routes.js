@@ -3,11 +3,9 @@ import IntalledComponentsStore from '../components/stores/InstalledComponentsSto
 import VersionsActionCreators from '../components/VersionsActionCreators';
 import ExDbIndex from './react/pages/index/Index';
 import ExDbCredentialsPage from './react/pages/credentials/CredentialsPage';
-import ExDbNewCredentialsPage from './react/pages/credentials/NewCredentialsPage';
 import ExDbQueryDetail from './react/pages/query-detail/QueryDetail';
 import ExDbQueryHeaderButtons from './react/components/QueryActionButtons';
 import ExDbCredentialsHeaderButtons from './react/components/CredentialsHeaderButtons';
-import ExDbNewCredentialsHeaderButtons from './react/components/NewCredentialsHeaderButtons';
 import ExDbQueryName from './react/components/QueryName';
 
 import createVersionsPageRoute from '../../modules/components/utils/createVersionsPageRoute';
@@ -77,14 +75,6 @@ export default function(componentId) {
           componentId, actionsProvisioning, storeProvisioning, credentialsTemplate, hasSshTunnel
         ),
         headerButtonsHandler: ExDbCredentialsHeaderButtons(componentId, actionsProvisioning, storeProvisioning)
-      }, {
-        name: 'ex-db-generic-' + componentId + '-new-credentials',
-        path: 'new-credentials',
-        title: () => 'New Credentials',
-        handler: ExDbNewCredentialsPage(
-          componentId, actionsProvisioning, storeProvisioning, credentialsTemplate, hasSshTunnel
-        ),
-        headerButtonsHandler: ExDbNewCredentialsHeaderButtons(componentId, actionsProvisioning, storeProvisioning)
       }
     ]
   };

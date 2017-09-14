@@ -24,11 +24,13 @@ import SearchRow from '../../../../../react/common/SearchRow';
 import * as actionsProvisioning from '../../../actionsProvisioning';
 import LastUpdateInfo from '../../../../../react/common/LastUpdateInfo';
 
+import {Navigation} from 'react-router';
+
 export default function(componentId) {
   const actionsCreators = actionsProvisioning.createActions(componentId);
   return React.createClass({
     displayName: 'ExDbIndex',
-    mixins: [createStoreMixin(VersionsStore, LatestJobsStore, storeProvisioning.componentsStore)],
+    mixins: [createStoreMixin(VersionsStore, LatestJobsStore, storeProvisioning.componentsStore), Navigation],
 
     componentWillReceiveProps() {
       return this.setState(this.getStateFromStores());
@@ -46,12 +48,14 @@ export default function(componentId) {
       const enabledQueries = queries.filter(function(query) {
         return query.get('enabled');
       });
+      const hasValidCredentials = ExDbStore.hasValidCredentials(credentials);
       return {
         configId: config,
         versions: VersionsStore.getVersions(componentId, config),
         pendingActions: ExDbStore.getQueriesPendingActions(),
         latestJobs: LatestJobsStore.getJobs(componentId, config),
-        hasCredentials: ExDbStore.hasValidCredentials(credentials),
+        hasCredentials: hasValidCredentials,
+        newCredentials: ExDbStore.getNewCredentials(),
         queries: queries,
         queriesFilter: ExDbStore.getQueriesFilter(),
         queriesFiltered: ExDbStore.getQueriesFiltered(),
@@ -59,35 +63,38 @@ export default function(componentId) {
       };
     },
 
+    handleCredentialsSetup() {
+      actionsCreators.updateEditingCredentials(this.state.configId, this.state.newCredentials);
+      this.transitionTo(
+        'ex-db-generic-' + componentId + '-credentials',
+        {config: this.state.configId}
+      );
+    },
+
     handleFilterChange(query) {
       return actionsCreators.setQueriesFilter(this.state.configId, query);
     },
 
     renderNewQueryLink() {
-      if (this.state.queries.count() >= 1) {
-        return (
-          <CreateQueryElement
-            isNav={false}
-            configurationId={this.state.configId}
-            componentId={componentId}
-            actionsProvisioning={actionsProvisioning}
-          />
-        );
-      }
+      return (
+        <CreateQueryElement
+          isNav={false}
+          configurationId={this.state.configId}
+          componentId={componentId}
+          actionsProvisioning={actionsProvisioning}
+        />
+      );
     },
 
     renderCredentialsSetup() {
       if (!this.state.hasCredentials) {
-        const link = 'ex-db-generic-' + componentId + '-new-credentials';
         return (
           <div className="row component-empty-state text-center">
             <p>Please setup database credentials for this extractor</p>
-            <Link
-              to={link}
-              params={{ config: this.state.configId }}
-            >
-              <button className="btn btn-success">Setup Database Credentials</button>
-            </Link>
+            <button
+              className="btn btn-success"
+              onClick={this.handleCredentialsSetup}
+            >Setup Database Credentials</button>
           </div>
         );
       }
@@ -128,15 +135,9 @@ export default function(componentId) {
           );
         }
       } else if (this.state.hasCredentials) {
-        const link = 'ex-db-generic-' + componentId + '-new-query';
         return (
           <div className="row component-empty-state text-center">
             <p>There are no queries configured yet.</p>
-            <Link to={link} params={{ config: this.state.configId }}>
-              <button className="btn btn-success">
-                <i className="kbc-icon-plus"/> New Query
-              </button>
-            </Link>
           </div>
         );
       }

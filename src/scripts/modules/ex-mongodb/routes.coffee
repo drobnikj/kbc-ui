@@ -90,13 +90,4 @@ module.exports = (componentId) ->
       componentId, actionsProvisioning, storeProvisioning, credentialsTemplate, hasSshTunnel
     )
     headerButtonsHandler: ExDbCredentialsHeaderButtons(componentId, actionsProvisioning, storeProvisioning)
-  ,
-    name: "ex-db-generic-#{componentId}-new-credentials"
-    path: 'new-credentials'
-    title: ->
-      'New Credentials'
-    handler: ExDbNewCredentialsPage(
-      componentId, actionsProvisioning, storeProvisioning, credentialsTemplate, hasSshTunnel
-    )
-    headerButtonsHandler: ExDbNewCredentialsHeaderButtons(componentId, actionsProvisioning, storeProvisioning)
   ]
