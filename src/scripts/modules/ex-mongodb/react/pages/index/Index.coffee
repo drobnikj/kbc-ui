@@ -76,7 +76,7 @@ module.exports = (componentId) ->
               p null,
                 'Please setup database credentials for this extractor.'
               Link
-                to: "ex-db-generic-#{componentId}-new-credentials"
+                to: "ex-db-generic-#{componentId}-credentials"
                 params:
                   config: @state.configId
               ,
