@@ -9,6 +9,7 @@ import createStoreMixin from  '../../../../react/mixins/createStoreMixin';
 import ComponentsStore from '../../stores/ComponentsStore';
 // import validateStorageTableId from  '../../../../utils/validateStorageTableId';
 import InstalledComponentStore from '../../stores/InstalledComponentsStore';
+import ComponentIcon from '../../../../react/common/ComponentIcon';
 
 export default  React.createClass({
   mixins: [createStoreMixin(storageTablesStore, MetadataStore, ComponentsStore, InstalledComponentStore)],
@@ -90,7 +91,7 @@ export default  React.createClass({
 
   optionRenderer(op) {
     if (op.isParent) {
-      return <strong style={{color: '#000'}}>{op.label}</strong>;
+      return <strong style={{color: '#000'}}><ComponentIcon component={fromJS(op.component)}/>{op.label}</strong>;
     }
     let value = op.label;
     if (!this.tableExist(op.value)) value = <span className="text-muted">{op.label}</span>;
@@ -101,7 +102,7 @@ export default  React.createClass({
     if (op.isUnknownSource) {
       return op.value;
     } else {
-      return `${op.parent.label} / ${op.label}`;
+      return <span><ComponentIcon component={fromJS(op.parent.component)}/> {op.parent.label} / {op.label}</span>;
     }
   },
 
@@ -122,7 +123,7 @@ export default  React.createClass({
         const tableName = isUnknownSource ? tid : tables.getIn([tid, 'name']);
         return {label: tableName, value: tid, isUnknownSource};
       });
-      return memo.set(fromJS({label: `${componentName} / ${configName}`, config: config}), tableNames);
+      return memo.set(fromJS({label: `${componentName} / ${configName}`, config: config, component: component}), tableNames);
     }, Map());
     const sortedGroups = groups.sortBy((value, key) => key.get('label'));
     return sortedGroups;
@@ -153,11 +154,14 @@ export default  React.createClass({
   },
 
   transformOptionsMap() {
-    const option = (value, label, config, disabled = false, parent = null, isUnknownSource = false) => ({value, label, disabled, isParent: disabled, parent, isUnknownSource, config});
-    return this.state.parsedTablesMap.reduce((acc, tables, component) => {
-      const componentName = component.get('label');
-      const parent = option(componentName, componentName, component.get('config').toJS(), true);
-      const children = tables.toJS().map(c => option(c.value, c.label, null, false, parent, c.isUnknownSource));
+    const option = (value, label, component, config, disabled = false, parent = null, isUnknownSource = false) =>
+    ({value, label, disabled, isParent: disabled, parent, isUnknownSource, config, component});
+    return this.state.parsedTablesMap.reduce((acc, tables, groupInfo) => {
+      const componentName = groupInfo.get('label');
+      const component = groupInfo.get('component') ? groupInfo.get('component').toJS() : null;
+      const config = groupInfo.get('config').toJS();
+      const parent = option(componentName, componentName, component, config, true);
+      const children = tables.toJS().map(c => option(c.value, c.label, null, null, false, parent, c.isUnknownSource));
       return acc.concat(parent).concat(children);
     }, []);
   }
