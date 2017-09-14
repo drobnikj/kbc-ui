@@ -18,7 +18,7 @@ import StorageActionCreators from '../components/StorageActionCreators';
 import * as actionsProvisioning from './actionsProvisioning';
 import * as storeProvisioning from './storeProvisioning';
 
-import credentialsTemplate from './templates/credentials';
+import * as credentialsTemplate from './templates/credentials';
 import hasSshTunnel from '../ex-db-generic/templates/hasSshTunnel';
 
 import {createTablesRoute} from '../table-browser/routes';

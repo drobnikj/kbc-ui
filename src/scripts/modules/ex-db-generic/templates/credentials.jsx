@@ -66,7 +66,7 @@ export function getFields(componentId) {
 // should return only password property in most cases
 export function getProtectedProperties(componentId) {
   var result = [];
-  let fields = this.getFields(componentId);
+  let fields = getFields(componentId);
   fields.forEach(function(f) {
     let isProtected = f[3];
     let propName = f[1];
@@ -80,7 +80,7 @@ export function getProtectedProperties(componentId) {
 // returns @array of properties that cannot be empty
 export function getRequiredProperties(componentId) {
   var result = [];
-  let fields = this.getFields(componentId);
+  let fields = getFields(componentId);
   fields.forEach(function(f) {
     let isRequired = f[4];
     let propName = f[1];

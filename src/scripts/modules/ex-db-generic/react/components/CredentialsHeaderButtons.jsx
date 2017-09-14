@@ -63,7 +63,7 @@ export default function(componentId, actionsProvisioning, storeProvisioning) {
             <button
               className="btn btn-success"
               disabled={this.state.isSaving}
-              onClick={this.handleEditStart()}
+              onClick={this.handleEditStart}
             >
               <span className="fa fa-edit">Edit Credentials</span>
             </button>

@@ -2,11 +2,12 @@ import React from 'react';
 import {Map} from 'immutable';
 import Clipboard from '../../../../../react/common/Clipboard';
 
-import {Input} from './../../../../../react/common/KbcBootstrap';
 import TestCredentialsButtonGroup from '../../../../../react/common/TestCredentialsButtonGroup';
-import StaticText from './../../../../../react/common/KbcBootstrap';
+import {FormControls} from './../../../../../react/common/KbcBootstrap';
 import Tooltip from '../../../../../react/common/Tooltip';
 import SshTunnelRow from '../../../../../react/common/SshTunnelRow';
+
+const StaticText = FormControls.Static;
 
 export default React.createClass({
   displayName: 'ExDbCredentialsForm',
@@ -68,14 +69,16 @@ export default React.createClass({
     let savedValue = this.props.savedCredentials.get(propName);
 
     return (
-      <Input
-        label={this.renderProtectedLabel(labelValue, !!savedValue)}
-        type="password"
-        placeholder={(savedValue) ? 'type new password to change it' : ''}
-        value={this.props.credentials.get(propName)}
-        labelClassName="col-xs-4"
-        wrapperClassName="col-xs-8"
-        onChange={this.handleChange.bind(this, propName)}/>
+      <div className="row">
+        <label className="col-xs-4">{this.renderProtectedLabel(labelValue, !!savedValue)}</label>
+        <div className="col-xs-8">
+          <input
+            type="password"
+            placeholder={(savedValue) ? 'type new password to change it' : ''}
+            value={this.props.credentials.get(propName)}
+            onChange={this.handleChange.bind(this, propName)}/>
+        </div>
+      </div>
     );
   },
 
@@ -85,13 +88,15 @@ export default React.createClass({
         return this.createProtectedInput(labelValue, propName);
       } else {
         return (
-          <Input
-            label={labelValue}
-            type={type}
-            value={this.props.credentials.get(propName)}
-            labelClassName="col-xs-4"
-            wrapperClassName="col-xs-8"
-            onChange={this.handleChange.bind(this, propName)}/>
+          <div className="row">
+            <label className="col-xs-4">{labelValue}</label>
+            <div className="col-xs-8">
+              <input
+                type={type}
+                value={this.props.credentials.get(propName)}
+                onChange={this.handleChange.bind(this, propName)}/>
+            </div>
+          </div>
         );
       }
     } else if (isProtected) {
@@ -112,7 +117,7 @@ export default React.createClass({
           labelClassName="col-xs-4"
           wrapperClassName="col-xs-8">
           {this.props.credentials.get(propName)}
-          {(this.props.credentials.get(propName)) ? <Clipboard text={this.props.credentials.get(propName)}/> : null}
+          {(this.props.credentials.get(propName)) ? <Clipboard text={this.props.credentials.get(propName).toString()}/> : null}
         </StaticText>
       );
     }
@@ -121,7 +126,7 @@ export default React.createClass({
   renderFields() {
     return this.props.credentialsTemplate.getFields(this.props.componentId).map(function(field) {
       return this.createInput(field[0], field[1], field[2], field[3]);
-    });
+    }, this);
   },
 
   renderSshRow() {
