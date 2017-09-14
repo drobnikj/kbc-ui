@@ -10,6 +10,7 @@ import ComponentsStore from '../../stores/ComponentsStore';
 // import validateStorageTableId from  '../../../../utils/validateStorageTableId';
 import InstalledComponentStore from '../../stores/InstalledComponentsStore';
 import ComponentIcon from '../../../../react/common/ComponentIcon';
+import fuzzy from 'fuzzy';
 
 export default  React.createClass({
   mixins: [createStoreMixin(storageTablesStore, MetadataStore, ComponentsStore, InstalledComponentStore)],
@@ -82,11 +83,11 @@ export default  React.createClass({
 
   filterOption(op, filter) {
     if (!filter) return true;
-    const compareFn = (what) => what.toLowerCase().indexOf(filter.toLowerCase()) >= 0;
+    const compareFn = (what) => fuzzy.match(filter, what);  // what.toLowerCase().indexOf(filter.toLowerCase()) >= 0;
     const {parsedTablesMap} = this.state;
     const parentTables = op.isParent ? parsedTablesMap.find((v, key) => key.get('label') === op.value) : null;
-    const isNestedMatch = parentTables && parentTables.find(t => compareFn(t.value));
-    return isNestedMatch || compareFn(op.label) || compareFn(op.value) || (op.parent && compareFn(op.parent.label));
+    const isNestedMatch = parentTables && parentTables.find(t => compareFn(op.value + t.label));
+    return isNestedMatch || (op.parent && compareFn(op.parent.label + op.label));
   },
 
   optionRenderer(op) {
