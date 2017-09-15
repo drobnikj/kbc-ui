@@ -26,6 +26,12 @@ import LastUpdateInfo from '../../../../../react/common/LastUpdateInfo';
 
 import {Navigation} from 'react-router';
 
+import {loadingSourceTablesPath} from '../../../storeProvisioning';
+import {sourceTablesPath} from '../../../storeProvisioning';
+import {sourceTablesErrorPath} from '../../../storeProvisioning';
+
+import Quickstart from '../../components/Quickstart';
+
 export default function(componentId) {
   const actionsCreators = actionsProvisioning.createActions(componentId);
   return React.createClass({
@@ -37,7 +43,10 @@ export default function(componentId) {
     },
 
     componentDidMount() {
-      return actionsProvisioning.loadSourceTables(componentId, this.state.configId);
+      // fetch sourceTable info if not done already
+      if (!this.state.sourceTables) {
+        return actionsProvisioning.loadSourceTables(componentId, this.state.configId);
+      }
     },
 
     getStateFromStores() {
@@ -56,10 +65,12 @@ export default function(componentId) {
         latestJobs: LatestJobsStore.getJobs(componentId, config),
         hasCredentials: hasValidCredentials,
         newCredentials: ExDbStore.getNewCredentials(),
+        sourceTables: ExDbStore.getSourceTables(),
         queries: queries,
         queriesFilter: ExDbStore.getQueriesFilter(),
         queriesFiltered: ExDbStore.getQueriesFiltered(),
-        hasEnabledQueries: enabledQueries.count() > 0
+        hasEnabledQueries: enabledQueries.count() > 0,
+        localState: ExDbStore.getLocalState()
       };
     },
 
@@ -138,6 +149,14 @@ export default function(componentId) {
         return (
           <div className="row component-empty-state text-center">
             <p>There are no queries configured yet.</p>
+            <Quickstart
+              componentId={componentId}
+              configId={this.state.configId}
+              isLoadingSourceTables={this.state.localState.getIn(loadingSourceTablesPath)}
+              sourceTables={this.state.localState.getIn(sourceTablesPath)}
+              sourceTablesError={this.state.localState.getIn(sourceTablesErrorPath)}
+              actionsProvisioning={actionsProvisioning}
+          />
           </div>
         );
       }
