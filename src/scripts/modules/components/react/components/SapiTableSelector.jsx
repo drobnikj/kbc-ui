@@ -11,9 +11,11 @@ import ComponentsStore from '../../stores/ComponentsStore';
 import InstalledComponentStore from '../../stores/InstalledComponentsStore';
 import ComponentIcon from '../../../../react/common/ComponentIcon';
 import fuzzy from 'fuzzy';
+import ApplicationStore from '../../../../stores/ApplicationStore';
+const PREVIEW_FEATURE = 'table-selector-ex';
 
 export default  React.createClass({
-  mixins: [createStoreMixin(storageTablesStore, MetadataStore, ComponentsStore, InstalledComponentStore)],
+  mixins: [createStoreMixin(storageTablesStore, MetadataStore, ComponentsStore, InstalledComponentStore, ApplicationStore)],
   propTypes: {
     onSelectTableFn: React.PropTypes.func.isRequired,
     placeholder: React.PropTypes.string.isRequired,
@@ -38,6 +40,7 @@ export default  React.createClass({
     const components = ComponentsStore.getAll();
     const parsedTables = this.mapTablesMetadataToConfigs(tables, InstalledComponentStore.getConfig, components, metadataGroupedTables);
     return {
+      hasMetadataFeature: ApplicationStore.hasCurrentAdminFeature(PREVIEW_FEATURE),
       isTablesLoading: isTablesLoading,
       tables: tables,
       parsedTablesMap: parsedTables
@@ -60,6 +63,7 @@ export default  React.createClass({
   },
 
   render() {
+    const isNew = this.state.hasMetadataFeature;
     return (
       <Select
         disabled={this.props.disabled}
@@ -68,11 +72,11 @@ export default  React.createClass({
         value={this.props.value}
         isLoading={this.state.isTablesLoading}
         placeholder={this.props.placeholder}
-        valueRenderer={this.valueRenderer}
-        optionRenderer={this.optionRenderer}
-        filterOption={this.filterOption}
+        valueRenderer={isNew && this.valueRenderer}
+        optionRenderer={isNew && this.optionRenderer}
+        filterOption={isNew && this.filterOption}
         onChange={this.onSelectTable}
-        options={this.prepareOptions()}
+        options={isNew ? this.prepareOptions() : this._getTables(this.state.tables)}
       />
     );
   },
