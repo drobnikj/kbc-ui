@@ -36,7 +36,7 @@ export default  React.createClass({
     const tables = storageTablesStore.getAll();
     const metadataGroupedTables = MetadataStore.getTablesByInstalledComponents();
     const components = ComponentsStore.getAll();
-    const parsedTables = this.groupTablesByMetadata(tables, InstalledComponentStore.getConfig, components, metadataGroupedTables);
+    const parsedTables = this.mapTablesMetadataToConfigs(tables, InstalledComponentStore.getConfig, components, metadataGroupedTables);
     return {
       isTablesLoading: isTablesLoading,
       tables: tables,
@@ -72,7 +72,7 @@ export default  React.createClass({
         optionRenderer={this.optionRenderer}
         filterOption={this.filterOption}
         onChange={this.onSelectTable}
-        options={this.transformOptionsMap()}
+        options={this.prepareOptions()}
       />
     );
   },
@@ -83,51 +83,77 @@ export default  React.createClass({
 
   filterOption(op, filter) {
     if (!filter) return true;
-    const compareFn = (what) => fuzzy.match(filter, what);  // what.toLowerCase().indexOf(filter.toLowerCase()) >= 0;
-    const {parsedTablesMap} = this.state;
-    const parentTables = op.isParent ? parsedTablesMap.find((v, key) => key.get('label') === op.value) : null;
-    const isNestedMatch = parentTables && parentTables.find(t => compareFn(op.value + t.label));
-    return isNestedMatch || (op.parent && compareFn(op.parent.label + op.label));
+    const compareFn = (groupName, tableLabel) => fuzzy.match(filter, `${groupName} ${tableLabel}`);  // what.toLowerCase().indexOf(filter.toLowerCase()) >= 0;
+    if (op.isParent) {
+      return op.childrenOptions.find(t => compareFn(op.groupName, t.tableLabel));
+    } else {
+      return compareFn(op.groupName, op.tableLabel);
+    }
   },
 
   optionRenderer(op) {
     if (op.isParent) {
-      return <strong style={{color: '#000'}}><ComponentIcon component={fromJS(op.component)}/>{op.label}</strong>;
+      const groupName = op.groupName;
+      return (
+        <strong style={{color: '#000'}}>
+          <ComponentIcon component={fromJS(op.component)}/>{groupName}
+        </strong>
+      );
     }
-    let value = op.label;
-    if (!this.tableExist(op.value)) value = <span className="text-muted">{op.label}</span>;
-    return <div style={{paddingLeft: 20}}>{value}</div>;
+    if (!this.tableExist(op.table.id)) {
+      return <span className="text-muted">{op.tableLabel}</span>;
+    } else {
+      return <div style={{paddingLeft: 20}}>{op.tableLabel}</div>;
+    }
   },
 
   valueRenderer(op) {
-    if (op.isUnknownSource) {
-      return op.value;
-    } else {
-      return <span><ComponentIcon component={fromJS(op.parent.component)}/> {op.parent.label} / {op.label}</span>;
-    }
+    return <span><ComponentIcon component={fromJS(op.component)}/> {op.groupName} / {op.tableLabel}</span>;
   },
 
-  groupTablesByMetadata(tables, getConfigFn, components, tablesByComponentAndConfig) {
-    const allTables = this._getTables(tables);
+  mapTablesMetadataToConfigs(storageTables, getConfigFn, components, tablesByComponentAndConfig) {
+    const allTables = this._getTables(storageTables);
     const allTablesIds = allTables.map(t => t.value);
-    const groups = tablesByComponentAndConfig.reduce((memo, tablesIds, key) => {
-      const filteredTablesIds = tablesIds.filter(tid => allTablesIds.includes(tid));
-      if (filteredTablesIds.count() === 0) return memo;
+    const groups = tablesByComponentAndConfig.reduce((memo, grouTables, key) => {
+      const filteredTables = grouTables.filter(t => allTablesIds.includes(t.get('id')));
+      if (filteredTables.count() === 0) return memo;
       const componentId = key.get('componentId');
       const component = components.get(componentId);
-      const componentName = component ? `${component.get('name')} ${component.get('type')}` : componentId;
       const configId = key.get('configId');
-      const config = getConfigFn(componentId, configId);
-      const configName = config.count() > 0 ? config.get('name') : configId;
-      const isUnknownSource = !component;
-      const tableNames = filteredTablesIds.sort().map(tid => {
-        const tableName = isUnknownSource ? tid : tables.getIn([tid, 'name']);
-        return {label: tableName, value: tid, isUnknownSource};
-      });
-      return memo.set(fromJS({label: `${componentName} / ${configName}`, config: config, component: component}), tableNames);
+      const parsedConfig = component ? getConfigFn(componentId, configId) : null;
+      const config = parsedConfig && parsedConfig.count() === 0 ? Map({id: configId, name: configId}) : parsedConfig;
+      const groupKey = fromJS({config: config, component: component});
+      return memo.set(groupKey, filteredTables);
     }, Map());
-    const sortedGroups = groups.sortBy((value, key) => key.get('label'));
-    return sortedGroups;
+
+    return groups;
+  },
+
+  composeGroupName(jsComponent, jsConfig) {
+    const componentName = jsComponent ? jsComponent.name : 'Unknown component';
+    const configName = jsConfig ? jsConfig.name : 'Unknown config';
+    return `${componentName} / ${configName}`;
+  },
+
+  makeOption(component, config, childrenOptions, table = null) {
+    const groupName = this.composeGroupName(component, config);
+    const isTableOption = !!table;
+    const value = isTableOption ? table.id : null;
+    let tableLabel = null;
+    if (isTableOption) tableLabel = component ? table.name : table.id;
+    return {component, groupName, config, childrenOptions, table, disabled: !isTableOption, isParent: !isTableOption, value, tableLabel};
+  },
+
+  prepareOptions() {
+    return this.state.parsedTablesMap.reduce((acc, tables, groupInfo) => {
+      // const componentName = groupInfo.get('label');
+      const jsComponent = groupInfo.get('component') ? groupInfo.get('component').toJS() : null;
+      const jsConfig = groupInfo.get('config') ? groupInfo.get('config').toJS() : null;
+      const jsTables = tables.toJS();
+      const children = jsTables.map(table => this.makeOption(jsComponent, jsConfig, null, table));
+      const parent = this.makeOption(jsComponent, jsConfig, children);
+      return acc.concat(parent).concat(children);
+    }, []);
   },
 
   _getTables(allTables) {
@@ -152,18 +178,6 @@ export default  React.createClass({
     } else {
       return result;
     }
-  },
-
-  transformOptionsMap() {
-    const option = (value, label, component, config, disabled = false, parent = null, isUnknownSource = false) =>
-    ({value, label, disabled, isParent: disabled, parent, isUnknownSource, config, component});
-    return this.state.parsedTablesMap.reduce((acc, tables, groupInfo) => {
-      const componentName = groupInfo.get('label');
-      const component = groupInfo.get('component') ? groupInfo.get('component').toJS() : null;
-      const config = groupInfo.get('config').toJS();
-      const parent = option(componentName, componentName, component, config, true);
-      const children = tables.toJS().map(c => option(c.value, c.label, null, null, false, parent, c.isUnknownSource));
-      return acc.concat(parent).concat(children);
-    }, []);
   }
+
 });
