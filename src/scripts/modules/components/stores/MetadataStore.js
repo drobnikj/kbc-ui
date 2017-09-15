@@ -21,8 +21,9 @@ const groupTablesByInstalledComponents = (tables) => {
     const configId = getMetadataValueByKey(tableMetadata, 'KBC.lastUpdatedBy.configuration.id', 'Unknown config');
     return Map({configId, componentId});
   });
-  return grouped.map((tgroups) =>
-    tgroups.map((table) => table.get('id')).toList().sort()
+  return grouped.sortBy((value, key) => key.get('componentId') + key.get('configId'))
+    .map((tgroups) =>
+      tgroups.sortBy((table) => table.get('id'))
   );
 };
 
@@ -31,7 +32,6 @@ var _store = Map({
   editingMetadata: Map(),
   metadata: Map(),
   tablesByInstalledComponents: Map(),
-
   filters: Map()
 });
 
