@@ -13,7 +13,8 @@ import ComponentIcon from '../../../../react/common/ComponentIcon';
 import fuzzy from 'fuzzy';
 import ApplicationStore from '../../../../stores/ApplicationStore';
 const PREVIEW_FEATURE = 'table-selector-ex';
-
+const BEGIN_MATCH = '%%%_';
+const END_MATCH = '_%%%';
 export default  React.createClass({
   mixins: [createStoreMixin(storageTablesStore, MetadataStore, ComponentsStore, InstalledComponentStore, ApplicationStore)],
   propTypes: {
@@ -75,6 +76,7 @@ export default  React.createClass({
         valueRenderer={isNew && this.valueRenderer}
         optionRenderer={isNew && this.optionRenderer}
         filterOption={isNew && this.filterOption}
+        filterOptions={isNew && this.filterOptions}
         onChange={this.onSelectTable}
         options={isNew ? this.prepareOptions() : this._getTables(this.state.tables)}
       />
@@ -95,19 +97,112 @@ export default  React.createClass({
     }
   },
 
+  extractFilterValue(op) {
+    if (!op.component) return op.isParent ? op.groupName : op.tableLabel;
+    if (op.isParent) return op.groupName;
+    return `${op.groupName} ${op.tableLabel}`;
+  },
+  // filterMatchedOption(op, matchedOptions, )
+  filterOptions(options, filter) {
+    if (!filter) {
+      return options.map(o => {
+        o.matched = null;
+        return o;
+      });
+    }
+    const filterSettings = {
+      pre: BEGIN_MATCH,
+      post: END_MATCH,
+      extract: this.extractFilterValue};
+    const matched = fuzzy.filter(filter, options, filterSettings);
+    // mutating options object!!
+    const newOptions = options.map((o, idx) => {
+      const matchedOption = matched.find(m => m.index === idx);
+      if (matchedOption) {
+        o.matched = matchedOption;
+      } else {
+        o.matched = null;
+      }
+      return o;
+    });
+    const results = newOptions.filter(o => {
+      if (!o.isParent) return !!o.matched;
+      return o.childrenOptions.reduce((memo, cop) => memo || matched.find(m => m.original.table && m.original.table.id === cop.table.id), false);
+    });
+    return results;
+  },
+
+  renderMatchedOptionParts(parts) {
+    const SIMPLE = 0;
+    return parts.map(e => e.type === SIMPLE ? <span>{e.value}</span> : <u>{e.value}</u>);
+  },
+
+  parseMatchedOption(matched, parentName) {
+    const splitRegex = new RegExp(`(${BEGIN_MATCH})|(${END_MATCH})`);
+    const strArray = matched.string.split(splitRegex);
+    const SIMPLE = 0;
+    const UNDERLINED = 1;
+    let parsingState = SIMPLE;
+    const elements = strArray.reduce((memo, token) => {
+      if (token === BEGIN_MATCH) {
+        parsingState = UNDERLINED;
+        return memo;
+      }
+      if (token === END_MATCH) {
+        parsingState = SIMPLE;
+        return memo;
+      }
+      memo.push({type: parsingState, value: token});
+      return memo;
+    }, []).filter(e => e.value);
+    const groups = elements.reduce((memo, el) => {
+      const newValue = `${memo.value}${el.value}`;
+      const lastValue = memo.value;
+
+      if (parentName && parentName.indexOf(newValue) === 0) {
+        memo.value = newValue;
+        memo.parentGroup.push(el);
+        return memo;
+      }
+      if (parentName && parentName.indexOf(lastValue) === 0 && lastValue !== parentName) {
+        const lastPart = parentName.slice(lastValue.length);
+        memo.parentGroup.push({type: el.type, value: lastPart});
+        const firstPart = el.value.slice(lastPart.length);
+        memo.tableGroup.push({type: el.type, value: firstPart});
+        memo.value = parentName;
+        return memo;
+      }
+      memo.tableGroup.push(el);
+      return memo;
+    }, {parentGroup: [], tableGroup: [], value: ''});
+
+    return (
+      <span>
+        {groups.parentGroup.length > 0 &&
+          <small>
+            {this.renderMatchedOptionParts(groups.parentGroup)}
+            {' '}/{' '}
+          </small>
+        }
+        <span>{this.renderMatchedOptionParts(groups.tableGroup)}</span>
+      </span>
+    );
+  },
+
   optionRenderer(op) {
     if (op.isParent) {
-      const groupName = op.groupName;
+      const groupName = op.matched ? this.parseMatchedOption(op.matched) : op.groupName;
       return (
         <strong style={{color: '#000'}}>
           <ComponentIcon component={fromJS(op.component)}/>{groupName}
         </strong>
       );
     }
+    const value = op.matched ? this.parseMatchedOption(op.matched, op.groupName) : op.tableLabel;
     if (!this.tableExist(op.table.id)) {
-      return <span className="text-muted">{op.tableLabel}</span>;
+      return <span className="text-muted">{value}</span>;
     } else {
-      return <div style={{paddingLeft: 20}}>{op.tableLabel}</div>;
+      return <div style={{paddingLeft: 20}}>{value}</div>;
     }
   },
 
