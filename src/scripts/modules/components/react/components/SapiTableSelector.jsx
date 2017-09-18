@@ -223,7 +223,11 @@ export default  React.createClass({
       const config = parsedConfig && parsedConfig.count() === 0 ? Map({id: configId, name: configId}) : parsedConfig;
       const groupKey = fromJS({config: config, component: component});
       return memo.set(groupKey, filteredTables);
-    }, Map());
+    }, Map()).sortBy((value, groupInfo) => {
+      const jsComponent = groupInfo.get('component') ? groupInfo.get('component').toJS() : null;
+      const jsConfig = groupInfo.get('config') ? groupInfo.get('config').toJS() : null;
+      return this.composeGroupName(jsComponent, jsConfig);
+    });
 
     return groups;
   },
