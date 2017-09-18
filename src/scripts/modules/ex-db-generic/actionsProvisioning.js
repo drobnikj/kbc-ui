@@ -67,21 +67,7 @@ export function createActions(componentId) {
   }
 
   return {
-    componentSupportsSimpleSetup() {
-      const nonSupportedComponents = [
-        'keboola.ex-db-firebird',
-        'keboola.ex-db-impala'
-      ];
-      if (nonSupportedComponents.indexOf(componentId) > -1) {
-        return false;
-      }
-      return true;
-    },
-
-    setQueriesFilter(configId, query) {
-      updateLocalState(configId, 'queriesFilter', query);
-    },
-
+    // Credentials Actions start
     editCredentials(configId) {
       const store = getStore(configId);
       let credentials = store.getCredentials();
@@ -104,6 +90,59 @@ export function createActions(componentId) {
       }
     },
 
+    resetNewCredentials(configId) {
+      updateLocalState(configId, ['newCredentials'], null);
+    },
+
+    updateNewCredentials(configId, newCredentials) {
+      updateLocalState(configId, ['newCredentials'], newCredentials);
+    },
+
+    saveNewCredentials(configId) {
+      const store = getStore(configId);
+      let newCredentials = store.getNewCredentials();
+      newCredentials = updateProtectedProperties(newCredentials, store.getCredentials());
+      const newData = store.configData.setIn(['parameters', 'db'], newCredentials);
+      const diffMsg = 'Save new credentials';
+      return saveConfigData(configId, newData, ['isSavingCredentials'], diffMsg).then(() => this.resetNewCredentials(configId));
+    },
+
+    saveCredentialsEdit(configId) {
+      const store = getStore(configId);
+      let credentials = store.getEditingCredentials();
+      credentials = updateProtectedProperties(credentials, store.getCredentials());
+      const newConfigData = store.configData.setIn(['parameters', 'db'], credentials);
+      const diffMsg = 'Update credentials';
+      return saveConfigData(configId, newConfigData, 'isSavingCredentials', diffMsg).then(() => this.cancelCredentialsEdit(configId));
+    },
+
+    testCredentials(configId, credentials) {
+      const store = getStore(configId);
+      const testingCredentials = updateProtectedProperties(credentials, store.getCredentials());
+      let runData = store.configData.setIn(['parameters', 'tables'], List());
+      runData = runData.setIn(['parameters', 'db'], testingCredentials);
+      const params = {
+        configData: runData.toJS()
+      };
+      return callDockerAction(componentId, 'testConnection', params);
+    },
+    // Credentials actions end
+
+    componentSupportsSimpleSetup() {
+      const nonSupportedComponents = [
+        'keboola.ex-db-firebird',
+        'keboola.ex-db-impala'
+      ];
+      if (nonSupportedComponents.indexOf(componentId) > -1) {
+        return false;
+      }
+      return true;
+    },
+
+    setQueriesFilter(configId, query) {
+      updateLocalState(configId, 'queriesFilter', query);
+    },
+
     changeQueryEnabledState(configId, qid, newValue) {
       const store = getStore(configId);
       const newQueries = store.getQueries().map((q) => {
@@ -121,23 +160,6 @@ export function createActions(componentId) {
 
     updateNewQuery(configId, newQuery) {
       updateLocalState(configId, ['newQueries', 'query'], newQuery);
-    },
-
-    resetNewCredentials(configId) {
-      updateLocalState(configId, ['newCredentials'], null);
-    },
-
-    updateNewCredentials(configId, newCredentials) {
-      updateLocalState(configId, ['newCredentials'], newCredentials);
-    },
-
-    saveNewCredentials(configId) {
-      const store = getStore(configId);
-      let newCredentials = store.getNewCredentials();
-      newCredentials = updateProtectedProperties(newCredentials, store.getCredentials());
-      const newData = store.configData.setIn(['parameters', 'db'], newCredentials);
-      const diffMsg = 'Save new credentials';
-      return saveConfigData(configId, newData, ['isSavingCredentials'], diffMsg).then(() => this.resetNewCredentials(configId));
     },
 
     checkTableName(query, store) {
@@ -160,32 +182,12 @@ export function createActions(componentId) {
       return newQuery;
     },
 
-    saveCredentialsEdit(configId) {
-      const store = getStore(configId);
-      let credentials = store.getEditingCredentials();
-      credentials = updateProtectedProperties(credentials, store.getCredentials());
-      const newConfigData = store.configData.setIn(['parameters', 'db'], credentials);
-      const diffMsg = 'Update credentials';
-      return saveConfigData(configId, newConfigData, 'isSavingCredentials', diffMsg).then(() => this.cancelCredentialsEdit(configId));
-    },
-
     deleteQuery(configId, qid) {
       const store = getStore(configId);
       const newQueries = store.getQueries().filter((q) => q.get('id') !== qid);
       const newData = store.configData.setIn(['parameters', 'tables'], newQueries);
       const diffMsg = 'Delete query ' + store.getQueryName(qid);
       return saveConfigData(configId, newData, ['pending', qid, 'deleteQuery'], diffMsg);
-    },
-
-    testCredentials(configId, credentials) {
-      const store = getStore(configId);
-      const testingCredentials = updateProtectedProperties(credentials, store.getCredentials());
-      let runData = store.configData.setIn(['parameters', 'tables'], List());
-      runData = runData.setIn(['parameters', 'db'], testingCredentials);
-      const params = {
-        configData: runData.toJS()
-      };
-      return callDockerAction(componentId, 'testConnection', params);
     },
 
     prepareSingleQueryRunData(configId, query) {
