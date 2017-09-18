@@ -134,7 +134,8 @@ export default  React.createClass({
   },
 
   composeGroupName(jsComponent, jsConfig) {
-    const componentName = jsComponent ? jsComponent.name : 'Unknown component';
+    const componentType = jsComponent && jsComponent.type !== 'transformation' ? ` ${jsComponent.type}` : '';
+    const componentName = jsComponent ? `${jsComponent.name}${componentType}` : 'Unknown component';
     const configName = jsConfig ? jsConfig.name : 'Unknown config';
     return `${componentName} / ${configName}`;
   },
