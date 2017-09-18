@@ -21,7 +21,7 @@ export default React.createClass({
     configId: React.PropTypes.string.isRequired,
     credentialsTemplate: React.PropTypes.object.isRequired,
     hasSshTunnel: React.PropTypes.func.isRequired,
-    actionsProvisioning: React.PropTypes.object.isRequired
+    actionCreators: React.PropTypes.object.isRequired
   },
 
   componentWillReceiveProps(nextProps) {
@@ -40,8 +40,7 @@ export default React.createClass({
 
 
   testCredentials() {
-    const ExDbActionCreators = this.props.actionsProvisioning.createActions(this.props.componentId);
-    return ExDbActionCreators.testCredentials(this.props.configId, this.props.credentials);
+    return this.props.actionCreators.testCredentials(this.props.configId, this.props.credentials);
   },
 
   handleChange(propName, event) {

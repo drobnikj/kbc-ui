@@ -234,6 +234,15 @@ export function createActions(componentId) {
       });
     },
 
+    quickstart(configId, tableList) {
+      const store = getStore(configId);
+      return tableList.map(function(table) {
+        let query = store.getNewQuery();
+        query = query.set('name', table.get('tableName'));
+        return query;
+      });
+    },
+
     sourceTablesLoaded(configId) {
       const store = getStore(configId);
       return !!store.getSourceTables(configId);

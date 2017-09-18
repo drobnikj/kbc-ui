@@ -43,7 +43,7 @@ export default function(componentId, actionsProvisioning, storeProvisioning, cre
                 configId={this.state.configId}
                 credentialsTemplate={credentialsTemplate}
                 hasSshTunnel={hasSshTunnel}
-                actionsProvisioning={actionCreators}
+                actionCreators={actionCreators}
               />
             </TabPane>
             {this.renderSSLForm()}
