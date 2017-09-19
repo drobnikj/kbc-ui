@@ -119,13 +119,7 @@ export function createStore(componentId, configId) {
     },
     // Credentials -- end --
 
-    isValidNewQuery() {
-      const query = this.getNewQuery();
-      return isValidQuery(query);
-    },
-
-
-    getNewQuery() {
+    generateNewQuery() {
       const ids = this.getQueries().map((q) => q.get('id')).toJS();
       const defaultNewQuery = fromJS({
         enabled: true,
@@ -137,8 +131,12 @@ export function createStore(componentId, configId) {
         primaryKey: [],
         id: generateId(ids)
       });
-      data.localState.setIn(['editingQueries', defaultNewQuery.get('id')], defaultNewQuery);
+      data.localState.setIn(['newQueries', defaultNewQuery.get('id')], defaultNewQuery);
       return defaultNewQuery;
+    },
+
+    getNewQuery(queryId) {
+      return data.localState.getIn(['newQueries', queryId]);
     },
 
     isEditingQuery(queryId) {
@@ -155,6 +153,10 @@ export function createStore(componentId, configId) {
 
     isSavingQuery(queryId) {
       return !!data.localState.getIn(['isSaving', queryId]);
+    },
+
+    isNewQuery(queryID) {
+      return !!data.localState.getIn(['newQueries', queryID]);
     },
 
     isEditingQueryValid(queryId) {
@@ -204,6 +206,8 @@ export function createStore(componentId, configId) {
     getConfigQuery(qid) {
       if (this.isEditingQuery(qid)) {
         return this.getEditingQuery(qid);
+      } else if (this.isNewQuery(qid)) {
+        return this.getNewQuery(qid);
       }
       let query = this.getQueries().find((q) => q.get('id') === qid );
       if (query.has('query')) {

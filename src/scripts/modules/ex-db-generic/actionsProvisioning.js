@@ -7,6 +7,8 @@ import callDockerAction from '../components/DockerActionsApi';
 import getDefaultPort from './templates/defaultPorts';
 import {getProtectedProperties} from './templates/credentials';
 
+import RouterStore from '../../stores/RoutesStore';
+
 export function loadConfiguration(componentId, configId) {
   if (!createActions(componentId).sourceTablesLoaded(configId)) {
     createActions(componentId).updateLocalState(configId, storeProvisioning.loadingSourceTablesPath, true);
@@ -158,10 +160,6 @@ export function createActions(componentId) {
       return saveConfigData(configId, newData, ['pending', qid, 'enabled'], diffMsg);
     },
 
-    updateNewQuery(configId, newQuery) {
-      updateLocalState(configId, ['newQueries', 'query'], newQuery);
-    },
-
     checkTableName(query, store) {
       const defaultTableName = store.getDefaultOutputTableId(query);
       if (query.get('outputTable', '').trim().length > 0) {
@@ -173,7 +171,8 @@ export function createActions(componentId) {
 
     createQuery(configId) {
       const store = getStore(configId);
-      let newQuery = this.checkTableName(store.getNewQuery(), store);
+      let newQuery = this.checkTableName(store.generateNewQuery(), store);
+      updateLocalState(configId, ['newQueries', newQuery.get('id'), newQuery]);
       this.changeQueryEdit(configId, newQuery);
       return newQuery;
     },
@@ -196,6 +195,12 @@ export function createActions(componentId) {
       removeFromLocalState(configId, ['isChanged', queryId]);
       removeFromLocalState(configId, ['editingQueries', queryId]);
       removeFromLocalState(configId, ['isDestinationEditing', queryId]);
+      const store = getStore(configId);
+      if (store.isNewQuery(queryId)) {
+        const router = RouterStore.getRouter();
+        router.transitionTo(componentId, {config: configId});
+        // removeFromLocalState(configId, ['newQueries', queryId]);
+      }
     },
 
     changeQueryEdit(configId, newQuery) {
@@ -232,13 +237,16 @@ export function createActions(componentId) {
         removeFromLocalState(configId, ['editingQueries', queryId]);
         removeFromLocalState(configId, ['isSaving', queryId]);
         removeFromLocalState(configId, ['isChanged', queryId]);
+        if (store.isNewQuery(queryId)) {
+          removeFromLocalState(configId, ['newQueries', queryId]);
+        }
       });
     },
 
     quickstart(configId, tableList) {
       const store = getStore(configId);
       return tableList.map(function(table) {
-        let query = store.getNewQuery();
+        let query = store.generateNewQuery();
         query = query.set('name', table.get('tableName'));
         return query;
       });

@@ -117,7 +117,8 @@ export default function(componentId) {
           <SearchRow
             onChange={this.handleFilterChange}
             query={this.state.queriesFilter}
-            className="row kbc-search-row"/>
+            className="kbc-search-row"
+          />
         );
       }
     },
@@ -181,18 +182,24 @@ export default function(componentId) {
         <div className="container-fluid">
           <div className="col-md-9 kbc-main-content">
             <div className="row kbc-header">
-              <div className="col-sm-8">
+              <div>
                 <ComponentDescription
                   componentId={componentId}
                   configId={this.state.configId}
                 />
               </div>
-              <div className="col-sm-4 kbc-buttons">
-                {this.renderNewQueryLink()}
-              </div>
             </div>
             {this.renderCredentialsSetup()}
-            {this.renderSearchRow()}
+            <div className="kbc-header">
+              <div className="col-sm-9">
+                {this.renderSearchRow()}
+              </div>
+              <div className="col-sm-3">
+                <div className="kbc-search-row text-right">
+                  {this.renderNewQueryLink()}
+                </div>
+              </div>
+            </div>
             {this.renderQueriesMain()}
           </div>
           <div className="col-md-3 kbc-main-sidebar">
