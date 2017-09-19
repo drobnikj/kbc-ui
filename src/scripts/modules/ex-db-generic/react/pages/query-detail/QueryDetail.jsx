@@ -80,6 +80,8 @@ export default function(componentId, actionsProvisioning, storeProvisioning) {
           isLoadingSourceTables={this.state.localState.getIn(loadingSourceTablesPath)}
           sourceTables={this.state.localState.getIn(sourceTablesPath)}
           sourceTablesError={this.state.localState.getIn(sourceTablesErrorPath)}
+          destinationEditing={this.state.localState.getIn(['isDestinationEditing', this.state.queryId], false)}
+          onDestinationEdit={ExDbActionCreators.destinationEdit}
         />
       );
     },

@@ -209,7 +209,7 @@ export function createStore(componentId, configId) {
       } else if (this.isNewQuery(qid)) {
         return this.getNewQuery(qid);
       }
-      let query = this.getQueries().find((q) => q.get('id') === qid );
+      let query = this.getQueries().find((q) => q.get('id') === qid ) || this.generateNewQuery();
       if (query.has('query')) {
         query = query.set('advancedMode', true);
       } else {

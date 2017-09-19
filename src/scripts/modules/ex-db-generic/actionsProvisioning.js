@@ -199,7 +199,14 @@ export function createActions(componentId) {
       if (store.isNewQuery(queryId)) {
         const router = RouterStore.getRouter();
         router.transitionTo(componentId, {config: configId});
-        // removeFromLocalState(configId, ['newQueries', queryId]);
+        // updateLocalState(configId, ['newQueries', queryId]);
+      }
+    },
+
+    destinationEdit(configId, queryId) {
+      updateLocalState(configId, ['isDestinationEditing', queryId], true);
+      if (!getLocalState(configId).get(['isChanged', queryId], false)) {
+        updateLocalState(configId, ['isChanged', queryId], true);
       }
     },
 

@@ -6,7 +6,8 @@ import {Loader} from 'kbc-react-components';
 import {CodeEditor} from '../../../../react/common/common';
 import Select from '../../../../react/common/Select';
 
-import AutoSuggestWrapper from '../../../transformations/react/components/mapping/AutoSuggestWrapper';
+import TableSelectorForm from '../../../../react/common/TableSelectorForm';
+// import AutoSuggestWrapper from '../../../transformations/react/components/mapping/AutoSuggestWrapper';
 import editorMode from '../../templates/editorMode';
 
 export default React.createClass({
@@ -22,7 +23,9 @@ export default React.createClass({
     componentId: React.PropTypes.string.isRequired,
     isLoadingSourceTables: React.PropTypes.bool.isRequired,
     sourceTables: React.PropTypes.object.isRequired,
-    sourceTablesError: React.PropTypes.string
+    sourceTablesError: React.PropTypes.string,
+    destinationEditing: React.PropTypes.bool.isRequired,
+    onDestinationEdit: React.PropTypes.func.isRequired
   },
 
   getDefaultProps() {
@@ -99,8 +102,14 @@ export default React.createClass({
     return this.props.onChange(immutable);
   },
 
-  handleOutputTableChange(newValue) {
+  handleDestinationChange(newValue) {
     return this.props.onChange(this.props.query.set('outputTable', newValue));
+  },
+
+  onDestinationEdit() {
+    const query = this.props.query;
+    this.props.onChange(query);
+    this.props.onDestinationEdit(this.props.configId, this.props.query.get('id'));
   },
 
   getColumnsGroupedByPrimaryKey(targetTable) {
@@ -292,20 +301,22 @@ export default React.createClass({
               />
             </div>
           </div>
+          <div>
+            <TableSelectorForm
+              labelClassName="col-md-3"
+              wrapperClassName="col-md-9"
+              value={this.props.query.get('outputTable')}
+              onChange={this.handleDestinationChange}
+              disabled={this.props.disabled}
+              label="Destination"
+              help="Where the table will be imported.
+                    If the table or bucket does not exist, it will be created.
+                    If left empty, the default value will be used"
+              onEdit={this.onDestinationEdit}
+              editing={this.props.destinationEditing}
+            />
+          </div>
           <div className="form-group">
-            <label className="col-md-3 control-label">Output Table</label>
-            <div className="col-md-6">
-              <AutoSuggestWrapper
-                suggestions={this.tableSelectOptions()}
-                placeholder={this.tableNamePlaceholder()}
-                value={this.props.query.get('outputTable')}
-                onChange={this.handleOutputTableChange}
-                disabled={this.props.disabled}
-              />
-              <div className="help-block">
-                If left empty, the default value will be used
-              </div>
-            </div>
             <div className="col-md-3 checkbox">
               <label>
                 <input

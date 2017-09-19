@@ -84,7 +84,7 @@ export default React.createClass({
         <button
           className="btn btn-success"
           onClick={this.quickstart}
-        > Let's go
+        > Start me up
         </button>
       </div>
     );
