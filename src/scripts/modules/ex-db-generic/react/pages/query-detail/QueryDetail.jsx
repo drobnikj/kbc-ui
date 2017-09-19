@@ -108,6 +108,7 @@ export default function(componentId, actionsProvisioning, storeProvisioning) {
                   isChanged={this.state.localState.getIn(['isChanged', this.state.queryId], false)}
                   onReset={this.handleReset}
                   onSave={this.handleSave}
+                  disabled={this.state.localState.getIn(['isSaving', this.state.queryId], false) || !this.state.isValid}
                 />
               </div>
             </div>
