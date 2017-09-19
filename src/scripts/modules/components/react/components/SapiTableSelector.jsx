@@ -210,7 +210,11 @@ export default  React.createClass({
   },
 
   valueRenderer(op) {
-    return <span><ComponentIcon component={fromJS(op.component)}/> {op.groupName} / {op.tableLabel}</span>;
+    if (op.component)  {
+      return <span><ComponentIcon component={fromJS(op.component)}/> {op.groupName} / {op.tableLabel}</span>;
+    } else {
+      return <span>{op.tableLabel}</span>;
+    }
   },
 
   mapTablesMetadataToConfigs(storageTables, getConfigFn, components, tablesByComponentAndConfig) {
