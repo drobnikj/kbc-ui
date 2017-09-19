@@ -227,9 +227,9 @@ export default  React.createClass({
       const groupKey = fromJS({config: config, component: component});
       return memo.set(groupKey, filteredTables);
     }, Map()).sortBy((value, groupInfo) => {
-      const jsComponent = groupInfo.get('component') ? groupInfo.get('component').toJS() : null;
-      const jsConfig = groupInfo.get('config') ? groupInfo.get('config').toJS() : null;
-      return this.composeGroupName(jsComponent, jsConfig);
+      const componentName = groupInfo.getIn(['component', 'name'], 'Unknown Component');
+      const configName = groupInfo.getIn(['config', 'name'], 'Unknown Config');
+      return `${componentName} ${configName}`;
     });
 
     return groups;
