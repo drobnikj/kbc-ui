@@ -43,20 +43,26 @@ export default React.createClass({
             key={this.props.navQuery.get('name')}
             query={this.props.navQuery}
             configurationId={this.props.configurationId}
-            componentId={this.props.componentId}/>
+            componentId={this.props.componentId}
+            isEditing={this.props.editingQueries.has(this.props.navQuery.get('id'))}
+          />
         );
       }
       var olnavrows = this.props.queries.map(function(query) {
         let navQuery = query;
+        let isEditing = false;
         if (this.props.editingQueries && this.props.editingQueries.has(query.get('id'))) {
           navQuery = this.props.editingQueries.get(query.get('id'));
+          isEditing = true;
         }
         return (
           <NavRow
             key={navQuery.get('name')}
             query={navQuery}
             configurationId={this.props.configurationId}
-            componentId={this.props.componentId}/>
+            componentId={this.props.componentId}
+            isEditing={isEditing}
+          />
         );
       }, this).toArray();
       return navrows.concat(olnavrows);

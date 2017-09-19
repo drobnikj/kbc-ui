@@ -5,7 +5,8 @@ export default React.createClass({
   propTypes: {
     query: PropTypes.object.isRequired,
     configurationId: PropTypes.string.isRequired,
-    componentId: PropTypes.string.isRequired
+    componentId: PropTypes.string.isRequired,
+    isEditing: PropTypes.bool.isRequired
   },
   render() {
     return (
@@ -14,7 +15,10 @@ export default React.createClass({
         to={`ex-db-generic-${this.props.componentId}-query`}
         params={this.linkParams()}
         >
-        <strong>{this.renderName()}</strong>
+        <strong>
+          {(this.props.isEditing) ? <i className="fa fa-fw fa-warning"/> : null}
+          {this.renderName()}
+        </strong>
       </Link>
     );
   },
