@@ -9,20 +9,20 @@ var _store = Map({
 });
 
 var OAuthStore = StoreUtils.createStore({
-  hasCredentials: function (componentId, configId) {
+  hasCredentials: function(componentId, configId) {
     return _store.hasIn(['credentials', componentId, configId]);
   },
 
-  getCredentials: function (componentId, configId) {
+  getCredentials: function(componentId, configId) {
     return _store.getIn(['credentials', componentId, configId]);
   },
 
-  isDeletingCredetials: function (componentId, configId) {
+  isDeletingCredetials: function(componentId, configId) {
     return _store.hasIn(['deletingCredentials', componentId, configId]);
   }
 });
 
-dispatcher.register(function (payload) {
+dispatcher.register(function(payload) {
   var action = payload.action;
 
   switch (action.type) {
@@ -43,6 +43,7 @@ dispatcher.register(function (payload) {
     case Constants.ActionTypes.OAUTH_API_ERROR:
       _store = _store.deleteIn(['deletingCredentials', action.componentId, action.configId]);
       return OAuthStore.emitChange();
+    default:
   }
 });
 

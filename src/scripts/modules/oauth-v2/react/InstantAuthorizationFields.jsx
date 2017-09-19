@@ -72,6 +72,9 @@ export default React.createClass({
     if (this.props.componentId === 'keboola.ex-zendesk') {
       return this.renderZendeskFields();
     }
+    if (this.props.componentId === 'keboola.ex-google-analytics-v4') {
+      return this.renderCredentialsFields();
+    }
     return null;
   },
 
@@ -97,6 +100,44 @@ export default React.createClass({
       <input type="hidden" name="userData"
         value={JSON.stringify({subdomain: this.state.subdomain})}/>
     ];
-  }
+  },
 
+  renderCredentialsFields() {
+    return [
+      <div className="form-group">
+        <label className="control-label col-xs-2">
+          Client ID
+        </label>
+        <div className="col-xs-10">
+          <input
+            className="form-control"
+            type="text"
+            name="clientId"
+            defaultValue={this.state.clientId}
+            onChange={this.makeSetStatePropertyFn('clientId')}
+          />
+          <p className="help-block">
+            Your app Client ID (optional)
+          </p>
+        </div>
+      </div>,
+      <div className="form-group">
+        <label className="control-label col-xs-2">
+          Client Secret
+        </label>
+        <div className="col-xs-10">
+          <input
+            className="form-control"
+            type="text"
+            name="clientSecret"
+            defaultValue={this.state.clientSecret}
+            onChange={this.makeSetStatePropertyFn('clientSecret')}
+          />
+          <p className="help-block">
+            Your app Client Secret (optional)
+          </p>
+        </div>
+      </div>
+    ];
+  }
 });

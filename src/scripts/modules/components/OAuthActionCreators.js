@@ -6,24 +6,23 @@ import Constants from './OAuthConstants';
 import Immutable from 'immutable';
 
 module.exports = {
-  loadCredentials: function (componentId, configId) {
+  loadCredentials: function(componentId, configId) {
     if (oauthStore.hasCredentials(componentId, configId)) {
-      return Promise.resolve()
+      return Promise.resolve();
     }
     return this.loadCredentialsForce(componentId, configId);
   },
 
-  loadCredentialsForce: function (componentId, configId) {
-    oauthApi.getCredentials(componentId, configId).then(function (result) {
+  loadCredentialsForce: function(componentId, configId) {
+    oauthApi.getCredentials(componentId, configId).then(function(result) {
       dispatcher.handleViewAction({
         type: Constants.ActionTypes.OAUTH_LOAD_CREDENTIALS_SUCCESS,
         componentId: componentId,
         configId: configId,
         credentials: Immutable.fromJS(result)
       });
-      return result
-    }).catch(function(err) {
-      console.log("LOAD CREDENTIALS API ERROR", err);
+      return result;
+    }).catch(function() {
       dispatcher.handleViewAction({
         type: Constants.ActionTypes.OAUTH_LOAD_CREDENTIALS_ERROR,
         componentId: componentId,
@@ -32,21 +31,20 @@ module.exports = {
     });
   },
 
-  deleteCredentials: function (componentId, configId) {
+  deleteCredentials: function(componentId, configId) {
     dispatcher.handleViewAction({
       type: Constants.ActionTypes.OAUTH_DELETE_CREDENTIALS_START,
       componentId: componentId,
       configId: configId
     });
-    oauthApi.deleteCredentials(componentId, configId).then(function (result) {
+    oauthApi.deleteCredentials(componentId, configId).then(function(result) {
       dispatcher.handleViewAction({
         type: Constants.ActionTypes.OAUTH_DELETE_CREDENTIALS_SUCCESS,
         componentId: componentId,
         configId: configId,
-        credentials: result,
-      })
-    }).catch(function (err) {
-      console.log("DELETE CREDENTIALS API ERROR", err);
+        credentials: result
+      });
+    }).catch(function() {
       dispatcher.handleViewAction({
         type: Constants.ActionTypes.OAUTH_API_ERROR,
         componentId: componentId,
