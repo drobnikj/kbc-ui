@@ -65,6 +65,12 @@ export default  React.createClass({
 
   render() {
     const isNew = this.state.hasMetadataFeature;
+    const enhancedProps = isNew ? {
+      valueRenderer: this.valueRenderer,
+      optionRenderer: this.optionRenderer,
+      filterOption: this.filterOption,
+      filterOptions: this.filterOptions
+    } : {};
     return (
       <Select
         disabled={this.props.disabled}
@@ -73,10 +79,7 @@ export default  React.createClass({
         value={this.props.value}
         isLoading={this.state.isTablesLoading}
         placeholder={this.props.placeholder}
-        valueRenderer={isNew && this.valueRenderer}
-        optionRenderer={isNew && this.optionRenderer}
-        filterOption={isNew && this.filterOption}
-        filterOptions={isNew && this.filterOptions}
+        {...enhancedProps}
         onChange={this.onSelectTable}
         options={isNew ? this.prepareOptions() : this._getTables(this.state.tables)}
       />
