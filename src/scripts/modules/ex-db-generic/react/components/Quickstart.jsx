@@ -12,11 +12,10 @@ export default React.createClass({
     isLoadingSourceTables: React.PropTypes.bool.isRequired,
     sourceTables: React.PropTypes.object.isRequired,
     sourceTablesError: React.PropTypes.string,
-    actionsProvisioning: React.PropTypes.object.isRequired,
-    tables: React.PropTypes.object
+    actionsProvisioning: React.PropTypes.object.isRequired
   },
 
-  getDefaultProps() {
+  getInitialState() {
     return {
       tables: Immutable.List()
     };
@@ -25,18 +24,17 @@ export default React.createClass({
   quickstart() {
     const ExDbActionCreators = this.props.actionsProvisioning.createActions(this.props.componentId);
 
-    let query = ExDbActionCreators.createQuery(this.props.configId);
+    ExDbActionCreators.quickstart(this.state.tables);
     this.transitionTo(
-      'ex-db-generic-' + this.props.componentId + '-query',
+      this.props.componentId,
       {
-        config: this.props.configId,
-        query: query.get('id')
+        config: this.props.configId
       }
     );
   },
 
   handleTableSelectChange(newValue) {
-    this.props.tables = Immutable.fromJS(newValue);
+    return this.setState({ tables: Immutable.fromJS(newValue)});
   },
 
   getTableOptions() {
@@ -63,8 +61,10 @@ export default React.createClass({
   },
 
   getQuickstartValue() {
-    if (this.props.tables.count() > 0) {
-      return this.props.tables.getIn(['tableName']).toJS();
+    if (this.state.tables.count() > 0) {
+      return this.state.tables.map(function(table) {
+        return table.get('tableName');
+      }).toJS();
     } else {
       return '';
     }
@@ -83,7 +83,7 @@ export default React.createClass({
           options={this.transformOptions(this.getTableOptions())}/>
         <button
           className="btn btn-success"
-          onClic={this.quickstart}
+          onClick={this.quickstart}
         > Let's go
         </button>
       </div>
@@ -107,7 +107,7 @@ export default React.createClass({
 
     return options.reduce((acc, o) => {
       const parent = option(o.value, o.label, (<strong style={{color: '#000'}}>{o.label}</strong>), true);
-      const children = o.children.map(c => option(c.value, c.label, <div style={{paddingLeft: 10}}>{c.label}</div>));
+      const children = o.children.map(c => option(c.value, c.label, <div>{c.label}</div>));
 
       return acc.concat(parent).concat(children);
     }, []);

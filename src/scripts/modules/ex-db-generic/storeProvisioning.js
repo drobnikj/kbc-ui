@@ -119,10 +119,6 @@ export function createStore(componentId, configId) {
     },
     // Credentials -- end --
 
-    isSavingNewQuery() {
-      return data.localState.getIn(['newQueries', 'isSaving']);
-    },
-
     isValidNewQuery() {
       const query = this.getNewQuery();
       return isValidQuery(query);
@@ -133,7 +129,7 @@ export function createStore(componentId, configId) {
       const ids = this.getQueries().map((q) => q.get('id')).toJS();
       const defaultNewQuery = fromJS({
         enabled: true,
-        name: '[Untitled]',
+        name: '',
         incremental: false,
         outputTable: '',
         table: '',
@@ -141,7 +137,8 @@ export function createStore(componentId, configId) {
         primaryKey: [],
         id: generateId(ids)
       });
-      return data.localState.getIn(['newQueries', 'query'], defaultNewQuery);
+      data.localState.setIn(['editingQueries', defaultNewQuery.get('id')], defaultNewQuery);
+      return defaultNewQuery;
     },
 
     isEditingQuery(queryId) {
@@ -174,6 +171,7 @@ export function createStore(componentId, configId) {
       const bucketName = string.sanitizeKbcTableIdString(componentId);
       return `in.c-${bucketName}.${qname}`;
     },
+
     getQueriesPendingActions() {
       return data.localState.getIn(['pending'], Map());
     },

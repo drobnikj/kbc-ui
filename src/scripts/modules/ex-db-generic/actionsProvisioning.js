@@ -175,10 +175,6 @@ export function createActions(componentId) {
       const store = getStore(configId);
       let newQuery = this.checkTableName(store.getNewQuery(), store);
       this.changeQueryEdit(configId, newQuery);
-      const newQueries = store.getQueries().push(newQuery);
-      const newData = store.configData.setIn(['parameters', 'tables'], newQueries);
-      const diffMsg = 'Created empty query ';
-      saveConfigData(configId, newData, ['newQueries', 'isSaving'], diffMsg);
       return newQuery;
     },
 
@@ -221,10 +217,15 @@ export function createActions(componentId) {
       }
       newQuery = newQuery.delete('advancedMode');
       newQuery = this.checkTableName(newQuery, store);
-      const newQueries = store.getQueries().map((q) => q.get('id') === queryId ? newQuery : q);
+      var newQueries, diffMsg;
+      if (store.getQueries().find((q) => q.get('id') === newQuery.get('id') )) {
+        newQueries = store.getQueries().map((q) => q.get('id') === queryId ? newQuery : q);
+        diffMsg = 'Edit query '  + newQuery.get('name');
+      } else {
+        newQueries = store.getQueries().push(newQuery);
+        diffMsg = 'Create query ' + newQuery.get('name');
+      }
       const newData = store.configData.setIn(['parameters', 'tables'], newQueries);
-      const diffMsg = 'Edit query '  + newQuery.get('name');
-
       removeFromLocalState(configId, ['isDestinationEditing', queryId]);
 
       saveConfigData(configId, newData, ['isSaving', queryId], diffMsg).then(() => {
