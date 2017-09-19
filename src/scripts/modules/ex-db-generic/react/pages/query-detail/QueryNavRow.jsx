@@ -14,9 +14,17 @@ export default React.createClass({
         to={`ex-db-generic-${this.props.componentId}-query`}
         params={this.linkParams()}
         >
-        <strong>{this.props.query.get('name')}</strong>
+        <strong>{this.renderName()}</strong>
       </Link>
     );
+  },
+
+  renderName() {
+    if (this.props.query.get('name').trim() === '') {
+      return <span className="text-muted">[Untitled]</span>;
+    } else {
+      return this.props.query.get('name');
+    }
   },
 
   linkParams() {
