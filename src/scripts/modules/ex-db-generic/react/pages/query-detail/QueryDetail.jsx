@@ -86,17 +86,28 @@ export default function(componentId, actionsProvisioning, storeProvisioning) {
 
     render() {
       return (
-        <div className="container-fluid">
-          <div className="kbc-main-content">
-            <div className="col-md-3 kbc-main-nav">
-              <div className="kbc-container">
-                <QueryNav
-                  queries={this.state.queriesFiltered}
-                  editingQueries={this.state.editingQueries}
-                  configurationId={this.state.configId}
-                  filter={this.state.queriesFilter}
-                  componentId={componentId}
-                  actionsProvisioning={actionsProvisioning}
+        <div className="container-fluid kbc-main-content">
+          <div className="col-md-3 kbc-main-nav">
+            <div className="kbc-container">
+              <QueryNav
+                queries={this.state.queriesFiltered}
+                navQuery={this.state.editingQuery}
+                editingQueries={this.state.editingQueries}
+                configurationId={this.state.configId}
+                filter={this.state.queriesFilter}
+                componentId={componentId}
+                actionsProvisioning={actionsProvisioning}
+              />
+            </div>
+          </div>
+          <div className="col-md-9 kbc-main-content-with-nav">
+            <div className="row kbc-header">
+              <div className="kbc-buttons">
+                <SaveButtons
+                  isSaving={this.state.localState.getIn(['isSaving', this.state.queryId], false)}
+                  isChanged={this.state.localState.getIn(['isChanged', this.state.queryId], false)}
+                  onReset={this.handleReset}
+                  onSave={this.handleSave}
                 />
               </div>
             </div>
