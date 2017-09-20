@@ -198,8 +198,8 @@ export function createActions(componentId) {
       const store = getStore(configId);
       if (store.isNewQuery(queryId)) {
         const router = RouterStore.getRouter();
+        updateLocalState(configId, ['newQueries', queryId]);
         router.transitionTo(componentId, {config: configId});
-        // updateLocalState(configId, ['newQueries', queryId]);
       }
     },
 

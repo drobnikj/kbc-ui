@@ -24,7 +24,7 @@ export default React.createClass({
   },
 
   renderName() {
-    if (this.props.query.get('name').trim() === '') {
+    if (this.props.query.get('name') === '') {
       return <span className="text-muted">[Untitled]</span>;
     } else {
       return this.props.query.get('name');

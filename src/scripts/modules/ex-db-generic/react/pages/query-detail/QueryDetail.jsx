@@ -1,4 +1,5 @@
 import React from 'react';
+import {Map} from 'immutable';
 
 import createStoreMixin from '../../../../../react/mixins/createStoreMixin';
 
@@ -69,7 +70,7 @@ export default function(componentId, actionsProvisioning, storeProvisioning) {
     getQueryElement() {
       return (
         <QueryEditor
-          query={this.state.editingQuery}
+          query={this.state.editingQuery || Map()}
           tables={this.state.tables}
           onChange={this.handleQueryChange}
           disabled={this.state.isSaving}
@@ -93,7 +94,7 @@ export default function(componentId, actionsProvisioning, storeProvisioning) {
             <div className="kbc-container">
               <QueryNav
                 queries={this.state.queriesFiltered}
-                navQuery={this.state.editingQuery}
+                navQuery={this.state.editingQuery || Map()}
                 editingQueries={this.state.editingQueries}
                 configurationId={this.state.configId}
                 filter={this.state.queriesFilter}
