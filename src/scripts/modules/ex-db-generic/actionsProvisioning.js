@@ -259,6 +259,10 @@ export function createActions(componentId) {
       });
     },
 
+    quickstartSelected(configId, selected) {
+      updateLocalState(configId, ['quickstart', 'tables'], selected);
+    },
+
     sourceTablesLoaded(configId) {
       const store = getStore(configId);
       return !!store.getSourceTables(configId);

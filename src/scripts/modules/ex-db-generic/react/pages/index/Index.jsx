@@ -1,4 +1,5 @@
 import React from 'react';
+import {Map} from 'immutable';
 import classnames from 'classnames';
 
 import createStoreMixin from '../../../../../react/mixins/createStoreMixin';
@@ -156,7 +157,9 @@ export default function(componentId) {
               isLoadingSourceTables={this.state.localState.getIn(loadingSourceTablesPath)}
               sourceTables={this.state.localState.getIn(sourceTablesPath)}
               sourceTablesError={this.state.localState.getIn(sourceTablesErrorPath)}
-              actionsProvisioning={actionsProvisioning}
+              quickstart={this.state.localState.get('quickstart') || Map()}
+              onChange={actionsCreators.quickstartSelected}
+              onSubmit={actionsCreators.quickstart}
           />
           </div>
         );

@@ -2,7 +2,7 @@ import React from 'react';
 
 import Immutable from 'immutable';
 import {Loader} from 'kbc-react-components';
-import Select from '../../../../react/common/Select';
+import Select from 'react-select';
 
 export default React.createClass({
   displayName: 'Quickstart',
@@ -10,31 +10,21 @@ export default React.createClass({
     configId: React.PropTypes.string.isRequired,
     componentId: React.PropTypes.string,
     isLoadingSourceTables: React.PropTypes.bool.isRequired,
-    sourceTables: React.PropTypes.object.isRequired,
+    sourceTables: React.PropTypes.object,
     sourceTablesError: React.PropTypes.string,
-    actionsProvisioning: React.PropTypes.object.isRequired
-  },
-
-  getInitialState() {
-    return {
-      tables: Immutable.List()
-    };
+    quickstart: React.PropTypes.object,
+    onChange: React.PropTypes.func.isRequired,
+    onSubmit: React.PropTypes.func.isRequired
   },
 
   quickstart() {
-    const ExDbActionCreators = this.props.actionsProvisioning.createActions(this.props.componentId);
-
-    ExDbActionCreators.quickstart(this.state.tables);
-    this.transitionTo(
-      this.props.componentId,
-      {
-        config: this.props.configId
-      }
-    );
+    this.props.onSubmit(this.props.configId, this.props.quickstart.get('tables'));
   },
 
-  handleTableSelectChange(newValue) {
-    return this.setState({ tables: Immutable.fromJS(newValue)});
+  handleSelectChange(selected) {
+    return this.props.onChange(this.props.configId, Immutable.fromJS(selected.map(function(table) {
+      return table.value;
+    })));
   },
 
   getTableOptions() {
@@ -60,32 +50,43 @@ export default React.createClass({
     }
   },
 
-  getQuickstartValue() {
-    if (this.state.tables.count() > 0) {
-      return this.state.tables.map(function(table) {
-        return table.get('tableName');
-      }).toJS();
+  getQuickstartValue(tables) {
+    if (tables) {
+      let jsTables = tables;
+      if (tables.toJS) {
+        jsTables = tables.toJS();
+      }
+      return jsTables.map(function(table) {
+        return {
+          label: table.tableName,
+          value: table
+        };
+      });
     } else {
-      return '';
+      return [];
     }
   },
 
   render() {
     var tableSelector = (
-      <div className="form-group">
-        <Select
-          multi={true}
-          name="quickstart"
-          value={this.getQuickstartValue()}
-          placeholder="All columns will be imported"
-          onChange={this.handleTableSelectChange}
-          optionRenderer={this.optionRenderer}
-          options={this.transformOptions(this.getTableOptions())}/>
-        <button
-          className="btn btn-success"
-          onClick={this.quickstart}
-        > Start me up
-        </button>
+      <div className="form-group text-left">
+        <div className="col-md-8">
+          <Select
+            multi={true}
+            name="quickstart"
+            value={this.getQuickstartValue(this.props.quickstart.get('tables'))}
+            placeholder="Select tables to copy"
+            onChange={this.handleSelectChange}
+            optionRenderer={this.optionRenderer}
+            options={this.transformOptions(this.getTableOptions())}/>
+        </div>
+        <div className="col-md-4">
+          <button
+            className="btn btn-success"
+            onClick={this.quickstart}
+          > Let's go!
+          </button>
+        </div>
       </div>
     );
 

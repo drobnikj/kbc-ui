@@ -230,6 +230,10 @@ export function createStore(componentId, configId) {
       return !!data.localState.getIn(loadingSourceTablesPath);
     },
 
+    getQuickstartTables() {
+      return data.localState.getIn(['quickstart', 'tables']);
+    },
+
     getLocalState() {
       return fetch(componentId, configId).localState;
     }
