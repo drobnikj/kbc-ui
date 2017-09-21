@@ -95,7 +95,7 @@ export default React.createClass({
                     className="kbc-icon-cup kbc-cursor-pointer" />
                 </td>
               </tr>
-             ).toArray()}
+            ).toArray()}
           </tbody>
         </table>
       );
@@ -104,10 +104,30 @@ export default React.createClass({
     }
   },
 
+  renderError(error, code) {
+    let message = 'Unexpected error';
+    try {
+      const jsError = JSON.parse(error).error;
+      message = jsError.message || jsError;
+    } catch (e) {
+      message = error;
+    }
+
+    return (
+      <div className="alert alert-danger">
+        Error: {message}
+        <div>
+          {code >= 500 ? error.get('exceptionId') : null}
+        </div>
+      </div>
+    );
+  },
+
   renderAllAccounts() {
     const getDesc = this.props.accountDescFn;
     if (this.props.syncAccounts.get('isLoading')) return (<span> <Loader /> Fetching {getDesc('pages')} from Facebook...</span>);
-    let data = this.props.syncAccounts.get('data', List());
+
+    let data = this.props.syncAccounts.get('data', List()) || List();
     data = data.filter((a) => !this.localState(['selected'], Map()).has(a.get('id')));
     let allCaption = '';
     if (!!this.localState(['filter'], '')) {
@@ -122,22 +142,28 @@ export default React.createClass({
       });
     }
 
+    const isError = this.props.syncAccounts.get('isError');
+    const error = this.props.syncAccounts.get('error');
+    const code = this.props.syncAccounts.get('code');
+
+    if (isError) return this.renderError(error, code);
+
     if (data.count() > 0) {
       return (
         <table className="table table-striped table-hover kbc-tasks-list">
           <tbody>
             <tr>
               <td>
-                  <a
-                    key="--all--"
-                    onClick={this.selectAllAccounts.bind(this, data)}>
-                    --Select All {allCaption}--
-                  </a>
+                <a
+                  key="--all--"
+                  onClick={this.selectAllAccounts.bind(this, data)}>
+                  --Select All {allCaption}--
+                </a>
               </td>
               <td>
-                  <span
-                    onClick={this.selectAllAccounts.bind(this, data)}
-                    className="kbc-icon-arrow-right pull-right kbc-cursor-pointer" />
+                <span
+                  onClick={this.selectAllAccounts.bind(this, data)}
+                  className="kbc-icon-arrow-right pull-right kbc-cursor-pointer" />
               </td>
             </tr>
             {data.map((d) =>
@@ -156,7 +182,7 @@ export default React.createClass({
                     className="kbc-icon-arrow-right pull-right kbc-cursor-pointer" />
                 </td>
               </tr>
-             ).toArray()}
+            ).toArray()}
           </tbody>
         </table>
       );

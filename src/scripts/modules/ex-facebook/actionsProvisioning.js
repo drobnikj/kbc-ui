@@ -174,13 +174,16 @@ export default function(COMPONENT_ID, configId) {
       let actionName = 'accounts';
       if (COMPONENT_ID === 'keboola.ex-facebook-ads') actionName = 'adaccounts';
       return callDockerAction(COMPONENT_ID, actionName, params)
-        .then((accounts) =>
-              updateLocalState(path, fromJS({
-                isLoading: false,
-                isError: false,
-                error: null,
-                data: accounts.map((a) => {delete a.perms; return a;})
-              })))
+        .then((response) => {
+          const isError = response.code >= 400;
+          return updateLocalState(path, fromJS({
+            isLoading: false,
+            code: response.code,
+            isError: isError,
+            error: isError ? response.error : null,
+            data: !isError ? response.map((a) => {delete a.perms; return a;}) : null
+          }));
+        })
         .catch((error) =>
                updateLocalState(path, fromJS({
                  isLoading: false,
