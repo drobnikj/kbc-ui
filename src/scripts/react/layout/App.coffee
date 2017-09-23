@@ -3,7 +3,7 @@ RouteHandler = React.createFactory(require('react-router').RouteHandler)
 ApplicationStore = require '../../stores/ApplicationStore'
 
 Header = React.createFactory(require '././Header')
-SidebarNavigation = React.createFactory(require '././SidebarNavigation')
+SidebarNavigation = React.createFactory(require('././SidebarNavigation').default)
 FloatingNotifications = require('./FloatingNotifications').default
 ErrorPage = React.createFactory(require './../pages/ErrorPage')
 LoadingPage = React.createFactory(require './../pages/LoadingPage')
