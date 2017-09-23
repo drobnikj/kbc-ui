@@ -1,5 +1,5 @@
 React = require 'react'
-DurationWithIcon = React.createFactory(require '../../../../../react/common/DurationWithIcon')
+DurationWithIcon = React.createFactory(require('../../../../../react/common/DurationWithIcon').default)
 FinishedWithIcon = React.createFactory(require '../../../../../react/common/FinishedWithIcon')
 JobStatusCircle = React.createFactory(require '../../../../../react/common/JobStatusCircle')
 Link = React.createFactory(require('react-router').Link)

@@ -5,7 +5,7 @@ module.exports =
   ComponentName: require('./ComponentName').default
   Confirm: require('./Confirm').default
   Duration: require './Duration'
-  DurationWithIcon: require './DurationWithIcon'
+  DurationWithIcon: require('./DurationWithIcon').default
   Finished: require('./Finished').default
   ValidUntil: require('./ValidUntil').default
   FinishedWithIcon: require './FinishedWithIcon'
