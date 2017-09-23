@@ -1,0 +1,14 @@
+exports[`<LoadingPage /> should render with no props 1`] = `
+<div
+  className="container-fluid">
+  <div
+    className="kbc-main-content">
+    <div
+      className="kbc-main-loader">
+      <span>
+        Loading ...
+      </span>
+    </div>
+  </div>
+</div>
+`;
