@@ -1,0 +1,29 @@
+exports[`<JobStatusCircle /> should render with no props (grey) 1`] = `
+<img
+  src="/some-path/status-grey.svg" />
+`;
+
+exports[`<JobStatusCircle /> should render with status error (red) 1`] = `
+<img
+  src="/some-path/status-red.svg" />
+`;
+
+exports[`<JobStatusCircle /> should render with status processing (orange) 1`] = `
+<img
+  src="/some-path/status-orange.svg" />
+`;
+
+exports[`<JobStatusCircle /> should render with status success (green) 1`] = `
+<img
+  src="/some-path/status-green.svg" />
+`;
+
+exports[`<JobStatusCircle /> should render with status warn (red) 1`] = `
+<img
+  src="/some-path/status-red.svg" />
+`;
+
+exports[`<JobStatusCircle /> should render with status warning (red) 1`] = `
+<img
+  src="/some-path/status-red.svg" />
+`;
