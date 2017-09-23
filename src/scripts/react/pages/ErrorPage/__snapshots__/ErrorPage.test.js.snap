@@ -1,0 +1,16 @@
+exports[`<ErrorPage /> should render with no props 1`] = `
+<div
+  className="container-fluid">
+  <div
+    className="kbc-main-content">
+    <Alert
+      bsClass="alert"
+      bsStyle="danger"
+      closeLabel="Close alert">
+      <div>
+        <p />
+      </div>
+    </Alert>
+  </div>
+</div>
+`;
