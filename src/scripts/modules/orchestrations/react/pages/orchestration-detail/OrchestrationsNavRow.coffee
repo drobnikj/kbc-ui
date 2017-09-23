@@ -3,7 +3,7 @@ React = require 'react'
 
 DurationWithIcon = React.createFactory(require('../../../../../react/common/DurationWithIcon').default)
 FinishedWithIcon = React.createFactory(require '../../../../../react/common/FinishedWithIcon')
-JobStatusCircle = React.createFactory(require '../../../../../react/common/JobStatusCircle')
+JobStatusCircle = React.createFactory(require('../../../../../react/common/JobStatusCircle').default)
 Link = React.createFactory(require('react-router').Link)
 
 ImmutableRendererMixin = require '../../../../../react/mixins/ImmutableRendererMixin'
