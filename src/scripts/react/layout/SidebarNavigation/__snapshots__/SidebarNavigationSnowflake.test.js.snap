@@ -1,0 +1,62 @@
+exports[`<SidebarNavigation /> should render snowflake navigation, has not route 1`] = `
+<Sidebar>
+  <ul
+    className="kbc-nav-sidebar nav nav-sidebar">
+    <li
+      className="">
+      <a
+        href="/home">
+        <span
+          className="kbc-icon-overview" />
+        <span>
+          Overview
+        </span>
+      </a>
+    </li>
+    <li
+      className="active">
+      <a
+        href="/extractors">
+        <span
+          className="kbc-icon-extractors" />
+        <span>
+          Extractors
+        </span>
+      </a>
+    </li>
+    <li
+      className="">
+      <a
+        href="/orchestrations">
+        <span
+          className="kbc-icon-orchestrations" />
+        <span>
+          Orchestrations
+        </span>
+      </a>
+    </li>
+    <li
+      className="">
+      <a
+        href="/storage">
+        <span
+          className="kbc-icon-storage" />
+        <span>
+          Storage
+        </span>
+      </a>
+    </li>
+    <li
+      className="">
+      <a
+        href="/jobs">
+        <span
+          className="kbc-icon-jobs" />
+        <span>
+          Jobs
+        </span>
+      </a>
+    </li>
+  </ul>
+</Sidebar>
+`;

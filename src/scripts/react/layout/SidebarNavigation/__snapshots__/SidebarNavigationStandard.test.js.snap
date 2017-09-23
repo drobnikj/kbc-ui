@@ -1,0 +1,119 @@
+exports[`<SidebarNavigation /> should render standard navigation, has route 1`] = `
+<Sidebar>
+  <ul
+    className="kbc-nav-sidebar nav nav-sidebar">
+    <li
+      className="">
+      <Component
+        to="home">
+        <a
+          href="home">
+          <span
+            className="kbc-icon-overview" />
+          <span>
+            Overview
+          </span>
+        </a>
+      </Component>
+    </li>
+    <li
+      className="active">
+      <Component
+        to="extractors">
+        <a
+          href="extractors">
+          <span
+            className="kbc-icon-extractors" />
+          <span>
+            Extractors
+          </span>
+        </a>
+      </Component>
+    </li>
+    <li
+      className="">
+      <Component
+        to="transformations">
+        <a
+          href="transformations">
+          <span
+            className="kbc-icon-transformations" />
+          <span>
+            Transformations
+          </span>
+        </a>
+      </Component>
+    </li>
+    <li
+      className="">
+      <Component
+        to="writers">
+        <a
+          href="writers">
+          <span
+            className="kbc-icon-writers" />
+          <span>
+            Writers
+          </span>
+        </a>
+      </Component>
+    </li>
+    <li
+      className="">
+      <Component
+        to="orchestrations">
+        <a
+          href="orchestrations">
+          <span
+            className="kbc-icon-orchestrations" />
+          <span>
+            Orchestrations
+          </span>
+        </a>
+      </Component>
+    </li>
+    <li
+      className="">
+      <Component
+        to="storage">
+        <a
+          href="storage">
+          <span
+            className="kbc-icon-storage" />
+          <span>
+            Storage
+          </span>
+        </a>
+      </Component>
+    </li>
+    <li
+      className="">
+      <Component
+        to="jobs">
+        <a
+          href="jobs">
+          <span
+            className="kbc-icon-jobs" />
+          <span>
+            Jobs
+          </span>
+        </a>
+      </Component>
+    </li>
+    <li
+      className="">
+      <Component
+        to="applications">
+        <a
+          href="applications">
+          <span
+            className="kbc-icon-applications" />
+          <span>
+            Applications
+          </span>
+        </a>
+      </Component>
+    </li>
+  </ul>
+</Sidebar>
+`;
