@@ -1,0 +1,39 @@
+exports[`<DurationWithIcon /> should render with both props 1`] = `
+<span>
+  <i
+    className="fa fa-clock-o" />
+   
+  <Duration
+    endTime="2017-09-23T14:30:00+00:00"
+    startTime="2017-09-23T12:30:00+00:00" />
+</span>
+`;
+
+exports[`<DurationWithIcon /> should render with end props 1`] = `
+<span>
+  <i
+    className="fa fa-clock-o" />
+   
+  <Duration
+    endTime="2017-09-23T14:30:00+00:00" />
+</span>
+`;
+
+exports[`<DurationWithIcon /> should render with no props 1`] = `
+<span>
+  <i
+    className="fa fa-clock-o" />
+   
+  <Duration />
+</span>
+`;
+
+exports[`<DurationWithIcon /> should render with start prop 1`] = `
+<span>
+  <i
+    className="fa fa-clock-o" />
+   
+  <Duration
+    startTime="2017-09-23T12:30:00+00:00" />
+</span>
+`;
