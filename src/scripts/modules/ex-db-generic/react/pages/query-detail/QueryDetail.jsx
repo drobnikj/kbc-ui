@@ -83,6 +83,7 @@ export default function(componentId, actionsProvisioning, storeProvisioning) {
           sourceTablesError={this.state.localState.getIn(sourceTablesErrorPath)}
           destinationEditing={this.state.localState.getIn(['isDestinationEditing', this.state.queryId], false)}
           onDestinationEdit={ExDbActionCreators.destinationEdit}
+          getPKColumns={ExDbActionCreators.getPKColumsFromSourceTable}
         />
       );
     },

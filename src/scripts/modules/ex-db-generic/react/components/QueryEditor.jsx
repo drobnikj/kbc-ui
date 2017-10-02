@@ -25,7 +25,8 @@ export default React.createClass({
     sourceTables: React.PropTypes.object.isRequired,
     sourceTablesError: React.PropTypes.string,
     destinationEditing: React.PropTypes.bool.isRequired,
-    onDestinationEdit: React.PropTypes.func.isRequired
+    onDestinationEdit: React.PropTypes.func.isRequired,
+    getPKColumns: React.PropTypes.func.isRequired
   },
 
   getDefaultProps() {
@@ -112,17 +113,6 @@ export default React.createClass({
     this.props.onDestinationEdit(this.props.configId, this.props.query.get('id'));
   },
 
-  getColumnsGroupedByPrimaryKey(targetTable) {
-    var matchedTable = this.props.sourceTables.find((table) =>
-      table.get('schema') === targetTable.get('schema')
-      && table.get('name') === targetTable.get('tableName')
-    );
-    if (!matchedTable) {
-      return [];
-    }
-    return matchedTable.get('columns').groupBy(column => column.get('primaryKey'));
-  },
-
   primaryKeyOptions() {
     return this.getColumnsOptions();
   },
@@ -195,14 +185,10 @@ export default React.createClass({
   },
 
   getPksOnSourceTableChange(newValue) {
-    const groupedCols = this.getColumnsGroupedByPrimaryKey(Immutable.fromJS(newValue));
-    if (groupedCols.has(true)) {
-      return groupedCols.get(true).map((column) => {
-        return column.get('name');
-      }).toJS();
-    } else {
-      return [];
-    }
+    const pkCols = this.props.getPKColumns(Immutable.fromJS(newValue), this.props.sourceTables);
+    return pkCols.map((column) => {
+      return column.get('name');
+    }).toJS();
   },
 
   handleSourceTableChange(newValue) {

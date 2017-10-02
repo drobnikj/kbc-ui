@@ -68,6 +68,17 @@ export function createActions(componentId) {
     componentsActions.updateLocalState(componentId, configId, newLocalState, path);
   }
 
+  function getPKColumsFromSourceTable(targetTable, sourceTables) {
+    var matchedTable = sourceTables.find((table) =>
+      table.get('schema') === targetTable.get('schema')
+      && table.get('name') === targetTable.get('tableName')
+    );
+    if (!matchedTable) {
+      return [];
+    }
+    return matchedTable.get('columns').filter((column) => column.get('primaryKey') === true);
+  }
+
   return {
     // Credentials Actions start
     editCredentials(configId) {
@@ -115,7 +126,7 @@ export function createActions(componentId) {
       credentials = updateProtectedProperties(credentials, store.getCredentials());
       const newConfigData = store.configData.setIn(['parameters', 'db'], credentials);
       const diffMsg = 'Update credentials';
-      return saveConfigData(configId, newConfigData, 'isSavingCredentials', diffMsg).then(() => this.cancelCredentialsEdit(configId));
+      return saveConfigData(configId, newConfigData, ['isSavingCredentials'], diffMsg).then(() => this.cancelCredentialsEdit(configId));
     },
 
     testCredentials(configId, credentials) {
@@ -252,11 +263,28 @@ export function createActions(componentId) {
 
     quickstart(configId, tableList) {
       const store = getStore(configId);
-      return tableList.map(function(table) {
+      let queries = tableList.map(function(table) {
         let query = store.generateNewQuery();
+        query = query.set('table', table);
         query = query.set('name', table.get('tableName'));
+        const pkCols = getPKColumsFromSourceTable(table, store.getSourceTables(configId));
+        if (pkCols) {
+          query = query.set('primaryKey', pkCols.map((column) => {
+            return column.get('name');
+          }).toJS());
+        }
+        query = query.set('outputTable', store.getDefaultOutputTableId(query));
         return query;
+      }, this);
+      const diffMsg = 'Quickstart config creation';
+      const newData = store.configData.setIn(['parameters', 'tables'], queries);
+      saveConfigData(configId, newData, ['quickstartSaving'], diffMsg).then(() => {
+        removeFromLocalState(configId, ['quickstartSaving']);
       });
+    },
+
+    getPKColumnsFromSourceTable(table, sourceTable) {
+      return getPKColumsFromSourceTable(table, sourceTable);
     },
 
     quickstartSelected(configId, selected) {

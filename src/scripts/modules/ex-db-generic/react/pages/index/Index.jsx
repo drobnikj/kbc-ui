@@ -151,6 +151,10 @@ export default function(componentId) {
         return (
           <div className="row component-empty-state text-center">
             <p>There are no queries configured yet.</p>
+            <p>
+              Select the tables you'd like to import below to autogenerate you're configuration.
+              You can edit it later at any time.
+            </p>
             <Quickstart
               componentId={componentId}
               configId={this.state.configId}

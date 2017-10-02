@@ -70,7 +70,7 @@ export default React.createClass({
   render() {
     var tableSelector = (
       <div className="form-group text-left">
-        <div className="col-md-8">
+        <div className="col-md-8 col-md-offset-2">
           <Select
             multi={true}
             name="quickstart"
@@ -80,7 +80,7 @@ export default React.createClass({
             optionRenderer={this.optionRenderer}
             options={this.transformOptions(this.getTableOptions())}/>
         </div>
-        <div className="col-md-4">
+        <div className="col-md-2">
           <button
             className="btn btn-success"
             onClick={this.quickstart}
