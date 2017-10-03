@@ -7,7 +7,7 @@ import {CodeEditor} from '../../../../react/common/common';
 import Select from '../../../../react/common/Select';
 
 import TableSelectorForm from '../../../../react/common/TableSelectorForm';
-// import AutoSuggestWrapper from '../../../transformations/react/components/mapping/AutoSuggestWrapper';
+
 import editorMode from '../../templates/editorMode';
 
 export default React.createClass({
@@ -257,7 +257,7 @@ export default React.createClass({
           {this.renderSimpleColumns()}
           <div className="form-group">
             <label className="col-md-3 control-label">Primary Key</label>
-            <div className="col-md-6">
+            <div className="col-md-9">
               <Select
                 name="primaryKey"
                 value={this.props.query.get('primaryKey')}
@@ -275,7 +275,7 @@ export default React.createClass({
           </div>
           <div className="form-group">
             <label className="col-md-3 control-label">Name</label>
-            <div className="col-md-6">
+            <div className="col-md-9">
               <input
                 className="form-control"
                 type="text"
@@ -314,8 +314,8 @@ export default React.createClass({
                 Incremental Load
               </label>
               <span className="help-block">
-                If incremental load is turned on, table will be updated instead of rewritten.
-                Tables with primary key will update rows, tables without primary key will append rows.
+                If incremental load is turned on, the table will be updated instead of rewritten.
+                Tables with primary keys will update rows, tables without primary keys will append rows.
               </span>
             </div>
           </div>
@@ -394,7 +394,7 @@ export default React.createClass({
       return (
         <div className="form-group">
           <label className="col-md-3 control-label">Source Table</label>
-          <div className="col-md-6">
+          <div className="col-md-9">
             { (this.props.isLoadingSourceTables) ? loader : tableSelect }
           </div>
         </div>
@@ -417,7 +417,7 @@ export default React.createClass({
       return (
         <div className="form-group">
           <label className="col-md-3 control-label">Columns</label>
-          <div className="col-md-6">
+          <div className="col-md-9">
             { columnSelect }
           </div>
         </div>
