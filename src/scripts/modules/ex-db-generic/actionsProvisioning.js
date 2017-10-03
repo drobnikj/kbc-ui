@@ -172,7 +172,7 @@ export function createActions(componentId) {
     },
 
     checkTableName(query, store) {
-      const defaultTableName = store.getDefaultOutputTableId(query);
+      const defaultTableName = store.getDefaultOutputTableId(query.get('name', ''));
       if (query.get('outputTable', '').trim().length > 0) {
         return query;
       } else {
@@ -274,7 +274,7 @@ export function createActions(componentId) {
           }).toJS());
           query = query.set('incremental', true);
         }
-        query = query.set('outputTable', store.getDefaultOutputTableId(query));
+        query = query.set('outputTable', store.getDefaultOutputTableId(table.get('tableName')));
         return query;
       }, this);
       const diffMsg = 'Quickstart config creation';
@@ -282,6 +282,11 @@ export function createActions(componentId) {
       saveConfigData(configId, newData, ['quickstartSaving'], diffMsg).then(() => {
         removeFromLocalState(configId, ['quickstartSaving']);
       });
+    },
+
+    getDefaultOutputTableId(configId, name) {
+      const store = getStore(configId);
+      return store.getDefaultOutputTableId(name);
     },
 
     getPKColumnsFromSourceTable(table, sourceTable) {

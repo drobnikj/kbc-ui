@@ -37,11 +37,11 @@ export default function(componentId, actionsProvisioning, storeProvisioning) {
       const queryId = RoutesStore.getCurrentRouteIntParam('query');
       const ExDbStore = storeProvisioning.createStore(componentId, configId);
       const query = ExDbStore.getConfigQuery(queryId);
-
+      const editingQuery = (ExDbStore.isEditingQuery(queryId)) ? ExDbStore.getEditingQuery(queryId) : query;
       return {
         configId: configId,
         queryId: queryId,
-        editingQuery: (ExDbStore.isEditingQuery(queryId)) ? ExDbStore.getEditingQuery(queryId) : query,
+        editingQuery: editingQuery,
         editingQueries: ExDbStore.getEditingQueries(),
         isSaving: ExDbStore.isSavingQuery(queryId),
         isValid: ExDbStore.isEditingQueryValid(queryId),
@@ -49,7 +49,6 @@ export default function(componentId, actionsProvisioning, storeProvisioning) {
         sourceTables: ExDbStore.getSourceTables(),
         queriesFilter: ExDbStore.getQueriesFilter(),
         queriesFiltered: ExDbStore.getQueriesFiltered(),
-        defaultOutputTable: ExDbStore.getDefaultOutputTableId(query),
         componentSupportsSimpleSetup: ExDbActionCreators.componentSupportsSimpleSetup(),
         localState: ExDbStore.getLocalState()
       };
@@ -67,6 +66,10 @@ export default function(componentId, actionsProvisioning, storeProvisioning) {
       return ExDbActionCreators.saveQueryEdit(this.state.configId, this.state.editingQuery.get('id'));
     },
 
+    getDefaultOutputTableId(name) {
+      return ExDbActionCreators.getDefaultOutputTableId(this.state.configId, name);
+    },
+
     getQueryElement() {
       return (
         <QueryEditor
@@ -77,13 +80,13 @@ export default function(componentId, actionsProvisioning, storeProvisioning) {
           showSimple={this.state.componentSupportsSimpleSetup}
           configId={this.state.configId}
           componentId={componentId}
-          defaultOutputTable={this.state.defaultOutputTable}
+          getDefaultOutputTable={this.getDefaultOutputTableId}
           isLoadingSourceTables={this.state.localState.getIn(loadingSourceTablesPath)}
           sourceTables={this.state.localState.getIn(sourceTablesPath)}
           sourceTablesError={this.state.localState.getIn(sourceTablesErrorPath)}
           destinationEditing={this.state.localState.getIn(['isDestinationEditing', this.state.queryId], false)}
           onDestinationEdit={ExDbActionCreators.destinationEdit}
-          getPKColumns={ExDbActionCreators.getPKColumsFromSourceTable}
+          getPKColumns={ExDbActionCreators.getPKColumnsFromSourceTable}
         />
       );
     },

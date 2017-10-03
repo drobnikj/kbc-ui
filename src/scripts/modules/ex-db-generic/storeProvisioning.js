@@ -167,9 +167,11 @@ export function createStore(componentId, configId) {
       return isValidQuery(query);
     },
 
-    getDefaultOutputTableId(query) {
-      if (!query) {return ''; }
-      const qname = string.sanitizeKbcTableIdString(query.get('name', ''));
+    getDefaultOutputTableId(name) {
+      if (name === '') {
+        return '';
+      }
+      const qname = string.sanitizeKbcTableIdString(name);
       const bucketName = string.sanitizeKbcTableIdString(componentId);
       return `in.c-${bucketName}.${qname}`;
     },

@@ -19,7 +19,7 @@ export default React.createClass({
     showSimple: React.PropTypes.bool.isRequired,
     disabled: React.PropTypes.bool,
     configId: React.PropTypes.string.isRequired,
-    defaultOutputTable: React.PropTypes.string.isRequired,
+    getDefaultOutputTable: React.PropTypes.func.isRequired,
     componentId: React.PropTypes.string.isRequired,
     isLoadingSourceTables: React.PropTypes.bool.isRequired,
     sourceTables: React.PropTypes.object.isRequired,
@@ -142,11 +142,13 @@ export default React.createClass({
   },
 
   handleNameChange(event) {
-    return this.props.onChange(this.props.query.set('name', event.target.value));
-  },
-
-  tableNamePlaceholder() {
-    return 'default: ' + this.props.defaultOutputTable;
+    const currentOutputTable = this.props.query.get('outputTable');
+    const oldDefaultTableValue = this.props.getDefaultOutputTable(this.props.query.get('name'));
+    return this.props.onChange(
+      this.props.query
+        .set('name', event.target.value)
+        .set('outputTable', (currentOutputTable && currentOutputTable !== oldDefaultTableValue) ? currentOutputTable : this.props.getDefaultOutputTable(event.target.name))
+    );
   },
 
   isSimpleDisabled() {
@@ -192,11 +194,19 @@ export default React.createClass({
   },
 
   handleSourceTableChange(newValue) {
+    const currentName = this.props.query.get('name');
+    const oldTableName = this.props.query.getIn(['table', 'tableName'], '');
+    const newName = (currentName && currentName !== oldTableName) ? currentName : newValue.tableName;
+    const currentOutputTable = this.props.query.get('outputTable');
+    const oldDefaultOutputTable = this.props.getDefaultOutputTable(oldTableName);
+    const defaultOutputTable = this.props.getDefaultOutputTable(newValue.tableName);
+    const newOutputTable = (currentOutputTable && currentOutputTable !== oldDefaultOutputTable) ? currentOutputTable : defaultOutputTable;
     return this.props.onChange(
       this.props.query
         .set('table', Immutable.fromJS(newValue))
-        .set('name', newValue.tableName)
+        .set('name', newName)
         .set('primaryKey', this.getPksOnSourceTableChange(newValue))
+        .set('outputTable', newOutputTable)
     );
   },
 
@@ -248,6 +258,14 @@ export default React.createClass({
     } else return '';
   },
 
+  getOutputTableValue() {
+    if (this.props.query.get('outputTable') !== '') {
+      return this.props.query.get('outputTable');
+    } else {
+      return this.props.getDefaultOutputTable(this.props.query.get('name'));
+    }
+  },
+
   render() {
     return (
       <div className="row">
@@ -291,7 +309,7 @@ export default React.createClass({
             <TableSelectorForm
               labelClassName="col-md-3"
               wrapperClassName="col-md-9"
-              value={this.props.query.get('outputTable')}
+              value={this.getOutputTableValue()}
               onChange={this.handleDestinationChange}
               disabled={this.props.disabled}
               label="Destination"
