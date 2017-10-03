@@ -18,13 +18,14 @@ export default function(componentId, actionsProvisioning, storeProvisioning, cre
       const dbStore = storeProvisioning.createStore(componentId, config);
       const editingCredentials = dbStore.getEditingCredentials();
       const isEditing = dbStore.isEditingCredentials();
+      const credentials = dbStore.getCredentials();
       return {
         configId: config,
-        credentials: dbStore.getCredentials(),
+        credentials: credentials,
         isEditing: isEditing,
         editingCredentials: editingCredentials,
         isSaving: dbStore.isSavingCredentials(),
-        isValidEditingCredentials: isEditing ? dbStore.hasValidCredentials(editingCredentials) : false
+        isValidCredentials: isEditing ? dbStore.hasValidCredentials(editingCredentials) : dbStore.hasValidCredentials(credentials)
       };
     },
 
@@ -34,7 +35,7 @@ export default function(componentId, actionsProvisioning, storeProvisioning, cre
           <TabbedArea defaultActiveKey="db" animation={false} id="credentialstab">
             <TabPane eventKey="db" title="Database Credentials">
               <CredentialsForm
-                isValidEditingCredentials={this.state.isValidEditingCredentials}
+                isValidEditingCredentials={this.state.isValidCredentials}
                 credentials={(this.state.isEditing) ? this.state.editingCredentials : this.state.credentials}
                 savedCredentials={this.state.credentials}
                 enabled={!this.state.isSaving}
