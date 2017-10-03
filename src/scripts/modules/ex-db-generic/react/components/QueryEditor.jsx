@@ -303,7 +303,7 @@ export default React.createClass({
             />
           </div>
           <div className="form-group">
-            <div className="col-md-3 checkbox">
+            <div className="col-md-9 col-md-offset-3 checkbox">
               <label>
                 <input
                   type="checkbox"
@@ -311,11 +311,17 @@ export default React.createClass({
                   onChange={this.handleIncrementalChange}
                   disabled={this.props.disabled}
                 />
-                Incremental
+                Incremental Load
               </label>
+              <span className="help-block">
+                If incremental load is turned on, table will be updated instead of rewritten.
+                Tables with primary key will update rows, tables without primary key will append rows.
+              </span>
             </div>
           </div>
-          {this.renderQueryToggle()}
+          <div className="form-group">
+            {this.renderQueryToggle()}
+          </div>
           <div className="form-group">
             {this.renderQueryEditor()}
           </div>
@@ -327,7 +333,7 @@ export default React.createClass({
   renderQueryToggle() {
     if (this.props.showSimple) {
       return (
-        <div className="help-block col-md-8 col-md-offset-3 checkbox">
+        <div className="col-md-9 col-md-offset-3 checkbox">
           <label>
             <input
               standalone={true}
