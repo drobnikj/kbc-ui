@@ -268,10 +268,11 @@ export function createActions(componentId) {
         query = query.set('table', table);
         query = query.set('name', table.get('tableName'));
         const pkCols = getPKColumsFromSourceTable(table, store.getSourceTables(configId));
-        if (pkCols) {
+        if (pkCols.count() > 0) {
           query = query.set('primaryKey', pkCols.map((column) => {
             return column.get('name');
           }).toJS());
+          query = query.set('incremental', true);
         }
         query = query.set('outputTable', store.getDefaultOutputTableId(query));
         return query;
