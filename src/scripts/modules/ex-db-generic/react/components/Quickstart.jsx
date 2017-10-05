@@ -73,10 +73,12 @@ export default React.createClass({
         <div className="col-md-8 col-md-offset-2">
           <Select
             multi={true}
+            matchProp="label"
             name="quickstart"
             value={this.getQuickstartValue(this.props.quickstart.get('tables'))}
             placeholder="Select tables to copy"
             onChange={this.handleSelectChange}
+            filterOptions={this.filterOptions}
             optionRenderer={this.optionRenderer}
             options={this.transformOptions(this.getTableOptions())}/>
         </div>
@@ -101,6 +103,22 @@ export default React.createClass({
         {(this.props.isLoadingSourceTables) ? loader : tableSelector }
       </div>
     );
+  },
+
+  filterOptions(options, filterString, values) {
+    var filterOption = function(op) {
+      if (values && Immutable.fromJS(values).toMap().find(
+        function(item) {
+          return item.get('label') === op.label;
+        }, op)
+      ) {
+        return false;
+      }
+      var labelTest = String(op.label).toLowerCase();
+      var filterStr = filterString.toLowerCase();
+      return !filterStr || labelTest.indexOf(filterStr) >= 0;
+    };
+    return (options || []).filter(filterOption, this);
   },
 
   transformOptions(options) {
