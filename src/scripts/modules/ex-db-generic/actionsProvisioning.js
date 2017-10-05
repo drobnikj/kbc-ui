@@ -7,8 +7,6 @@ import callDockerAction from '../components/DockerActionsApi';
 import getDefaultPort from './templates/defaultPorts';
 import {getProtectedProperties} from './templates/credentials';
 
-import RouterStore from '../../stores/RoutesStore';
-
 export function loadConfiguration(componentId, configId) {
   if (!createActions(componentId).sourceTablesLoaded(configId)) {
     createActions(componentId).updateLocalState(configId, storeProvisioning.loadingSourceTablesPath, true);
@@ -208,9 +206,7 @@ export function createActions(componentId) {
       removeFromLocalState(configId, ['isDestinationEditing', queryId]);
       const store = getStore(configId);
       if (store.isNewQuery(queryId)) {
-        const router = RouterStore.getRouter();
-        updateLocalState(configId, ['newQueries', queryId]);
-        router.transitionTo(componentId, {config: configId});
+        updateLocalState(configId, ['newQueries', queryId], store.generateNewQuery(queryId));
       }
     },
 
