@@ -39,6 +39,7 @@ export default function(componentId, actionsProvisioning, storeProvisioning, cre
                 credentials={(this.state.isEditing) ? this.state.editingCredentials : this.state.credentials}
                 savedCredentials={this.state.credentials}
                 enabled={!this.state.isSaving}
+                isEditing={this.state.isEditing}
                 onChange={this.handleChange}
                 componentId={componentId}
                 configId={this.state.configId}

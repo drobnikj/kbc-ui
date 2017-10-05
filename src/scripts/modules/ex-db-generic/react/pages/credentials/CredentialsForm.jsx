@@ -15,6 +15,7 @@ export default React.createClass({
     savedCredentials: React.PropTypes.object.isRequired,
     credentials: React.PropTypes.object.isRequired,
     enabled: React.PropTypes.bool.isRequired,
+    isEditing: React.PropTypes.bool.isRequired,
     isValidEditingCredentials: React.PropTypes.bool.isRequired,
     onChange: React.PropTypes.func,
     componentId: React.PropTypes.string.isRequired,
@@ -152,6 +153,9 @@ export default React.createClass({
         </div>
         {this.renderSshRow()}
         <TestCredentialsButtonGroup
+          componentId={this.props.componentId}
+          configId={this.props.configId}
+          isEditing={this.props.isEditing}
           disabled={(this.props.enabled) ? !this.props.isValidEditingCredentials : false}
           testCredentialsFn={this.testCredentials}
         />
