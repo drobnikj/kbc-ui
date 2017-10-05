@@ -1,5 +1,5 @@
 import React from 'react';
-import {Map} from 'immutable';
+import {Map, List} from 'immutable';
 
 import createStoreMixin from '../../../../../react/mixins/createStoreMixin';
 
@@ -82,7 +82,7 @@ export default function(componentId, actionsProvisioning, storeProvisioning) {
           componentId={componentId}
           getDefaultOutputTable={this.getDefaultOutputTableId}
           isLoadingSourceTables={this.state.localState.getIn(loadingSourceTablesPath)}
-          sourceTables={this.state.localState.getIn(sourceTablesPath)}
+          sourceTables={this.state.localState.getIn(sourceTablesPath) || List()}
           sourceTablesError={this.state.localState.getIn(sourceTablesErrorPath)}
           destinationEditing={this.state.localState.getIn(['isDestinationEditing', this.state.queryId], false)}
           onDestinationEdit={ExDbActionCreators.destinationEdit}
@@ -99,7 +99,7 @@ export default function(componentId, actionsProvisioning, storeProvisioning) {
               <QueryNav
                 queries={this.state.queriesFiltered}
                 navQuery={this.state.editingQuery || Map()}
-                editingQueries={this.state.editingQueries}
+                editingQueries={this.state.editingQueries || List()}
                 configurationId={this.state.configId}
                 filter={this.state.queriesFilter}
                 componentId={componentId}

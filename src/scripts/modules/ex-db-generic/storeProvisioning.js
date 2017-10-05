@@ -119,7 +119,7 @@ export function createStore(componentId, configId) {
     },
     // Credentials -- end --
 
-    generateNewQuery() {
+    generateNewQuery(queryId = null) {
       const ids = this.getQueries().map((q) => q.get('id')).toJS();
       const defaultNewQuery = fromJS({
         enabled: true,
@@ -129,7 +129,7 @@ export function createStore(componentId, configId) {
         table: '',
         columns: [],
         primaryKey: [],
-        id: generateId(ids)
+        id: (queryId) ? queryId : generateId(ids)
       });
       data.localState.setIn(['newQueries', defaultNewQuery.get('id')], defaultNewQuery);
       return defaultNewQuery;
@@ -211,7 +211,7 @@ export function createStore(componentId, configId) {
       } else if (this.isNewQuery(qid)) {
         return this.getNewQuery(qid);
       }
-      let query = this.getQueries().find((q) => q.get('id') === qid ) || this.generateNewQuery();
+      let query = this.getQueries().find((q) => q.get('id') === qid ) || this.generateNewQuery(qid);
       if (query.has('query')) {
         query = query.set('advancedMode', true);
       } else {
