@@ -15,7 +15,8 @@ export function loadConfiguration(componentId, configId) {
 }
 
 export function loadSourceTables(componentId, configId) {
-  if (!createActions(componentId).sourceTablesLoaded(configId)) {
+  const actions = createActions(componentId);
+  if (actions.componentSupportsSimpleSetup() && !actions.sourceTablesLoaded(configId)) {
     return createActions(componentId).getSourceTables(configId);
   }
 }
@@ -140,14 +141,19 @@ export function createActions(componentId) {
     // Credentials actions end
 
     componentSupportsSimpleSetup() {
-      const nonSupportedComponents = [
-        'keboola.ex-db-firebird',
-        'keboola.ex-db-impala'
+      const supportedComponents = [
+        'keboola.ex-db-mysql',
+        'keboola.ex-db-redshift',
+        'keboola.ex-db-snowflake',
+        'keboola.ex-db-mssql',
+        'keboola.ex-db-oracle',
+        'keboola.ex-db-db2',
+        'keboola.ex-db-pgsql'
       ];
-      if (nonSupportedComponents.indexOf(componentId) > -1) {
-        return false;
+      if (supportedComponents.indexOf(componentId) > -1) {
+        return true;
       }
-      return true;
+      return false;
     },
 
     setQueriesFilter(configId, query) {
