@@ -3,6 +3,7 @@ import {Input} from './../../../../../react/common/KbcBootstrap';
 import {Button, Modal} from 'react-bootstrap';
 import ComponentsStore from '../../../../components/stores/ComponentsStore';
 import {Loader} from 'kbc-react-components';
+import {OAUTH_V2_WRITERS} from '../../../tdeCommon';
 
 export default React.createClass({
 
@@ -52,6 +53,7 @@ export default React.createClass({
           {this.generateOption('wr-tableau-server', 'tableauServer')}
           {this.generateOption('wr-dropbox', 'dropbox')}
           {this.generateOption('wr-google-drive', 'gdrive')}
+          {OAUTH_V2_WRITERS.map(c => this.generateOption(c, c))}
         </Input>
       </div>
     );

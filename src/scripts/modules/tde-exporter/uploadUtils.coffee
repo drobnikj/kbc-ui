@@ -131,6 +131,10 @@ module.exports =
       account.has('description') and
       account.has('id')
 
+  isOauthV2Authorized: (parameters, componentId) ->
+    account = parameters.get(componentId)
+    !!account
+
   isGdriveAuthorized: (parameters) ->
     account = if parameters then parameters.get('gdrive') else null
     account and
