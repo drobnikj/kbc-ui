@@ -1,4 +1,5 @@
 import {Map, List} from 'immutable';
+export const OAUTH_V2_WRITERS = ['keboola.wr-dropbox-v2', 'keboola.wr-google-drive'];
 export function getTdeFileName(configData, tableId) {
   const name = configData.getIn(['parameters', 'tables', tableId, 'tdename']);
   return name || `${tableId}.tde`;

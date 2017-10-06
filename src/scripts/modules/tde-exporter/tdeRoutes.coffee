@@ -1,6 +1,7 @@
 _ = require 'underscore'
-{List} = require 'immutable'
+{List, Map} = require 'immutable'
 moment = require 'moment'
+Promise = require 'bluebird'
 index = require './react/pages/Index/Index'
 tableDetail = require './react/pages/Table/Table'
 destinationPage = require './react/pages/Destination/Destination'
@@ -10,6 +11,9 @@ LatestJobsStore = require '../jobs/stores/LatestJobsStore'
 installedComponentsActions = require '../components/InstalledComponentsActionCreators'
 oauthStore = require '../components/stores/OAuthStore'
 oauthActions = require '../components/OAuthActionCreators'
+oauth2Actions = require '../oauth-v2/ActionCreators'
+oauth2Store = require '../oauth-v2/Store'
+{OAUTH_V2_WRITERS} = require './tdeCommon'
 
 InstalledComponentsStore = require '../components/stores/InstalledComponentsStore'
 ApplicationActionCreators = require('../../actions/ApplicationActionCreators')
@@ -20,6 +24,34 @@ componentId = 'tde-exporter'
 {fromJS} = require 'immutable'
 VersionsActionCreators = require '../components/VersionsActionCreators'
 {createTablesRoute} = require '../table-browser/routes'
+
+registerOAuthV2Route = (writerComponentId) ->
+  name: 'tde-oauth-v2-redirect-' + writerComponentId
+  path: 'oauth-redirect-' + writerComponentId
+  # handler: 'Please wait..'
+  title: (routerState) ->
+    return 'Verifying authorization...'
+  requireData: [
+    (params) ->
+      installedComponentsActions.loadComponentConfigData(componentId, params.config).then ->
+        configuration = InstalledComponentsStore.getConfigData(componentId, params.config)
+        credentialsId = "tde-#{params.config}"
+        router = RouterStore.getRouter()
+        oauth2Actions.loadCredentials(writerComponentId, credentialsId).then ->
+          saveFn = installedComponentsActions.saveComponentConfigData
+          newConfig = configuration.setIn ['parameters', writerComponentId], credentialsId
+          saveFn(componentId, params.config, newConfig).then ->
+            notification = "Account succesfully authorized."
+            ApplicationActionCreators.sendNotification
+              message: notification
+            router.transitionTo('tde-exporter-destination', config: params.config)
+        .error (err) ->
+          notification = 'Failed to verify authorized account, please contact us on support@keboola.com'
+          ApplicationActionCreators.sendNotification
+            message: notification
+            type: 'error'
+          router.transitionTo('tde-exporter', config: params.config)
+  ]
 
 # return first non empty(aka authorized) writer account
 findNonEmptyAccount = (configData) ->
@@ -117,14 +149,20 @@ module.exports =
   ,
     name: 'tde-exporter-destination'
     path: 'destination'
-    handler: destinationPage
-    # requireData: [
-    #   (params) ->
-
-    #     gdriveActions.loadGoogleInfo(params.configId, googleId)
-    # ]
+    defaultRouteHandler: destinationPage
+    requireData: [
+      (params) ->
+        installedComponentsActions.loadComponentConfigData(componentId, params.config).then ->
+          configData = InstalledComponentsStore.getConfigData(componentId, params.config)
+          parameters = configData.get('parameters', Map())
+          Promise.props(OAUTH_V2_WRITERS.map((cid) ->
+            credentialsId = parameters.get(cid)
+            !!credentialsId && oauth2Actions.loadCredentials(cid, credentialsId)
+          ))
+    ]
     title: (routerState) ->
       return 'Setup Upload'
+    childRoutes: OAUTH_V2_WRITERS.map((wid) -> registerOAuthV2Route(wid))
   ,
     name: 'tde-exporter-gdrive-redirect'
     path: 'oauth/gdrive'
