@@ -17,6 +17,8 @@ export default React.createClass({
     componentId: PropTypes.string.isRequired,
     id: PropTypes.string.isRequired,
     configId: PropTypes.string.isRequired,
+    allowExternalAuthorization: PropTypes.object,
+    returnUrlSuffix: PropTypes.string,
     show: PropTypes.bool,
     onHideFn: PropTypes.func
   },
@@ -46,6 +48,7 @@ export default React.createClass({
             </Modal.Title>
           </Modal.Header>
           <AuthorizationForm
+            returnUrlSuffix={this.props.returnUrlSuffix}
             componentId={this.props.componentId}
             id={this.props.id}>
             <Modal.Body>
@@ -53,9 +56,11 @@ export default React.createClass({
                 <TabPane eventKey="general" title="Instant authorization">
                   {this.renderInstant()}
                 </TabPane>
-                <TabPane eventKey="external" title="External authorization">
-                  {this.renderExternal()}
-                </TabPane>
+                {this.props.allowExternalAuthorization &&
+                  <TabPane eventKey="external" title="External authorization">
+                    {this.renderExternal()}
+                  </TabPane>
+                }
                 {DIRECT_TOKEN_COMPONENTS.includes(this.props.componentId) ?
                   <TabPane key="direct" eventKey="direct" title="Direct token insert">
                     {this.renderDirectTokenInsert()}

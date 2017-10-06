@@ -6,7 +6,8 @@ export default React.createClass({
   propTypes: {
     componentId: PropTypes.string.isRequired,
     id: PropTypes.string.isRequired,
-    children: PropTypes.any
+    children: PropTypes.any,
+    returnUrlSuffix: PropTypes.string
   },
 
   getDefaultProps() {
@@ -19,7 +20,7 @@ export default React.createClass({
     const oauthUrl = ComponentsStore.getComponent('keboola.oauth-v2').get('uri');
     const actionUrl = `${oauthUrl}/authorize/${this.props.componentId}`;
     const token = ApplicationStore.getSapiTokenString();
-    const returnUrl = `${window.location.href}/oauth-redirect`;
+    const returnUrl = `${window.location.href}/${this.props.returnUrlSuffix}`;
     return (
       <form
         method="POST"

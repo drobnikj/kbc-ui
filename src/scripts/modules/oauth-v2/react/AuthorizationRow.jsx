@@ -13,8 +13,11 @@ export default React.createClass({
     onResetCredentials: PropTypes.func.isRequired,
     id: PropTypes.string.isRequired,
     configId: PropTypes.string.isRequired,
+    allowExternalAuthorization: PropTypes.bool,
     className: PropTypes.string.isRequired,
     isResetingCredentials: PropTypes.bool,
+    innerComponent: PropTypes.object,
+    returnUrlSuffix: PropTypes.string,
     showHeader: PropTypes.bool
   },
 
@@ -26,7 +29,10 @@ export default React.createClass({
 
   getDefaultProps() {
     return {
-      showHeader: true
+      showHeader: true,
+      innerComponent: EmptyState,
+      allowExternalAuthorization: true,
+      returnUrlSuffix: 'oauth-redirect'
     };
   },
 
@@ -50,16 +56,15 @@ export default React.createClass({
   },
 
   renderAuth() {
-    return (
-      <EmptyState>
-        <p>No Account authorized</p>
-        <button
+    return React.createElement(this.props.innerComponent, null,
+      [(<p>No Account authorized</p>),
+       (<button
           onClick={this.showModal}
           className="btn btn-success">
           <i className="fa fa-fw fa-user"/>
           Authorize Account
-        </button>
-      </EmptyState>
+        </button>)
+      ]
     );
   },
 
@@ -107,10 +112,12 @@ export default React.createClass({
     return (
       <AuthorizationModal
         componentId={this.props.componentId}
+        allowExternalAuthorization={this.props.allowExternalAuthorization}
         id={this.props.id}
         configId={this.props.configId}
         show={this.state.showModal}
         onHideFn={this.hideModal}
+        returnUrlSuffix={this.props.returnUrlSuffix}
       />
     );
   },
