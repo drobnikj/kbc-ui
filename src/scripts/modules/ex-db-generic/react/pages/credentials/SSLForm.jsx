@@ -15,11 +15,14 @@ export default React.createClass({
     onChange: React.PropTypes.func,
     componentId: React.PropTypes.string.isRequired,
     configId: React.PropTypes.string.isRequired,
+    isEditing: React.PropTypes.bool.isRequired,
     actionsProvisioning: React.PropTypes.object.isRequired
   },
 
   getDefaultProps() {
-    return function() {};
+    return {
+      onChange: () => {}
+    };
   },
 
   handleChange(propName, event) {
@@ -40,13 +43,13 @@ export default React.createClass({
   },
 
   createEnableSSLCheckbox(propName) {
-    if (this.props.enabled) {
+    if (!this.isSSLEnabled()) {
       return (
         <div className="form-group">
           <Input
             label="Enable encrypted connection"
             type="checkbox"
-            onChange={this.handleToggle(propName).bind(this)}
+            onChange={this.handleToggle.bind(this, propName)}
             checked={this.isSSLEnabled()}
           />
         </div>
@@ -100,7 +103,7 @@ export default React.createClass({
             label={labelValue}
             type="textarea"
             value={this.props.credentials.getIn(['ssl', propName])}
-            onChange={this.handleChange(propName).bind(this)}
+            onChange={this.handleChange.bind(this, propName)}
             className="form-control"
             minRows={4}
           />
@@ -126,6 +129,9 @@ export default React.createClass({
           <TestCredentials
             testCredentialsFn={this.testCredentials}
             hasOffset={false}
+            componentId={this.props.componentId}
+            configId={this.props.configId}
+            isEditing={this.props.isEditing}
           />
         </div>
       );

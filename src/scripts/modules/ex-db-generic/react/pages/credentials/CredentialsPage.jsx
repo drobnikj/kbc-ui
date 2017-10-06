@@ -31,25 +31,27 @@ export default function(componentId, actionsProvisioning, storeProvisioning, cre
 
     render() {
       return (
-        <div className="container-fluid kbc-main-content">
-          <TabbedArea defaultActiveKey="db" animation={false} id="credentialstab">
-            <TabPane eventKey="db" title="Database Credentials">
-              <CredentialsForm
-                isValidEditingCredentials={this.state.isValidCredentials}
-                credentials={(this.state.isEditing) ? this.state.editingCredentials : this.state.credentials}
-                savedCredentials={this.state.credentials}
-                enabled={!this.state.isSaving}
-                isEditing={this.state.isEditing}
-                onChange={this.handleChange}
-                componentId={componentId}
-                configId={this.state.configId}
-                credentialsTemplate={credentialsTemplate}
-                hasSshTunnel={hasSshTunnel}
-                actionCreators={actionCreators}
-              />
-            </TabPane>
-            {this.renderSSLForm()}
-          </TabbedArea>
+        <div className="container-fluid">
+          <div className="kbc-main-content">
+            <TabbedArea defaultActiveKey="db" animation={false} id="credentialstab">
+              <TabPane eventKey="db" title="Database Credentials">
+                <CredentialsForm
+                  isValidEditingCredentials={this.state.isValidCredentials}
+                  credentials={(this.state.isEditing) ? this.state.editingCredentials : this.state.credentials}
+                  savedCredentials={this.state.credentials}
+                  enabled={!this.state.isSaving}
+                  isEditing={this.state.isEditing}
+                  onChange={this.handleChange}
+                  componentId={componentId}
+                  configId={this.state.configId}
+                  credentialsTemplate={credentialsTemplate}
+                  hasSshTunnel={hasSshTunnel}
+                  actionCreators={actionCreators}
+                />
+              </TabPane>
+              {this.renderSSLForm()}
+            </TabbedArea>
+          </div>
         </div>
       );
     },
@@ -59,12 +61,13 @@ export default function(componentId, actionsProvisioning, storeProvisioning, cre
         return (
           <TabPane eventKey="ssl" title="SSL">
             <SSLForm
-              credentials={this.state.credentials}
+              credentials={(this.state.isEditing) ? this.state.editingCredentials : this.state.credentials}
               enabled={!this.state.isSaving}
               onChange={this.handleChange}
               componentId={componentId}
               configId={this.state.configId}
               actionsProvisioning={actionCreators}
+              isEditing={this.state.isEditing}
             />
           </TabPane>
         );
