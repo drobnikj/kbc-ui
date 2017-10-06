@@ -51,8 +51,6 @@ export default React.createClass({
             }
             } >
           {this.generateOption('wr-tableau-server', 'tableauServer')}
-          {this.generateOption('wr-dropbox', 'dropbox')}
-          {this.generateOption('wr-google-drive', 'gdrive')}
           {OAUTH_V2_WRITERS.map(c => this.generateOption(c, c))}
         </Input>
       </div>
