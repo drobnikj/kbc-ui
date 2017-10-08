@@ -112,18 +112,6 @@ export default function(componentId) {
       }
     },
 
-    renderSearchRow() {
-      if (this.state.queries.count() > 1) {
-        return (
-          <SearchRow
-            onChange={this.handleFilterChange}
-            query={this.state.queriesFilter}
-            className="kbc-search-row"
-          />
-        );
-      }
-    },
-
     renderQueriesMain() {
       if (this.state.queries.count() > 0) {
         if (this.state.queriesFiltered.count() > 0) {
@@ -222,16 +210,27 @@ export default function(componentId) {
             {this.renderError()}
             {this.state.hasCredentials ? (
               <div>
-                <div className="kbc-header">
-                  <div className="col-sm-9">
-                    {this.renderSearchRow()}
-                  </div>
-                  <div className="col-sm-3">
-                    <div className="kbc-search-row text-right">
-                      {this.renderNewQueryLink()}
+                {this.state.queries.count() > 1 ? (
+                  <div style={{padding: '22px'}}>
+                    <div className="row">
+                      <div className="col-sm-9">
+                        <SearchRow
+                          onChange={this.handleFilterChange}
+                          query={this.state.queriesFilter}
+                        />
+                      </div>
+                      <div className="col-sm-3">
+                        <div className="text-right" style={{marginTop: '16px'}}>
+                          {this.renderNewQueryLink()}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="text-right" style={{padding: '22px'}}>
+                    {this.renderNewQueryLink()}
+                  </div>
+                )}
                 {this.renderQueriesMain()}
               </div>
             ) : this.renderCredentialsSetup()}
