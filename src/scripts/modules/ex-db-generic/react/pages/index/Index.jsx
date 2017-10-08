@@ -210,65 +210,63 @@ export default function(componentId) {
       const configurationId = this.state.configId;
       return (
         <div className="container-fluid">
-          <div className="kbc-main-content">
-            <div className="col-md-9">
-              <div className="row kbc-header">
-                <div>
-                  <ComponentDescription
-                    componentId={componentId}
-                    configId={this.state.configId}
-                  />
-                </div>
-              </div>
-              {this.renderError()}
-              {this.renderCredentialsSetup()}
-              <div className="kbc-header">
-                <div className="col-sm-9">
-                  {this.renderSearchRow()}
-                </div>
-                <div className="col-sm-3">
-                  <div className="kbc-search-row text-right">
-                    {this.renderNewQueryLink()}
-                  </div>
-                </div>
-              </div>
-              {this.renderQueriesMain()}
-            </div>
-            <div className="col-md-3 kbc-main-sidebar">
-              <div className="kbc-buttons kbc-text-light">
-                <ComponentMetadata
+          <div className="col-md-9 kbc-main-content">
+            <div className="row kbc-header">
+              <div>
+                <ComponentDescription
                   componentId={componentId}
                   configId={this.state.configId}
                 />
-                <LastUpdateInfo lastVersion={this.state.versions.get(0)}/>
               </div>
-              <ul className="nav nav-stacked">
-                {this.renderCredentialsLink()}
-                <li className={classnames({ disabled: !this.state.hasEnabledQueries })}>
-                  <RunComponentButton
-                    title="Run Extraction"
-                    component={componentId}
-                    mode="link"
-                    disabled={!this.state.hasEnabledQueries}
-                    disabledReason="There are no queries to be executed"
-                    runParams={function() { return { config: configurationId }; }}
-                  >
-                    You are about to run the extraction
-                  </RunComponentButton>
-                </li>
-                <li>
-                  <DeleteConfigurationButton
-                    componentId={componentId}
-                    configId={this.state.configId}
-                  />
-                </li>
-              </ul>
-
-              <LatestJobs limit={3} jobs={this.state.latestJobs}/>
-
-              <SidebarVersions limit={3} componentId={componentId}/>
-
             </div>
+            {this.renderError()}
+            {this.renderCredentialsSetup()}
+            <div className="kbc-header">
+              <div className="col-sm-9">
+                {this.renderSearchRow()}
+              </div>
+              <div className="col-sm-3">
+                <div className="kbc-search-row text-right">
+                  {this.renderNewQueryLink()}
+                </div>
+              </div>
+            </div>
+            {this.renderQueriesMain()}
+          </div>
+          <div className="col-md-3 kbc-main-sidebar">
+            <div className="kbc-buttons kbc-text-light">
+              <ComponentMetadata
+                componentId={componentId}
+                configId={this.state.configId}
+              />
+              <LastUpdateInfo lastVersion={this.state.versions.get(0)}/>
+            </div>
+            <ul className="nav nav-stacked">
+              {this.renderCredentialsLink()}
+              <li className={classnames({ disabled: !this.state.hasEnabledQueries })}>
+                <RunComponentButton
+                  title="Run Extraction"
+                  component={componentId}
+                  mode="link"
+                  disabled={!this.state.hasEnabledQueries}
+                  disabledReason="There are no queries to be executed"
+                  runParams={function() { return { config: configurationId }; }}
+                >
+                  You are about to run the extraction
+                </RunComponentButton>
+              </li>
+              <li>
+                <DeleteConfigurationButton
+                  componentId={componentId}
+                  configId={this.state.configId}
+                />
+              </li>
+            </ul>
+
+            <LatestJobs limit={3} jobs={this.state.latestJobs}/>
+
+            <SidebarVersions limit={3} componentId={componentId}/>
+
           </div>
         </div>
       );
