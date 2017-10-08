@@ -220,18 +220,21 @@ export default function(componentId) {
               </div>
             </div>
             {this.renderError()}
-            {this.renderCredentialsSetup()}
-            <div className="kbc-header">
-              <div className="col-sm-9">
-                {this.renderSearchRow()}
-              </div>
-              <div className="col-sm-3">
-                <div className="kbc-search-row text-right">
-                  {this.renderNewQueryLink()}
+            {this.state.hasCredentials ? (
+              <div>
+                <div className="kbc-header">
+                  <div className="col-sm-9">
+                    {this.renderSearchRow()}
+                  </div>
+                  <div className="col-sm-3">
+                    <div className="kbc-search-row text-right">
+                      {this.renderNewQueryLink()}
+                    </div>
+                  </div>
                 </div>
+                {this.renderQueriesMain()}
               </div>
-            </div>
-            {this.renderQueriesMain()}
+            ) : this.renderCredentialsSetup()}
           </div>
           <div className="col-md-3 kbc-main-sidebar">
             <div className="kbc-buttons kbc-text-light">
