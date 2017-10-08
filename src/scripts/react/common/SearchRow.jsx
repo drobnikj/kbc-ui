@@ -1,5 +1,5 @@
 import React from 'react';
-
+import classNames from 'classnames';
 
 export default React.createClass({
 
@@ -37,7 +37,7 @@ export default React.createClass({
 
   render() {
     return (
-      <form className={'kbc-search ' + this.props.className} onSubmit={this.onSubmit}>
+      <form className={classNames('kbc-search', this.props.className)} onSubmit={this.onSubmit}>
         <span className="kbc-icon-search" />
         <input
           type="text"
