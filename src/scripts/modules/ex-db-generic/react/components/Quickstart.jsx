@@ -70,25 +70,29 @@ export default React.createClass({
   render() {
     var tableSelector = (
       <div className="form-group text-left">
-        <div className="col-md-8 col-md-offset-2">
-          <Select
-            multi={true}
-            matchProp="label"
-            name="quickstart"
-            value={this.getQuickstartValue(this.props.quickstart.get('tables'))}
-            placeholder="Select tables to copy"
-            onChange={this.handleSelectChange}
-            filterOptions={this.filterOptions}
-            optionRenderer={this.optionRenderer}
-            options={this.transformOptions(this.getTableOptions())}/>
+        <div className="row">
+          <div className="col-md-8 col-md-offset-2">
+            <Select
+              multi={true}
+              matchProp="label"
+              name="quickstart"
+              value={this.getQuickstartValue(this.props.quickstart.get('tables'))}
+              placeholder="Select tables to copy"
+              onChange={this.handleSelectChange}
+              filterOptions={this.filterOptions}
+              optionRenderer={this.optionRenderer}
+              options={this.transformOptions(this.getTableOptions())}/>
+          </div>
         </div>
-        <div className="col-md-2">
-          <button
-            className="btn btn-success"
-            onClick={this.quickstart}
-            disabled={!this.props.quickstart.get('tables') || this.props.quickstart.get('tables').count() === 0}
-          > Let's go!
-          </button>
+        <div className="row">
+          <div className="col-md-12 text-center" style={{padding: '22px'}}>
+            <button
+              className="btn btn-success"
+              onClick={this.quickstart}
+              disabled={!this.props.quickstart.get('tables') || this.props.quickstart.get('tables').count() === 0}
+            > Create Configurations
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -126,7 +130,7 @@ export default React.createClass({
     const option = (value, label, render, disabled = false) => ({value, label, render, disabled});
 
     return options.reduce((acc, o) => {
-      const parent = option(o.value, o.label, (<strong style={{color: '#000'}}>{o.label}</strong>), true);
+      const parent = option(o.value, o.label, (<strong style={{color: '#000'}}>Schema: {o.label}</strong>), true);
       const children = o.children.map(c => option(c.value, c.label, <div>{c.label}</div>));
 
       return acc.concat(parent).concat(children);

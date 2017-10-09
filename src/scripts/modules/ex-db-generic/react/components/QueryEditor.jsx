@@ -475,7 +475,7 @@ export default React.createClass({
     const option = (value, label, render, disabled = false) => ({value, label, render, disabled});
 
     return options.reduce((acc, o) => {
-      const parent = option(o.value, o.label, (<strong style={{color: '#000'}}>{o.label}</strong>), true);
+      const parent = option(o.value, o.label, (<strong style={{color: '#000'}}>Schema: {o.label}</strong>), true);
       const children = o.children.map(c => option(c.value, c.label, <div style={{paddingLeft: 10}}>{c.label}</div>));
 
       return acc.concat(parent).concat(children);
