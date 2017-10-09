@@ -212,7 +212,11 @@ export function createActions(componentId) {
       removeFromLocalState(configId, ['isDestinationEditing', queryId]);
       const store = getStore(configId);
       if (store.isNewQuery(queryId)) {
-        updateLocalState(configId, ['newQueries', queryId], store.generateNewQuery(queryId));
+        updateLocalState(
+          configId,
+          ['newQueries', queryId],
+          store.generateNewQuery(queryId, this.componentSupportsSimpleSetup())
+        );
       }
     },
 
@@ -266,7 +270,7 @@ export function createActions(componentId) {
     quickstart(configId, tableList) {
       const store = getStore(configId);
       let queries = tableList.map(function(table) {
-        let query = store.generateNewQuery();
+        let query = store.generateNewQuery(null, this.componentSupportsSimpleSetup());
         query = query.set('table', table);
         query = query.set('name', table.get('tableName'));
         const pkCols = getPKColumsFromSourceTable(table, store.getSourceTables(configId));

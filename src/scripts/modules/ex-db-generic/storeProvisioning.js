@@ -119,9 +119,9 @@ export function createStore(componentId, configId) {
     },
     // Credentials -- end --
 
-    generateNewQuery(queryId = null) {
+    generateNewQuery(queryId = null, simpleSupport = true) {
       const ids = this.getQueries().map((q) => q.get('id')).toJS();
-      const defaultNewQuery = fromJS({
+      let defaultQuery = {
         enabled: true,
         name: '',
         incremental: false,
@@ -130,7 +130,11 @@ export function createStore(componentId, configId) {
         columns: [],
         primaryKey: [],
         id: (queryId) ? queryId : generateId(ids)
-      });
+      };
+      if (simpleSupport) {
+        defaultQuery.advancedMode = true;
+      }
+      const defaultNewQuery = fromJS(defaultQuery);
       data.localState.setIn(['newQueries', defaultNewQuery.get('id')], defaultNewQuery);
       return defaultNewQuery;
     },
