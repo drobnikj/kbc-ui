@@ -34,8 +34,8 @@ export default React.createClass({
   },
 
   render() {
-    var deleteLabel = 'Delete ' + this.props.entityName;
-    var deleteText = 'Do you really want to delete '
+    let deleteLabel = 'Delete ' + this.props.entityName;
+    let deleteText = 'Do you really want to delete '
       + this.props.entityName.toLowerCase()
       + ' ' + this.props.query.get('name');
 
