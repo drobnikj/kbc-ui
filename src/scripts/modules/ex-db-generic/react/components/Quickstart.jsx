@@ -86,6 +86,7 @@ export default React.createClass({
           <button
             className="btn btn-success"
             onClick={this.quickstart}
+            disabled={!this.props.quickstart.get('tables') || this.props.quickstart.get('tables').count() === 0}
           > Let's go!
           </button>
         </div>
