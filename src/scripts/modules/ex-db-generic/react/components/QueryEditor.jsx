@@ -36,40 +36,6 @@ export default React.createClass({
     };
   },
 
-  componentWillReceiveProps() {
-    this.setState(this.getStateFromStores());
-  },
-
-  getInitialState() {
-    const query = this.props.query;
-    if (query.get('advancedMode') || !this.props.showSimple) {
-      return {
-        simpleDisabled: true,
-        useQueryEditor: true
-      };
-    } else {
-      return {
-        simpleDisabled: false,
-        useQueryEditor: false
-      };
-    }
-  },
-
-  getStateFromStores() {
-    const query = this.props.query;
-    if (query.get('advancedMode') || !this.props.showSimple) {
-      return {
-        simpleDisabled: true,
-        useQueryEditor: true
-      };
-    } else {
-      return {
-        simpleDisabled: false,
-        useQueryEditor: false
-      };
-    }
-  },
-
   isExistingTable() {
     const destinationTable = this.props.query.get('outputTable');
     if (!destinationTable || destinationTable === '') {
@@ -82,18 +48,14 @@ export default React.createClass({
     let pk = [];
     if (e.target.checked) {
       this.setState({
-        useQueryEditor: e.target.checked,
-        simpleDisabled: e.target.checked,
         simplePk: this.props.query.get('primaryKey')
       });
-      pk = this.state.advancedPk;
+      pk = this.state.advancedPk || [];
     } else {
       this.setState({
-        useQueryEditor: e.target.checked,
-        simpleDisabled: e.target.checked,
         advancedPk: this.props.query.get('primaryKey')
       });
-      pk = this.state.simplePk;
+      pk = this.state.simplePk || [];
     }
 
     let immutable = this.props.query.withMutations(function(mapping) {
@@ -150,10 +112,6 @@ export default React.createClass({
         .set('name', event.target.value)
         .set('outputTable', (currentOutputTable && currentOutputTable !== oldDefaultTableValue) ? currentOutputTable : this.props.getDefaultOutputTable(event.target.name))
     );
-  },
-
-  isSimpleDisabled() {
-    return !!this.state.simpleDisabled;
   },
 
   sourceTableSelectOptions() {
@@ -341,9 +299,7 @@ export default React.createClass({
               </span>
             </div>
           </div>
-          <div className="form-group">
-            {this.renderQueryToggle()}
-          </div>
+          {this.renderQueryToggle()}
           <div className="form-group">
             {this.renderQueryEditor()}
           </div>
@@ -355,24 +311,29 @@ export default React.createClass({
   renderQueryToggle() {
     if (this.props.showSimple) {
       return (
-        <div className="col-md-9 col-md-offset-3 checkbox">
-          <label>
-            <input
-              standalone={true}
-              type="checkbox"
-              label="Use query editor"
-              checked={this.state.useQueryEditor}
-              disabled={this.props.disabled}
-              onChange={this.handleToggleUseQueryEditor}/>
-            Advanced Mode: Create your own query
-          </label>
+        <div className="form-group">
+          <div className="col-md-9 col-md-offset-3 checkbox">
+            <label>
+              <input
+                standalone={true}
+                type="checkbox"
+                label="Use query editor"
+                checked={!!this.props.query.get('advancedMode')}
+                disabled={this.props.disabled}
+                onChange={this.handleToggleUseQueryEditor}/>
+              Advanced Mode
+            </label>
+            <div className="help-block">
+              Create your own query using an SQL editor
+            </div>
+          </div>
         </div>
       );
     }
   },
 
   renderQueryEditor() {
-    if (this.state.useQueryEditor) {
+    if (this.props.query.get('advancedMode')) {
       return (
         <div>
           <label className="col-md-12 control-label">SQL Query</label>
@@ -394,7 +355,7 @@ export default React.createClass({
   },
 
   renderSimpleTable() {
-    if (this.props.showSimple && !this.state.simpleDisabled) {
+    if (this.props.showSimple && !this.props.query.get('advancedMode')) {
       var tableSelect = (
         <Select
           name="sourceTable"
@@ -425,7 +386,7 @@ export default React.createClass({
   },
 
   renderSimpleColumns() {
-    if (this.props.showSimple && !this.state.simpleDisabled) {
+    if (this.props.showSimple && !this.props.query.get('advancedMode')) {
       var columnSelect = (
         <Select
           multi={true}
