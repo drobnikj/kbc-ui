@@ -70,29 +70,25 @@ export default React.createClass({
   render() {
     var tableSelector = (
       <div className="form-group text-left">
-        <div className="row">
-          <div className="col-md-8 col-md-offset-2">
-            <Select
-              multi={true}
-              matchProp="label"
-              name="quickstart"
-              value={this.getQuickstartValue(this.props.quickstart.get('tables'))}
-              placeholder="Select tables to copy"
-              onChange={this.handleSelectChange}
-              filterOptions={this.filterOptions}
-              optionRenderer={this.optionRenderer}
-              options={this.transformOptions(this.getTableOptions())}/>
-          </div>
+        <div className="col-md-8 col-md-offset-2">
+          <Select
+            multi={true}
+            matchProp="label"
+            name="quickstart"
+            value={this.getQuickstartValue(this.props.quickstart.get('tables'))}
+            placeholder="Select tables to copy"
+            onChange={this.handleSelectChange}
+            filterOptions={this.filterOptions}
+            optionRenderer={this.optionRenderer}
+            options={this.transformOptions(this.getTableOptions())}/>
         </div>
-        <div className="row">
-          <div className="col-md-12 text-center" style={{padding: '22px'}}>
-            <button
-              className="btn btn-success"
-              onClick={this.quickstart}
-              disabled={!this.props.quickstart.get('tables') || this.props.quickstart.get('tables').count() === 0}
-            > Create Configurations
-            </button>
-          </div>
+        <div className="col-md-2">
+          <button
+            className="btn btn-success"
+            onClick={this.quickstart}
+            disabled={!this.props.quickstart.get('tables') || this.props.quickstart.get('tables').count() === 0}
+          > Create
+          </button>
         </div>
       </div>
     );

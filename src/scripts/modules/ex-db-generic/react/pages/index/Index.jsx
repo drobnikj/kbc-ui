@@ -140,10 +140,6 @@ export default function(componentId) {
           <div className="row component-empty-state text-center">
             <div className="col-md-12">
               <p>There are no queries configured yet.</p>
-              <p>
-                Select the tables you'd like to import below to autogenerate you're configuration.
-                You can edit it later at any time.
-              </p>
               <Quickstart
                 componentId={componentId}
                 configId={this.state.configId}
@@ -154,6 +150,10 @@ export default function(componentId) {
                 onChange={actionsCreators.quickstartSelected}
                 onSubmit={actionsCreators.quickstart}
               />
+              <div className="help-block">
+                Select the tables you'd like to import below to autogenerate you're configuration.
+                You can edit them later at any time.
+              </div>
             </div>
           </div>
         );
