@@ -151,7 +151,7 @@ export default function(componentId) {
                 onSubmit={actionsCreators.quickstart}
               />
               <div className="help-block">
-                Select the tables you'd like to import below to autogenerate you're configuration.
+                Select the tables you'd like to import to autogenerate your configuration.
                 You can edit them later at any time.
               </div>
             </div>
@@ -186,7 +186,7 @@ export default function(componentId) {
         return (
           <div className="row">
             <div className="alert alert-danger">
-              <h4>An Error occured fetching table listing</h4>
+              <h4>An Error occurred fetching the table list</h4>
               {sourceTablesError}
               <h5>
                 Refresh the page to force a retry
