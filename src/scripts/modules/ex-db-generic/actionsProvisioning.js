@@ -311,7 +311,7 @@ export function createActions(componentId) {
     getSourceTables(configId) {
       const store = getStore(configId);
       const credentials = store.getCredentials();
-      if (credentials) {
+      if (store.hasValidCredentials(credentials)) {
         let runData = store.configData.setIn(['parameters', 'tables'], List());
         runData = runData.setIn(['parameters', 'db'], store.getCredentials());
         const params = {
