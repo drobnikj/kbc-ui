@@ -26,7 +26,8 @@ export default React.createClass({
     sourceTablesError: React.PropTypes.string,
     destinationEditing: React.PropTypes.bool.isRequired,
     onDestinationEdit: React.PropTypes.func.isRequired,
-    getPKColumns: React.PropTypes.func.isRequired
+    getPKColumns: React.PropTypes.func.isRequired,
+    queryNameExists: React.PropTypes.bool.isRequired
   },
 
   getDefaultProps() {
@@ -78,7 +79,7 @@ export default React.createClass({
   },
 
   handleToggleUseQueryEditor(e) {
-    var pk = [];
+    let pk = [];
     if (e.target.checked) {
       this.setState({
         useQueryEditor: e.target.checked,
@@ -95,7 +96,7 @@ export default React.createClass({
       pk = this.state.simplePk;
     }
 
-    var immutable = this.props.query.withMutations(function(mapping) {
+    let immutable = this.props.query.withMutations(function(mapping) {
       let query = mapping.set('advancedMode', e.target.checked);
       query = query.set('primaryKey', pk);
       return query;
@@ -293,7 +294,7 @@ export default React.createClass({
               />
             </div>
           </div>
-          <div className="form-group">
+          <div className={(this.props.queryNameExists) ? 'form-group has-error' : 'form-group'}>
             <label className="col-md-3 control-label">Name</label>
             <div className="col-md-9">
               <input
@@ -305,6 +306,7 @@ export default React.createClass({
                 disabled={this.props.disabled}
                 onChange={this.handleNameChange}
               />
+              {(this.props.queryNameExists) ? <div className="help-block">This name already exists</div> : null}
             </div>
           </div>
           <div>

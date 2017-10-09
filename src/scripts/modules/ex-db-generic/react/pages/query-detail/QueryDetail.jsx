@@ -44,12 +44,13 @@ export default function(componentId, actionsProvisioning, storeProvisioning) {
         editingQuery: editingQuery,
         editingQueries: ExDbStore.getEditingQueries(),
         isSaving: ExDbStore.isSavingQuery(queryId),
-        isValid: ExDbStore.isEditingQueryValid(queryId),
+        isValid: ExDbStore.isEditingQueryValid(queryId) && !ExDbStore.queryNameExists(editingQuery),
         tables: StorageTablesStore.getAll(),
         sourceTables: ExDbStore.getSourceTables(),
         queriesFilter: ExDbStore.getQueriesFilter(),
         queriesFiltered: ExDbStore.getQueriesFiltered(),
         componentSupportsSimpleSetup: ExDbActionCreators.componentSupportsSimpleSetup(),
+        queryNameExists: ExDbStore.queryNameExists(editingQuery),
         localState: ExDbStore.getLocalState()
       };
     },
@@ -87,6 +88,7 @@ export default function(componentId, actionsProvisioning, storeProvisioning) {
           destinationEditing={this.state.localState.getIn(['isDestinationEditing', this.state.queryId], false)}
           onDestinationEdit={ExDbActionCreators.destinationEdit}
           getPKColumns={ExDbActionCreators.getPKColumnsFromSourceTable}
+          queryNameExists={this.state.queryNameExists}
         />
       );
     },

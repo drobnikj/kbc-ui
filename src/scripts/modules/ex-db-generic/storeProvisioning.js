@@ -167,6 +167,10 @@ export function createStore(componentId, configId) {
       return isValidQuery(query);
     },
 
+    queryNameExists(query) {
+      return !!this.getQueries().find((q) => q.get('name') === query.get('name') && q.get('id') !== query.get('id'));
+    },
+
     getDefaultOutputTableId(name) {
       if (name === '') {
         return '';
