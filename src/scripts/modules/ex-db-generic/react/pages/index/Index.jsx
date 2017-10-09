@@ -138,27 +138,30 @@ export default function(componentId) {
       } else if (actionsCreators.componentSupportsSimpleSetup() && this.state.hasCredentials) {
         return (
           <div className="row component-empty-state text-center">
-            <p>There are no queries configured yet.</p>
-            <p>
-              Select the tables you'd like to import below to autogenerate you're configuration.
-              You can edit it later at any time.
-            </p>
-            <Quickstart
-              componentId={componentId}
-              configId={this.state.configId}
-              isLoadingSourceTables={this.state.localState.getIn(loadingSourceTablesPath)}
-              sourceTables={this.state.localState.getIn(sourceTablesPath)}
-              sourceTablesError={this.state.localState.getIn(sourceTablesErrorPath)}
-              quickstart={this.state.localState.get('quickstart') || Map()}
-              onChange={actionsCreators.quickstartSelected}
-              onSubmit={actionsCreators.quickstart}
-          />
+            <div className="col-md-12">
+              <p>There are no queries configured yet.</p>
+              <p>
+                Select the tables you'd like to import below to autogenerate you're configuration.
+                You can edit it later at any time.
+              </p>
+              <Quickstart
+                componentId={componentId}
+                configId={this.state.configId}
+                isLoadingSourceTables={this.state.localState.getIn(loadingSourceTablesPath)}
+                sourceTables={this.state.localState.getIn(sourceTablesPath)}
+                sourceTablesError={this.state.localState.getIn(sourceTablesErrorPath)}
+                quickstart={this.state.localState.get('quickstart') || Map()}
+                onChange={actionsCreators.quickstartSelected}
+                onSubmit={actionsCreators.quickstart}
+              />
+            </div>
           </div>
         );
       } else if (this.state.hasCredentials) {
         return (
           <div className="row component-empty-state text-center">
             <p>There are no queries configured yet.</p>
+            {this.renderNewQueryLink()}
           </div>
         );
       }
@@ -209,9 +212,9 @@ export default function(componentId) {
             </div>
             {this.renderError()}
             {this.state.hasCredentials ? (
-              <div>
-                {this.state.queries.count() > 1 ? (
-                  <div style={{padding: '22px'}}>
+              <div style={{padding: '22px'}}>
+                {this.state.queries.count() > 0 ? (
+                  <div>
                     <div className="row">
                       <div className="col-sm-9">
                         <SearchRow
@@ -226,11 +229,8 @@ export default function(componentId) {
                       </div>
                     </div>
                   </div>
-                ) : (
-                  <div className="text-right" style={{padding: '22px'}}>
-                    {this.renderNewQueryLink()}
-                  </div>
-                )}
+                ) : null
+                }
                 {this.renderQueriesMain()}
               </div>
             ) : this.renderCredentialsSetup()}
