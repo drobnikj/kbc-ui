@@ -57,7 +57,7 @@ export default React.createClass({
         }
         return (
           <NavRow
-            key={navQuery.get('name')}
+            key={navQuery.get('id')}
             query={navQuery}
             configurationId={this.props.configurationId}
             componentId={this.props.componentId}
