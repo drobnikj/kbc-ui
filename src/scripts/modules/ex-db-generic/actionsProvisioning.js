@@ -209,15 +209,14 @@ export function createActions(componentId) {
 
     resetQueryEdit(configId, queryId) {
       removeFromLocalState(configId, ['isChanged', queryId]);
-      removeFromLocalState(configId, ['editingQueries', queryId]);
       removeFromLocalState(configId, ['isDestinationEditing', queryId]);
       const store = getStore(configId);
       if (store.isNewQuery(queryId)) {
-        updateLocalState(
-          configId,
-          ['newQueries', queryId],
-          store.generateNewQuery(queryId, this.componentSupportsSimpleSetup())
-        );
+        const newQuery = store.generateNewQuery(queryId, this.componentSupportsSimpleSetup());
+        updateLocalState(configId, ['newQueries', queryId], newQuery);
+        updateLocalState(configId, ['editingQueries', queryId], newQuery);
+      } else {
+        removeFromLocalState(configId, ['editingQueries', queryId]);
       }
     },
 
