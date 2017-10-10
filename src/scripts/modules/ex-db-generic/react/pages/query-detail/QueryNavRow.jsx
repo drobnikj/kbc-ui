@@ -15,10 +15,16 @@ export default React.createClass({
         to={`ex-db-generic-${this.props.componentId}-query`}
         params={this.linkParams()}
         >
-        <strong>
-          {(this.props.isEditing) ? <i className="fa fa-fw fa-warning"/> : null}
-          {this.renderName()}
-        </strong>
+        {(this.props.isEditing) ? (
+            <strong>
+              {this.renderName()} *
+            </strong>
+          ) : (
+            <span>
+              {this.renderName()}
+            </span>
+          )
+        }
       </Link>
     );
   },
