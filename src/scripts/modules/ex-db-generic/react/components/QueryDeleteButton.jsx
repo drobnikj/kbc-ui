@@ -1,7 +1,6 @@
 import React from 'react';
 
 import Tooltip from './../../../../react/common/Tooltip';
-import Confirm from '../../../../react/common/Confirm';
 import {Loader} from 'kbc-react-components';
 import {Navigation} from 'react-router';
 
@@ -35,10 +34,6 @@ export default React.createClass({
 
   render() {
     let deleteLabel = 'Delete ' + this.props.entityName;
-    let deleteText = 'Do you really want to delete '
-      + this.props.entityName.toLowerCase()
-      + ' ' + this.props.query.get('name');
-
     if (this.props.isPending) {
       return (
         <span className="btn btn-link">
@@ -47,22 +42,18 @@ export default React.createClass({
       );
     } else {
       return (
-        <Confirm
-          title={deleteLabel}
-          text={deleteText}
-          buttonLabel="Delete"
-          onConfirm={this.deleteQuery}
+        <Tooltip
+          tooltip={deleteLabel}
+          id="delete"
+          placement={this.props.tooltipPlacement}
         >
-          <Tooltip
-            tooltip={deleteLabel}
-            id="delete"
-            placement={this.props.tooltipPlacement}
+          <button
+            className="btn btn-link"
+            onClick={this.deleteQuery}
           >
-             <button className="btn btn-link">
-               <i className="kbc-icon-cup"/>
-             </button>
-          </Tooltip>
-        </Confirm>
+            <i className="kbc-icon-cup"/>
+          </button>
+        </Tooltip>
       );
     }
   }
