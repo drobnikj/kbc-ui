@@ -32,6 +32,7 @@ import {sourceTablesPath} from '../../../storeProvisioning';
 import {sourceTablesErrorPath} from '../../../storeProvisioning';
 
 import Quickstart from '../../components/Quickstart';
+import SourceTablesError from '../../components/SourceTablesError';
 
 export default function(componentId) {
   const actionsCreators = actionsProvisioning.createActions(componentId);
@@ -180,23 +181,6 @@ export default function(componentId) {
       }
     },
 
-    renderError() {
-      const sourceTablesError = this.state.localState.getIn(sourceTablesErrorPath);
-      if (sourceTablesError) {
-        return (
-          <div className="row">
-            <div className="alert alert-danger">
-              <h4>An Error occurred fetching the table list</h4>
-              {sourceTablesError}
-              <h5>
-                Refresh the page to force a retry
-              </h5>
-            </div>
-          </div>
-        );
-      }
-    },
-
     render() {
       const configurationId = this.state.configId;
       return (
@@ -210,7 +194,12 @@ export default function(componentId) {
                 />
               </div>
             </div>
-            {this.renderError()}
+            <SourceTablesError
+              componentId={componentId}
+              configId={this.state.configId}
+              sourceTablesLoading={this.state.localState.getIn(loadingSourceTablesPath)}
+              sourceTablesError={this.state.localState.getIn(sourceTablesErrorPath)}
+            />
             {this.state.hasCredentials ? (
               <div style={{padding: '22px'}}>
                 {this.state.queries.count() > 0 ? (

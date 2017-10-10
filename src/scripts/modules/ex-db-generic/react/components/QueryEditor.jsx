@@ -5,8 +5,9 @@ import _ from 'underscore';
 import {Loader} from 'kbc-react-components';
 import {CodeEditor} from '../../../../react/common/common';
 import Select from '../../../../react/common/Select';
-
 import TableSelectorForm from '../../../../react/common/TableSelectorForm';
+
+import SourceTablesError from './SourceTablesError';
 
 import editorMode from '../../templates/editorMode';
 
@@ -231,7 +232,12 @@ export default React.createClass({
     return (
       <div className="row">
         <div className="form-horizontal">
-          {this.renderError()}
+          <SourceTablesError
+            componentId={this.props.componentId}
+            configId={this.props.configId}
+            sourceTablesLoading={this.props.isLoadingSourceTables}
+            sourceTablesError={this.props.sourceTablesError}
+          />
           {this.renderSimpleTable()}
           {this.renderSimpleColumns()}
           <div className="form-group">
@@ -415,20 +421,6 @@ export default React.createClass({
           <div className="help-block">
             Please do not put semicolons at the end of the query.
           </div>
-        </div>
-      );
-    }
-  },
-
-  renderError() {
-    if (this.props.sourceTablesError) {
-      return (
-        <div className="alert alert-danger">
-          <h4>An Error occured fetching table listing</h4>
-          {this.props.sourceTablesError}
-          <h5>
-            Refresh the page to force a retry
-          </h5>
         </div>
       );
     }

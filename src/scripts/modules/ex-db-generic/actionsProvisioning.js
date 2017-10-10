@@ -17,6 +17,7 @@ export function loadConfiguration(componentId, configId) {
 export function loadSourceTables(componentId, configId) {
   const actions = createActions(componentId);
   if (actions.componentSupportsSimpleSetup() && !actions.sourceTablesLoaded(configId)) {
+    createActions(componentId).updateLocalState(configId, storeProvisioning.loadingSourceTablesPath, true);
     return createActions(componentId).getSourceTables(configId);
   }
 }
