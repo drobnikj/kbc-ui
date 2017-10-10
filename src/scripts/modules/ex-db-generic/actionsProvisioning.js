@@ -187,8 +187,8 @@ export function createActions(componentId) {
 
     createQuery(configId) {
       const store = getStore(configId);
-      let newQuery = this.checkTableName(store.generateNewQuery(), store);
-      updateLocalState(configId, ['newQueries', newQuery.get('id'), newQuery]);
+      let newQuery = this.checkTableName(store.generateNewQuery(null, this.componentSupportsSimpleSetup()), store);
+      updateLocalState(configId, ['newQueries', newQuery.get('id')], newQuery);
       this.changeQueryEdit(configId, newQuery);
       return newQuery;
     },

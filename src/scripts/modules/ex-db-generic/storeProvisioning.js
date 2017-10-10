@@ -131,8 +131,9 @@ export function createStore(componentId, configId) {
         primaryKey: [],
         id: (queryId) ? queryId : generateId(ids)
       };
-      if (simpleSupport) {
+      if (!simpleSupport) {
         defaultQuery.advancedMode = true;
+        defaultQuery.query = '';
       }
       const defaultNewQuery = fromJS(defaultQuery);
       data.localState.setIn(['newQueries', defaultNewQuery.get('id')], defaultNewQuery);
@@ -141,6 +142,10 @@ export function createStore(componentId, configId) {
 
     getNewQuery(queryId) {
       return data.localState.getIn(['newQueries', queryId]);
+    },
+
+    getNewQueries() {
+      return data.localState.getIn(['newQueries']);
     },
 
     isEditingQuery(queryId) {

@@ -8,6 +8,7 @@ export default React.createClass({
     queries: PropTypes.object.isRequired,
     navQuery: PropTypes.object.isRequired,
     editingQueries: PropTypes.object.isRequired,
+    newQueries: PropTypes.object.isRequired,
     configurationId: PropTypes.string.isRequired,
     filter: PropTypes.string.isRequired,
     componentId: PropTypes.string.isRequired,
@@ -37,22 +38,33 @@ export default React.createClass({
   rows() {
     if (this.props.queries.count() > 0) {
       var navrows = [];
-      if (!this.props.queries.find((q) => q.get('id') === this.props.navQuery.get('id') )) {
-        navrows.push(
-          <NavRow
-            key={this.props.navQuery.get('name')}
-            query={this.props.navQuery}
-            configurationId={this.props.configurationId}
-            componentId={this.props.componentId}
-            isEditing={this.props.editingQueries.has(this.props.navQuery.get('id'))}
-          />
-        );
+      if (this.props.newQueries) {
+        navrows = this.props.newQueries.map(function(query) {
+          let isEditing = false;
+          let navQuery = query;
+          if (this.props.editingQueries && this.props.editingQueries.has(query.get('id'))) {
+            navQuery = this.props.editingQueries.get(query.get('id'));
+            isEditing = true;
+          }
+          return (
+            <NavRow
+              key={navQuery.get('id')}
+              query={navQuery}
+              configurationId={this.props.configurationId}
+              componentId={this.props.componentId}
+              isEditing={isEditing}
+            />
+          );
+        }, this).toArray();
       }
       var olnavrows = this.props.queries.map(function(query) {
         let navQuery = query;
         let isEditing = false;
         if (this.props.editingQueries && this.props.editingQueries.has(query.get('id'))) {
           navQuery = this.props.editingQueries.get(query.get('id'));
+          isEditing = true;
+        } else if (this.props.newQueries && this.props.newQueries.has(query.get('id'))) {
+          navQuery = this.props.newQueries.get(query.get('id'));
           isEditing = true;
         }
         return (
