@@ -81,7 +81,7 @@ export default React.createClass({
         {this.renderInput(
            'Memory',
            'memory',
-           '(Optional) Specifies the amount of memory allocated for Actor run',
+           '(Optional) Specifies the amount of memory allocated for Actor run.',
            '2048'
         )}
         {this.renderInput(
@@ -108,7 +108,7 @@ export default React.createClass({
               lint={true}
               gutters={['CodeMirror-lint-markers']}/>
             <div className="help-text">
-              (Optional) Contains input for the Actor in JSON format
+              (Optional) Contains input for the Actor in JSON format.
             </div>
           </div>
         </div>
@@ -126,7 +126,7 @@ export default React.createClass({
         <Input
           type="radio"
           label="Run Crawler"
-          help="Runs a specific Crawler and retrieves its results if it finishes successfully"
+          help="Runs a specific Crawler and retrieves its results if it finishes successfully."
           value="crawler"
         />
         <Input
@@ -137,14 +137,14 @@ export default React.createClass({
         />
         <Input
           type="radio"
-          label="Retrieve results only"
-          help="Retrieves the results from a Crawler run specified by its Execution ID"
+          label="Retrieve results from Crawler run"
+          help="Retrieves the results from a Crawler run specified by its Execution ID."
           value="executionId"
         />
         <Input
           type="radio"
-          label="Retrieve items from dataset"
-          help="Retrieves items from a Dataset specified by its ID or name"
+          label="Retrieve items from Dataset"
+          help="Retrieves items from a Dataset specified by its ID or name."
           value="dataset"
         />
       </RadioGroup>
@@ -174,7 +174,7 @@ export default React.createClass({
         gutters={['CodeMirror-lint-markers']}
       />
     );
-    const eidHelp = 'Execution ID of the Crawler run to retrieve the results from';
+    const eidHelp = 'Execution ID of the Crawler run to retrieve the results from.';
     const executionIdControl = (
       <div className="form-horizontal">
         {this.renderInput('Execution ID', 'executionId', eidHelp, 'Enter Execution ID')}
@@ -194,7 +194,7 @@ export default React.createClass({
           <div className="col-xs-10">
             {editor}
             <div className="help-text">
-              Optional parameter <a href="https://www.apify.com/docs#crawlers" target="_blank" rel="noopener noreferrer">crawler settings</a>. Specifies a JSON object with properties that override the default crawler settings. For more information, see documentation.
+              Optional parameter. Specifies a JSON object with properties that override the default crawler settings. For more information, see <a href="https://www.apify.com/docs#crawlers" target="_blank" rel="noopener noreferrer">documentation</a>.
             </div>
           </div>
         </div>
